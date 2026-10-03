@@ -102,7 +102,7 @@ root.querySelectorAll('[data-sample]').forEach(button => button.addEventListener
   input.value = samples[button.dataset.sample]; selected = 0; start(); encode();
 }));
 retry.addEventListener('click', () => { start(); encode(); });
-const observer = new IntersectionObserver(entries => {
-  if (entries.some(entry => entry.isIntersecting)) { start(); observer.disconnect(); }
-}, { rootMargin: '200px' });
-observer.observe(root);
+// Prepare the default sentence as soon as the course loads, including direct
+// links to this slide. Vocabulary construction still runs in the worker.
+start();
+encode();
