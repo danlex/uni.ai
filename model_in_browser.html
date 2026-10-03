@@ -5,13 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Un model care rulează în browser · Cursul 1</title>
 <style>
-  :root { --fg:#1a1a2e; --muted:#6b7280; --accent:#2563eb; --bg:#f7f8fb; --card:#fff; --border:#e5e7eb; }
+  :root { --fg:#1a1a2e; --muted:#6b7280; --accent:#2563eb; --bg:#f7f8fb; --card:#fff; --border:#e5e7eb;
+          --code-bg:#0f172a; --code-fg:#e2e8f0; --code-key:#7dd3fc; --code-str:#86efac; --code-com:#64748b; }
   * { box-sizing: border-box; }
   body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
          color:var(--fg); background:var(--bg); line-height:1.5; }
-  .wrap { max-width: 820px; margin: 0 auto; padding: 32px 20px 80px; }
-  h1 { font-size: 28px; margin: 0 0 6px; }
-  .lead { color:var(--muted); margin: 0 0 24px; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 28px 20px 80px; }
+  h1 { font-size: 26px; margin: 0 0 6px; }
+  .lead { color:var(--muted); margin: 0 0 22px; }
+  .cols { display:flex; gap:22px; align-items:flex-start; }
+  .left { flex: 1 1 520px; min-width:0; }
+  .right { flex: 1 1 440px; min-width:0; position:sticky; top:20px; }
   .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px; margin-bottom:18px; }
   label { font-weight:600; font-size:14px; display:block; margin-bottom:6px; }
   select, textarea, input[type=text] { width:100%; padding:10px 12px; border:1px solid var(--border);
@@ -26,7 +30,7 @@
   .bar { height:8px; background:#eef1f6; border-radius:999px; overflow:hidden; margin-top:8px; display:none; }
   .bar > i { display:block; height:100%; width:0; background:var(--accent); transition:width .2s; }
   .chat { display:flex; flex-direction:column; gap:12px; margin-top:4px; }
-  .msg { padding:12px 14px; border-radius:10px; max-width:88%; white-space:pre-wrap; font-size:15px; }
+  .msg { padding:12px 14px; border-radius:10px; max-width:92%; white-space:pre-wrap; font-size:15px; }
   .msg.user { align-self:flex-end; background:#dbeafe; }
   .msg.assistant { align-self:flex-start; background:#f1f3f7; }
   .msg .who { font-size:12px; color:var(--muted); font-weight:600; margin-bottom:4px; text-transform:uppercase; letter-spacing:.04em; }
@@ -34,47 +38,129 @@
   .warn { background:#fef3c7; border:1px solid #fde68a; color:#92400e; padding:12px 14px; border-radius:10px; font-size:14px; }
   code { background:#eef1f6; padding:1px 5px; border-radius:4px; font-size:13px; }
   .hidden { display:none; }
+  /* panoul de cod */
+  .codepanel { background:var(--code-bg); border-radius:12px; overflow:hidden; border:1px solid #1e293b; }
+  .codepanel .barhead { display:flex; align-items:center; gap:8px; padding:10px 14px; background:#111827; border-bottom:1px solid #1e293b; }
+  .codepanel .dot { width:11px; height:11px; border-radius:50%; }
+  .codepanel .title { color:#94a3b8; font-size:13px; margin-left:8px; font-weight:600; }
+  .codepanel pre { margin:0; padding:16px 18px; overflow-x:auto; }
+  .codepanel code { background:transparent; padding:0; color:var(--code-fg);
+         font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size:13.5px; line-height:1.6; }
+  .codepanel .k { color:var(--code-key); }
+  .codepanel .s { color:var(--code-str); }
+  .codepanel .c { color:var(--code-com); font-style:italic; }
+  .caption { color:var(--muted); font-size:13px; margin:10px 2px 0; }
+  @media (max-width: 880px) {
+    .cols { flex-direction:column; }
+    .right { position:static; width:100%; }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>Un model care rulează în browser</h1>
   <p class="lead">Cursul 1 · AI și programare. Modelul se descarcă o singură dată și rulează
-  <strong>local, pe placa ta video</strong> — fără server, fără cont, fără cheie API.</p>
+  <strong>local, pe placa ta video</strong> — fără server, fără cont, fără cheie API.
+  În dreapta vezi <strong>codul care rulează la fiecare apel</strong>.</p>
 
-  <div id="nogpu" class="warn hidden">
+  <div id="nogpu" class="warn hidden" style="margin-bottom:18px">
     Browserul tău nu are <strong>WebGPU</strong> activ, deci modelul nu poate rula aici.
     Încearcă Chrome sau Edge recent (actualizat), pe un calculator cu placă video.
   </div>
 
-  <div class="card">
-    <label for="model">1. Alege modelul</label>
-    <select id="model">
-      <option value="Qwen2.5-0.5B-Instruct-q4f16_1-MLC">Qwen2.5 0.5B — cel mai mic, ~0.4 GB (rapid)</option>
-      <option value="Llama-3.2-1B-Instruct-q4f16_1-MLC" selected>Llama 3.2 1B — echilibrat, ~0.9 GB</option>
-      <option value="gemma-2-2b-it-q4f16_1-MLC">Gemma 2 2B — mai bun, ~1.5 GB (mai lent la descărcare)</option>
-    </select>
-    <div class="row" style="margin-top:12px">
-      <button id="load">Descarcă și pornește modelul</button>
-      <span class="hint">Prima dată durează (se descarcă). Apoi rămâne în cache-ul browserului.</span>
+  <div class="cols">
+    <!-- STÂNGA: interacțiunea -->
+    <div class="left">
+      <div class="card">
+        <label for="model">1. Alege modelul</label>
+        <select id="model">
+          <option value="Qwen2.5-0.5B-Instruct-q4f16_1-MLC">Qwen2.5 0.5B — cel mai mic, ~0.4 GB (rapid)</option>
+          <option value="Llama-3.2-1B-Instruct-q4f16_1-MLC" selected>Llama 3.2 1B — echilibrat, ~0.9 GB</option>
+          <option value="gemma-2-2b-it-q4f16_1-MLC">Gemma 2 2B — mai bun, ~1.5 GB (mai lent la descărcare)</option>
+        </select>
+        <div class="row" style="margin-top:12px">
+          <button id="load">Descarcă și pornește modelul</button>
+          <span class="hint">Prima dată durează. Apoi rămâne în cache-ul browserului.</span>
+        </div>
+        <div class="bar" id="bar"><i></i></div>
+        <div class="status" id="status"></div>
+      </div>
+
+      <div class="card" id="chatCard" style="opacity:.5; pointer-events:none;">
+        <label for="system">2. Mesajul <code>system</code> (cum se comportă modelul)</label>
+        <textarea id="system" rows="2">Ești un profesor de informatică. Răspunzi pe scurt, în română, cu un exemplu simplu.</textarea>
+
+        <div class="chat" id="chat" style="margin-top:16px"></div>
+
+        <div class="row" style="margin-top:14px">
+          <input type="text" id="input" placeholder="Scrie o întrebare, ex.: Ce este căutarea binară?" style="flex:1 1 240px">
+          <button id="send">Trimite</button>
+          <button id="reset" class="secondary">Conversație nouă</button>
+        </div>
+      </div>
     </div>
-    <div class="bar" id="bar"><i></i></div>
-    <div class="status" id="status"></div>
+
+    <!-- DREAPTA: codul fiecărui apel -->
+    <div class="right">
+      <div class="codepanel">
+        <div class="barhead" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#111827;border-bottom:1px solid #1e293b">
+          <span class="dot" style="background:#ef4444"></span>
+          <span class="dot" style="background:#f59e0b"></span>
+          <span class="dot" style="background:#22c55e"></span>
+          <span class="title" id="codeTitle">codul apelului</span>
+        </div>
+        <pre><code id="codeView"></code></pre>
+      </div>
+      <p class="caption" id="codeCaption">Codul se actualizează la fiecare acțiune din stânga.</p>
+    </div>
   </div>
 
-  <div class="card" id="chatCard" style="opacity:.5; pointer-events:none;">
-    <label for="system">2. Mesajul <code>system</code> (cum se comportă modelul)</label>
-    <textarea id="system" rows="2">Ești un profesor de informatică. Răspunzi pe scurt, în română, cu un exemplu simplu.</textarea>
+  <!-- EXPLICAȚII: cum funcționează, cerere, prompturi -->
+  <h2 style="margin:34px 0 4px; font-size:22px">Cum funcționează</h2>
+  <p class="hint" style="margin-top:0">De la deschiderea paginii până la răspuns, fără server și fără cheie API.</p>
 
-    <div class="chat" id="chat" style="margin-top:16px"></div>
+  <div class="card">
+    <ol style="margin:0; padding-left:20px">
+      <li><strong>Biblioteca</strong> <code>@mlc-ai/web-llm</code> se încarcă dintr-un CDN
+          (<code>import ... from "https://esm.run/@mlc-ai/web-llm"</code>).</li>
+      <li><strong>Modelul</strong> (ex. Llama 3.2 1B, comprimat) se descarcă o singură dată și rămâne
+          în cache-ul browserului.</li>
+      <li><strong>WebGPU</strong> rulează modelul pe placa ta video, local — textul tău nu pleacă nicăieri.</li>
+      <li><strong>Apelul</strong> are aceeași formă ca un API conversațional: o listă de mesaje cu roluri,
+          iar răspunsul vine în flux (<code>stream</code>).</li>
+    </ol>
+    <p class="hint" style="margin-bottom:0">Condiții: Chrome/Edge recent, cu WebGPU, servit peste
+       <code>https</code> (sau <code>localhost</code>). Modelele din browser sunt mici, deci mai slabe
+       decât un model mare din cloud.</p>
+  </div>
 
-    <div class="row" style="margin-top:14px">
-      <input type="text" id="input" placeholder="Scrie o întrebare, ex.: Ce este căutarea binară?" style="flex:1 1 240px">
-      <button id="send">Trimite</button>
-      <button id="reset" class="secondary">Conversație nouă</button>
+  <h2 style="margin:28px 0 10px; font-size:22px">Exemplu de cerere (request)</h2>
+  <div class="codepanel">
+    <div class="barhead" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#111827;border-bottom:1px solid #1e293b">
+      <span class="dot" style="width:11px;height:11px;border-radius:50%;background:#ef4444"></span>
+      <span class="dot" style="width:11px;height:11px;border-radius:50%;background:#f59e0b"></span>
+      <span class="dot" style="width:11px;height:11px;border-radius:50%;background:#22c55e"></span>
+      <span class="title" style="color:#94a3b8;font-size:13px;margin-left:8px;font-weight:600">cerere completă</span>
     </div>
-    <p class="hint" style="margin-bottom:0">Fiecare întrebare (<code>user</code>) și fiecare răspuns
-    (<code>assistant</code>) rămân în istoric, așa că modelul ține minte conversația — exact ca pe slide-urile 27–28.</p>
+    <pre><code id="codeFull"></code></pre>
+  </div>
+  <p class="caption">Aceeași structură (listă de mesaje cu roluri) o folosesc și API-urile mari: Gemini, OpenAI etc.</p>
+
+  <h2 style="margin:28px 0 10px; font-size:22px">Exemple de prompt</h2>
+  <div class="card">
+    <p style="margin-top:0"><strong>Mesajul <code>system</code></strong> schimbă tonul și forma răspunsului. Încearcă:</p>
+    <ul style="margin:0 0 14px">
+      <li>„Ești un profesor de informatică. Răspunzi pe scurt, în română, cu un exemplu simplu.”</li>
+      <li>„Explică totul ca pentru un copil de 10 ani, fără termeni tehnici.”</li>
+      <li>„Răspunde doar cu cod Python comentat, fără text în plus.”</li>
+      <li>„Ești un examinator exigent. Pui o întrebare de verificare după fiecare răspuns.”</li>
+    </ul>
+    <p style="margin:0"><strong>Întrebări <code>user</code></strong> de încercat:</p>
+    <ul style="margin:6px 0 0">
+      <li>„Ce este căutarea binară?”</li>
+      <li>„Scrie o funcție Python care verifică dacă un număr este prim.”</li>
+      <li>„Dă-mi un exemplu concret cu numere.” (ca a doua tură — folosește istoricul)</li>
+    </ul>
   </div>
 </div>
 
@@ -83,8 +169,9 @@ import * as webllm from "https://esm.run/@mlc-ai/web-llm";
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $("status"), bar = $("bar"), barFill = bar.querySelector("i");
+const codeView = $("codeView"), codeTitle = $("codeTitle"), codeCaption = $("codeCaption");
 let engine = null;
-let messages = [];           // istoricul conversației: {role, content}
+let messages = [];
 let busy = false;
 
 if (!navigator.gpu) { $("nogpu").classList.remove("hidden"); $("load").disabled = true; }
@@ -95,22 +182,91 @@ function setChatEnabled(on) {
   card.style.pointerEvents = on ? "auto" : "none";
 }
 
-function addBubble(role, text) {
-  const div = document.createElement("div");
-  div.className = "msg " + role;
-  div.innerHTML = `<div class="who">${role === "user" ? "Tu (user)" : "Model (assistant)"}</div>`;
-  const body = document.createElement("span");
-  body.textContent = text;
-  div.appendChild(body);
-  $("chat").appendChild(div);
-  div.scrollIntoView({ behavior: "smooth", block: "end" });
-  return body;
+// --- panoul de cod: colorare simplă (comentarii, șiruri, cuvinte-cheie) ---
+function renderCode(src, title, caption) {
+  const esc = (t) => t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const html = esc(src)
+    .replace(/(\/\/[^\n]*)/g, '<span class="c">$1</span>')
+    .replace(/(&quot;|&#39;|")(?:(?!\1).)*\1/g, (m) => `<span class="s">${m}</span>`)
+    .replace(/\b(const|let|await|import|from|for|of|function|return)\b/g, '<span class="k">$1</span>');
+  codeView.innerHTML = html;
+  if (title) codeTitle.textContent = title;
+  if (caption) codeCaption.textContent = caption;
 }
+
+function codeLoad(model) {
+  return [
+    'import * as webllm from "@mlc-ai/web-llm";',
+    '',
+    '// Descarcă modelul și pornește-l pe placa video (WebGPU)',
+    `const engine = await webllm.CreateMLCEngine(`,
+    `  "${model}"`,
+    ');',
+  ].join('\n');
+}
+
+function trunc(t, n = 60) {
+  t = t.replace(/\s+/g, ' ').trim();
+  return t.length > n ? t.slice(0, n) + '…' : t;
+}
+
+function codeChat(msgs) {
+  const lines = msgs.map((m) =>
+    `  { role: ${('"' + m.role + '",').padEnd(13)} content: "${trunc(m.content)}" },`
+  );
+  return [
+    'const messages = [',
+    ...lines,
+    '];',
+    '',
+    '// Trimitem toată conversația; răspunsul vine în flux (stream)',
+    'const raspuns = await engine.chat.completions.create({',
+    '  messages,',
+    '  stream: true,',
+    '});',
+  ].join('\n');
+}
+
+// exemplu static, complet, de cerere (secțiunea de jos)
+function colorize(src) {
+  const esc = (t) => t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  return esc(src)
+    .replace(/(\/\/[^\n]*)/g, '<span class="c">$1</span>')
+    .replace(/"[^"\n]*"/g, (m) => `<span class="s">${m}</span>`)
+    .replace(/\b(const|let|await|import|from|for|of|function|return)\b/g, '<span class="k">$1</span>');
+}
+$("codeFull").innerHTML = colorize([
+  'import * as webllm from "https://esm.run/@mlc-ai/web-llm";',
+  '',
+  '// 1. Descarcă modelul și pornește-l pe WebGPU (o singură dată)',
+  'const engine = await webllm.CreateMLCEngine("Llama-3.2-1B-Instruct-q4f16_1-MLC");',
+  '',
+  '// 2. Conversația = o listă de mesaje cu roluri',
+  'const messages = [',
+  '  { role: "system", content: "Ești profesor de informatică. Răspunzi în română." },',
+  '  { role: "user",   content: "Ce este căutarea binară?" },',
+  '];',
+  '',
+  '// 3. Trimitem cererea; răspunsul vine bucată cu bucată (stream)',
+  'const raspuns = await engine.chat.completions.create({ messages, stream: true });',
+  'for await (const parte of raspuns) {',
+  '  process.stdout.write(parte.choices[0]?.delta?.content || "");',
+  '}',
+].join('\n'));
+
+// cod inițial (panoul din dreapta)
+renderCode(codeLoad($("model").value), "1 · încărcarea modelului",
+  "Pasul 1: codul care descarcă și pornește modelul în browser.");
+$("model").addEventListener("change", () => {
+  if (!engine) renderCode(codeLoad($("model").value), "1 · încărcarea modelului",
+    "Pasul 1: codul care descarcă și pornește modelul în browser.");
+});
 
 $("load").addEventListener("click", async () => {
   const model = $("model").value;
   $("load").disabled = true;
   bar.style.display = "block";
+  renderCode(codeLoad(model), "1 · încărcarea modelului", "Se execută acum: descărcarea și pornirea modelului.");
   try {
     engine = await webllm.CreateMLCEngine(model, {
       initProgressCallback: (p) => {
@@ -134,10 +290,13 @@ async function send() {
   if (!text) return;
   busy = true; $("send").disabled = true; $("input").value = "";
 
-  // Construim lista de mesaje: system (o dată) + tot istoricul + noua întrebare.
   if (messages.length === 0) messages.push({ role: "system", content: $("system").value });
   messages.push({ role: "user", content: text });
   addBubble("user", text);
+
+  // dreapta: codul exact al acestui apel, cu lista reală de mesaje
+  renderCode(codeChat(messages), "2 · apelul cu rolurile",
+    `Apelul curent trimite ${messages.length} mesaje (system, user, assistant…).`);
 
   const out = addBubble("assistant", "…");
   try {
@@ -147,7 +306,9 @@ async function send() {
       full += chunk.choices[0]?.delta?.content || "";
       out.textContent = full;
     }
-    messages.push({ role: "assistant", content: full });   // păstrăm răspunsul în istoric
+    messages.push({ role: "assistant", content: full });
+    renderCode(codeChat(messages), "2 · apelul cu rolurile",
+      `Răspunsul (assistant) a fost adăugat în istoric: acum ${messages.length} mesaje.`);
   } catch (e) {
     out.textContent = "Eroare: " + e.message;
   } finally {
@@ -155,9 +316,25 @@ async function send() {
   }
 }
 
+function addBubble(role, text) {
+  const div = document.createElement("div");
+  div.className = "msg " + role;
+  div.innerHTML = `<div class="who">${role === "user" ? "Tu (user)" : "Model (assistant)"}</div>`;
+  const body = document.createElement("span");
+  body.textContent = text;
+  div.appendChild(body);
+  $("chat").appendChild(div);
+  div.scrollIntoView({ behavior: "smooth", block: "end" });
+  return body;
+}
+
 $("send").addEventListener("click", send);
 $("input").addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
-$("reset").addEventListener("click", () => { messages = []; $("chat").innerHTML = ""; $("input").focus(); });
+$("reset").addEventListener("click", () => {
+  messages = []; $("chat").innerHTML = "";
+  renderCode(codeLoad($("model").value), "1 · încărcarea modelului", "Conversație nouă. Pune o întrebare ca să vezi apelul.");
+  $("input").focus();
+});
 </script>
 </body>
 </html>
