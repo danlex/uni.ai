@@ -1279,14 +1279,19 @@ reduced.addEventListener('change',()=>{paused=reduced.matches;sync()});selectIma
 const root=document.getElementById('s24'),panel=root.querySelector('#generation-demo');
 const tokens=['Căut','area',' bin','ară',' cere',' o',' list','ă',' sort','ată','.'];
 const output=panel.querySelector('.generation-output'),next=panel.querySelector('.generation-next'),status=panel.querySelector('.generation-status'),play=panel.querySelector('.generation-play'),step=panel.querySelector('.generation-step');
-let count=0,timer=null,visible=false,active=false,hold=0;const reduced=matchMedia('(prefers-reduced-motion:reduce)');
+const reduced=matchMedia('(prefers-reduced-motion:reduce)');
+let count=0,timer=null,visible=false,active=false,hold=0,enabled=!reduced.matches,printing=false;
 function stop(){clearInterval(timer);timer=null;active=false;play.textContent='Pornește animația';play.setAttribute('aria-pressed','false')}
 function paint(){output.replaceChildren();if(!count){const empty=document.createElement('div');empty.className='generation-empty';empty.textContent='Răspunsul va apărea aici.';output.append(empty)}else tokens.slice(0,count).forEach(t=>{const el=document.createElement('span');el.textContent=t;output.append(el)});next.textContent=count<tokens.length?tokens[count]:'Final';status.textContent=count+' / '+tokens.length+' fragmente'+(count===tokens.length?' · răspuns complet':'');step.disabled=count===tokens.length;}
 function tick(){if(count===tokens.length){hold++;if(hold>=3){count=0;hold=0;paint()}}else{count++;paint()}}
-function start(){if(!visible||document.hidden)return;active=true;play.textContent='Pauză';play.setAttribute('aria-pressed','true');timer=setInterval(tick,900)}
-step.addEventListener('click',()=>{stop();if(count<tokens.length){count++;paint()}});play.addEventListener('click',()=>{if(active)stop();else{if(count===tokens.length){count=0;hold=0;paint()}start()}});panel.querySelector('.generation-reset').addEventListener('click',()=>{stop();count=0;hold=0;paint()});
-new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(!visible)stop()},{threshold:.15}).observe(root);document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});reduced.addEventListener('change',()=>{if(reduced.matches)stop()});
-window.addEventListener('beforeprint',()=>{stop();count=tokens.length;paint()});paint();
+function start(){if(active||!visible||document.hidden||printing)return;active=true;play.textContent='Pauză';play.setAttribute('aria-pressed','true');timer=setInterval(tick,900)}
+function sync(){if(enabled&&visible&&!document.hidden&&!printing)start();else stop()}
+step.addEventListener('click',()=>{enabled=false;stop();if(count<tokens.length){count++;paint()}});play.addEventListener('click',()=>{enabled=!enabled;sync()});panel.querySelector('.generation-reset').addEventListener('click',()=>{count=0;hold=0;paint();enabled=true;sync()});
+function updateVisibility(){const bounds=root.getBoundingClientRect();visible=bounds.bottom>0&&bounds.top<innerHeight;sync()}
+new IntersectionObserver(updateVisibility,{threshold:[0,.15]}).observe(root);window.addEventListener('scroll',updateVisibility,{passive:true});window.addEventListener('resize',updateVisibility);window.addEventListener('load',updateVisibility);document.addEventListener('visibilitychange',updateVisibility);reduced.addEventListener('change',()=>{enabled=!reduced.matches;sync()});
+requestAnimationFrame(updateVisibility);
+window.addEventListener('beforeprint',()=>{printing=true;sync();count=tokens.length;paint()});window.addEventListener('afterprint',()=>{printing=false;sync()});paint();
+
 const tokenRoot=document.getElementById('s25'),buttons=[...tokenRoot.querySelectorAll('[data-token]')];
 buttons.forEach((button,i)=>button.addEventListener('click',()=>{buttons.forEach((b,j)=>b.setAttribute('aria-pressed',String(i===j)));const text=button.textContent;tokenRoot.querySelector('.token-selected').textContent=text.replaceAll(' ','·');tokenRoot.querySelector('.token-description').textContent='Tokenul '+(i+1)+' din 23. '+(text.startsWith(' ')?'Punctul marchează spațiul.':text==='.'?'Semnul de punctuație are un token propriu.':'Acest fragment nu începe cu un spațiu.')}));
 })();</script><script type="module" src="js/tokenizer-slide.js"></script><script type="module" src="js/student-qr.js"></script></body></html>
