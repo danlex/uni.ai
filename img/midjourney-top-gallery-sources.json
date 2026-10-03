@@ -1,0 +1,63 @@
+{
+  "source": "https://www.midjourney.com/explore?tab=top",
+  "feed": "Top day",
+  "accessed": "2026-10-03",
+  "images": [
+    {
+      "file": "img/midjourney-top-01.webp",
+      "creator": "Celine",
+      "title": "Detaliu fotorealist",
+      "url": "https://www.midjourney.com/jobs/c24b201e-de0d-48a8-82e6-a6256a6cb7d8?index=2",
+      "cdn": "https://cdn.midjourney.com/c24b201e-de0d-48a8-82e6-a6256a6cb7d8/0_2_640_N.webp?method=shortest"
+    },
+    {
+      "file": "img/midjourney-top-02.webp",
+      "creator": "juniorokmpo",
+      "title": "Personaj ilustrat",
+      "url": "https://www.midjourney.com/jobs/8bb368fc-1904-498e-978f-7ade4425bc7d?index=2",
+      "cdn": "https://cdn.midjourney.com/8bb368fc-1904-498e-978f-7ade4425bc7d/0_2_640_N.webp?method=shortest"
+    },
+    {
+      "file": "img/midjourney-top-03.webp",
+      "creator": "dc",
+      "title": "Peisaj pictural",
+      "url": "https://www.midjourney.com/jobs/ef59d90f-82bf-49c0-879a-d3abd2bdc91c?index=3",
+      "cdn": "https://cdn.midjourney.com/ef59d90f-82bf-49c0-879a-d3abd2bdc91c/0_3_640_N.webp?method=shortest"
+    },
+    {
+      "file": "img/midjourney-top-04.webp",
+      "creator": "xiaojing",
+      "title": "Animale în pictură",
+      "url": "https://www.midjourney.com/jobs/f3cd70a9-e9f2-44fe-b572-fb2080c68761?index=2",
+      "cdn": "https://cdn.midjourney.com/f3cd70a9-e9f2-44fe-b572-fb2080c68761/0_2_640_N.webp?method=shortest"
+    },
+    {
+      "file": "img/midjourney-top-05.webp",
+      "creator": "u6657469859",
+      "title": "Portret generat",
+      "url": "https://www.midjourney.com/jobs/1f437d4b-6d86-4709-9c6e-01ee3faf198d?index=3",
+      "cdn": "https://cdn.midjourney.com/1f437d4b-6d86-4709-9c6e-01ee3faf198d/0_3_640_N.webp?method=shortest"
+    },
+    {
+      "file": "img/midjourney-top-06.webp",
+      "creator": "erinlynn1221",
+      "title": "Textură de pictură",
+      "url": "https://www.midjourney.com/jobs/f8d45f68-860c-44f3-a27e-9f2f77a02e6d?index=2",
+      "cdn": "https://cdn.midjourney.com/f8d45f68-860c-44f3-a27e-9f2f77a02e6d/0_2_640_N.webp?method=shortest"
+    },
+    {
+      "file": "img/midjourney-top-07.webp",
+      "creator": "jedijappstar",
+      "title": "Ilustrație de modă",
+      "url": "https://www.midjourney.com/jobs/16f6ad88-414b-48c3-adce-02d8127a56b7?index=3",
+      "cdn": "https://cdn.midjourney.com/16f6ad88-414b-48c3-adce-02d8127a56b7/0_3_640_N.webp?method=shortest"
+    },
+    {
+      "file": "img/midjourney-top-08.webp",
+      "creator": "zoomzoom",
+      "title": "Personaje imaginare",
+      "url": "https://www.midjourney.com/jobs/8449a32e-e08b-4974-b304-a293b18f6c93?index=0",
+      "cdn": "https://cdn.midjourney.com/8449a32e-e08b-4974-b304-a293b18f6c93/0_0_640_N.webp?method=shortest"
+    }
+  ]
+}
