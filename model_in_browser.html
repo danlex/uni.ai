@@ -182,14 +182,18 @@ function setChatEnabled(on) {
   card.style.pointerEvents = on ? "auto" : "none";
 }
 
-// --- panoul de cod: colorare simplă (comentarii, șiruri, cuvinte-cheie) ---
-function renderCode(src, title, caption) {
+// --- colorare simplă, pe linii (comentarii / șiruri / cuvinte-cheie) ---
+function highlight(src) {
   const esc = (t) => t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-  const html = esc(src)
-    .replace(/(\/\/[^\n]*)/g, '<span class="c">$1</span>')
-    .replace(/(&quot;|&#39;|")(?:(?!\1).)*\1/g, (m) => `<span class="s">${m}</span>`)
-    .replace(/\b(const|let|await|import|from|for|of|function|return)\b/g, '<span class="k">$1</span>');
-  codeView.innerHTML = html;
+  return src.split('\n').map((line) => {
+    if (/^\s*\/\//.test(line)) return `<span class='c'>${esc(line)}</span>`;
+    return esc(line)
+      .replace(/"[^"\n]*"/g, (m) => `<span class='s'>${m}</span>`)
+      .replace(/\b(const|let|await|import|from|for|of|function|return)\b/g, `<span class='k'>$1</span>`);
+  }).join('\n');
+}
+function renderCode(src, title, caption) {
+  codeView.innerHTML = highlight(src);
   if (title) codeTitle.textContent = title;
   if (caption) codeCaption.textContent = caption;
 }
@@ -228,14 +232,7 @@ function codeChat(msgs) {
 }
 
 // exemplu static, complet, de cerere (secțiunea de jos)
-function colorize(src) {
-  const esc = (t) => t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-  return esc(src)
-    .replace(/(\/\/[^\n]*)/g, '<span class="c">$1</span>')
-    .replace(/"[^"\n]*"/g, (m) => `<span class="s">${m}</span>`)
-    .replace(/\b(const|let|await|import|from|for|of|function|return)\b/g, '<span class="k">$1</span>');
-}
-$("codeFull").innerHTML = colorize([
+$("codeFull").innerHTML = highlight([
   'import * as webllm from "https://esm.run/@mlc-ai/web-llm";',
   '',
   '// 1. Descarcă modelul și pornește-l pe WebGPU (o singură dată)',
