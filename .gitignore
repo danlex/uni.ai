@@ -1,0 +1,6 @@
+.venv/
+.claude/
+*.bak
+.tiktoken_cache/
+__pycache__/
+.DS_Store
