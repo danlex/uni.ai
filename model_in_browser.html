@@ -29,7 +29,15 @@
   .status { font-size:14px; color:var(--muted); margin-top:10px; min-height:20px; }
   .bar { height:8px; background:#eef1f6; border-radius:999px; overflow:hidden; margin-top:8px; display:none; }
   .bar > i { display:block; height:100%; width:0; background:var(--accent); transition:width .2s; }
-  .chat { display:flex; flex-direction:column; gap:12px; margin-top:4px; }
+  .chat { display:flex; flex-direction:column; gap:12px; margin-top:16px;
+          min-height:240px; max-height:460px; overflow-y:auto;
+          background:#fafbff; border:1px solid var(--border); border-radius:10px; padding:16px; }
+  .chat:empty::before { content:"Pune o întrebare mai jos — răspunsul modelului apare aici.";
+          color:var(--muted); font-size:14px; }
+  .composer { margin-top:14px; }
+  .composer textarea { width:100%; font-size:16px; padding:14px 16px; min-height:64px; line-height:1.5; }
+  .composer .btns { display:flex; gap:10px; margin-top:10px; }
+  .composer #send { padding:12px 26px; font-size:16px; }
   .msg { padding:12px 14px; border-radius:10px; max-width:92%; white-space:pre-wrap; font-size:15px; }
   .msg.user { align-self:flex-end; background:#dbeafe; }
   .msg.assistant { align-self:flex-start; background:#f1f3f7; }
@@ -90,12 +98,14 @@
         <label for="system">2. Mesajul <code>system</code> (cum se comportă modelul)</label>
         <textarea id="system" rows="2">Ești un profesor de informatică. Răspunzi pe scurt, în română, cu un exemplu simplu.</textarea>
 
-        <div class="chat" id="chat" style="margin-top:16px"></div>
+        <div class="chat" id="chat"></div>
 
-        <div class="row" style="margin-top:14px">
-          <input type="text" id="input" placeholder="Scrie o întrebare, ex.: Ce este căutarea binară?" style="flex:1 1 240px">
-          <button id="send">Trimite</button>
-          <button id="reset" class="secondary">Conversație nouă</button>
+        <div class="composer">
+          <textarea id="input" rows="2" placeholder="Scrie o întrebare, ex.: Ce este căutarea binară?   (Enter = trimite · Shift+Enter = rând nou)"></textarea>
+          <div class="btns">
+            <button id="send">Trimite</button>
+            <button id="reset" class="secondary">Conversație nouă</button>
+          </div>
         </div>
       </div>
     </div>
@@ -326,7 +336,7 @@ function addBubble(role, text) {
 }
 
 $("send").addEventListener("click", send);
-$("input").addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
+$("input").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } });
 $("reset").addEventListener("click", () => {
   messages = []; $("chat").innerHTML = "";
   renderCode(codeLoad($("model").value), "1 · încărcarea modelului", "Conversație nouă. Pune o întrebare ca să vezi apelul.");
