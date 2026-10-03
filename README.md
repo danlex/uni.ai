@@ -1,4 +1,4 @@
-# Cursul 1 · De la AI la primul agent de programare
+# Cursul 1 · Inginerie pentru AI
 
 Materiale pentru Cursul 1 — AI și programare (Facultatea de Matematică și Informatică, Universitatea din București).
 
@@ -8,10 +8,17 @@ Materiale pentru Cursul 1 — AI și programare (Facultatea de Matematică și I
 - **`exemplu_colab_ai.ipynb`** — notebook pentru Google Colab: primul apel către un LLM (`google.colab.ai`) și tokenizare cu `tiktoken`.
 - **`exemplu_tokeni.py`** — același exemplu de tokenizare, ca script local.
 - **`img/`** — imaginile folosite în slide-uri.
+- **`js/`** — tokenizatorul interactiv, cu vocabularul `o200k_base` și dependențele locale.
 
 ## Cum deschizi slide-urile
 
-Descarcă `Curs_1_AI_Algorithm_Tutor_v30.html` și deschide-l într-un browser. Folosește săgețile pentru navigare.
+Pentru toate funcțiile interactive, servește întregul folder prin HTTP:
+
+```bash
+python3 -m http.server 7777 --bind 127.0.0.1
+```
+
+Deschide [cursul local](http://127.0.0.1:7777/Curs_1_AI_Algorithm_Tutor_v30.html). Tokenizarea interactivă este pe slide-ul „Scrie un text. Vezi tokenii.”, după exemplul fix de tokenizare. Are text editabil, exemple în română și engleză, cod Python și emoji. Calculul rulează local într-un Web Worker, fără API; vocabularul se încarcă la apropierea de slide. Deschiderea directă prin `file://` poate bloca modulele și worker-ul.
 
 ## Cum rulezi exemplele
 
