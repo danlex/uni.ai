@@ -1,0 +1,55 @@
+{
+  "generator": "Built-in ChatGPT Image tool",
+  "mode": "Edit",
+  "purpose": "Bright premium educational images",
+  "images": [
+    {
+      "key": "ml",
+      "reference": "img/ai-domain-ml-premium.png",
+      "output": "img/ai-domain-ml-bright.png",
+      "prompt": "Edit this premium educational image to make it bright and clearly legible in a small university course card. Preserve the subject, exact readable words, diagram relationships, geometry, panoramic composition and educational meaning. Replace the very dark midnight look with high-key professional editorial photography: soft daylight, warm ivory and pale gray environment, crisp realistic materials, restrained petrol teal and amber accents. Screens and panels should have light ivory backgrounds with dark graphite text and clear teal diagrams; preserve all meaningful text exactly. Expose the main subjects generously, lift shadows, readable midtones, gentle controlled contrast, retain photographic depth and realism, not washed out. For street scenes use natural daytime; for warehouse/studio use beautiful bright architectural daylight. Scientific visualization uses an ivory background, dark visible node connections, teal and amber protein structure. No plants, new decorative objects, slogans or logos. Do not add new elements. The final image must be visibly much brighter, refined, premium and clean; no dark cinematic atmosphere. Keep the existing wide aspect ratio."
+    },
+    {
+      "key": "nlp",
+      "reference": "img/ai-domain-nlp-premium.png",
+      "output": "img/ai-domain-nlp-bright.png",
+      "prompt": "Edit this premium educational image to make it bright and clearly legible in a small university course card. Preserve the subject, exact readable words, diagram relationships, geometry, panoramic composition and educational meaning. Replace the very dark midnight look with high-key professional editorial photography: soft daylight, warm ivory and pale gray environment, crisp realistic materials, restrained petrol teal and amber accents. Screens and panels should have light ivory backgrounds with dark graphite text and clear teal diagrams; preserve all meaningful text exactly. Expose the main subjects generously, lift shadows, readable midtones, gentle controlled contrast, retain photographic depth and realism, not washed out. For street scenes use natural daytime; for warehouse/studio use beautiful bright architectural daylight. Scientific visualization uses an ivory background, dark visible node connections, teal and amber protein structure. No plants, new decorative objects, slogans or logos. Do not add new elements. The final image must be visibly much brighter, refined, premium and clean; no dark cinematic atmosphere. Keep the existing wide aspect ratio."
+    },
+    {
+      "key": "vision",
+      "reference": "img/ai-domain-vision-premium.png",
+      "output": "img/ai-domain-vision-bright.png",
+      "prompt": "Edit this premium educational image to make it bright and clearly legible in a small university course card. Preserve the subject, exact readable words, diagram relationships, geometry, panoramic composition and educational meaning. Replace the very dark midnight look with high-key professional editorial photography: soft daylight, warm ivory and pale gray environment, crisp realistic materials, restrained petrol teal and amber accents. Screens and panels should have light ivory backgrounds with dark graphite text and clear teal diagrams; preserve all meaningful text exactly. Expose the main subjects generously, lift shadows, readable midtones, gentle controlled contrast, retain photographic depth and realism, not washed out. For street scenes use natural daytime; for warehouse/studio use beautiful bright architectural daylight. Scientific visualization uses an ivory background, dark visible node connections, teal and amber protein structure. No plants, new decorative objects, slogans or logos. Do not add new elements. The final image must be visibly much brighter, refined, premium and clean; no dark cinematic atmosphere. Keep the existing wide aspect ratio."
+    },
+    {
+      "key": "dl",
+      "reference": "img/ai-domain-dl-premium.png",
+      "output": "img/ai-domain-dl-bright.png",
+      "prompt": "Edit this premium educational image to make it bright and clearly legible in a small university course card. Preserve the subject, exact readable words, diagram relationships, geometry, panoramic composition and educational meaning. Replace the very dark midnight look with high-key professional editorial photography: soft daylight, warm ivory and pale gray environment, crisp realistic materials, restrained petrol teal and amber accents. Screens and panels should have light ivory backgrounds with dark graphite text and clear teal diagrams; preserve all meaningful text exactly. Expose the main subjects generously, lift shadows, readable midtones, gentle controlled contrast, retain photographic depth and realism, not washed out. For street scenes use natural daytime; for warehouse/studio use beautiful bright architectural daylight. Scientific visualization uses an ivory background, dark visible node connections, teal and amber protein structure. No plants, new decorative objects, slogans or logos. Do not add new elements. The final image must be visibly much brighter, refined, premium and clean; no dark cinematic atmosphere. Keep the existing wide aspect ratio."
+    },
+    {
+      "key": "robotics",
+      "reference": "img/ai-domain-robotics-premium.png",
+      "output": "img/ai-domain-robotics-bright.png",
+      "prompt": "Edit this premium educational image to make it bright and clearly legible in a small university course card. Preserve the subject, exact readable words, diagram relationships, geometry, panoramic composition and educational meaning. Replace the very dark midnight look with high-key professional editorial photography: soft daylight, warm ivory and pale gray environment, crisp realistic materials, restrained petrol teal and amber accents. Screens and panels should have light ivory backgrounds with dark graphite text and clear teal diagrams; preserve all meaningful text exactly. Expose the main subjects generously, lift shadows, readable midtones, gentle controlled contrast, retain photographic depth and realism, not washed out. For street scenes use natural daytime; for warehouse/studio use beautiful bright architectural daylight. Scientific visualization uses an ivory background, dark visible node connections, teal and amber protein structure. No plants, new decorative objects, slogans or logos. Do not add new elements. The final image must be visibly much brighter, refined, premium and clean; no dark cinematic atmosphere. Keep the existing wide aspect ratio."
+    },
+    {
+      "key": "analytics",
+      "reference": "img/ai-domain-analytics-premium.png",
+      "output": "img/ai-domain-analytics-bright.png",
+      "prompt": "Edit this premium educational image to make it bright and clearly legible in a small university course card. Preserve the subject, exact readable words, diagram relationships, geometry, panoramic composition and educational meaning. Replace the very dark midnight look with high-key professional editorial photography: soft daylight, warm ivory and pale gray environment, crisp realistic materials, restrained petrol teal and amber accents. Screens and panels should have light ivory backgrounds with dark graphite text and clear teal diagrams; preserve all meaningful text exactly. Expose the main subjects generously, lift shadows, readable midtones, gentle controlled contrast, retain photographic depth and realism, not washed out. For street scenes use natural daytime; for warehouse/studio use beautiful bright architectural daylight. Scientific visualization uses an ivory background, dark visible node connections, teal and amber protein structure. No plants, new decorative objects, slogans or logos. Do not add new elements. The final image must be visibly much brighter, refined, premium and clean; no dark cinematic atmosphere. Keep the existing wide aspect ratio."
+    },
+    {
+      "key": "expert",
+      "reference": "img/ai-domain-expert-premium.png",
+      "output": "img/ai-domain-expert-bright.png",
+      "prompt": "Edit this premium educational image to make it bright and clearly legible in a small university course card. Preserve the subject, exact readable words, diagram relationships, geometry, panoramic composition and educational meaning. Replace the very dark midnight look with high-key professional editorial photography: soft daylight, warm ivory and pale gray environment, crisp realistic materials, restrained petrol teal and amber accents. Screens and panels should have light ivory backgrounds with dark graphite text and clear teal diagrams; preserve all meaningful text exactly. Expose the main subjects generously, lift shadows, readable midtones, gentle controlled contrast, retain photographic depth and realism, not washed out. For street scenes use natural daytime; for warehouse/studio use beautiful bright architectural daylight. Scientific visualization uses an ivory background, dark visible node connections, teal and amber protein structure. No plants, new decorative objects, slogans or logos. Do not add new elements. The final image must be visibly much brighter, refined, premium and clean; no dark cinematic atmosphere. Keep the existing wide aspect ratio."
+    },
+    {
+      "key": "speech",
+      "reference": "img/ai-domain-speech-premium.png",
+      "output": "img/ai-domain-speech-bright.png",
+      "prompt": "Edit this premium educational image to make it bright and clearly legible in a small university course card. Preserve the subject, exact readable words, diagram relationships, geometry, panoramic composition and educational meaning. Replace the very dark midnight look with high-key professional editorial photography: soft daylight, warm ivory and pale gray environment, crisp realistic materials, restrained petrol teal and amber accents. Screens and panels should have light ivory backgrounds with dark graphite text and clear teal diagrams; preserve all meaningful text exactly. Expose the main subjects generously, lift shadows, readable midtones, gentle controlled contrast, retain photographic depth and realism, not washed out. For street scenes use natural daytime; for warehouse/studio use beautiful bright architectural daylight. Scientific visualization uses an ivory background, dark visible node connections, teal and amber protein structure. No plants, new decorative objects, slogans or logos. Do not add new elements. The final image must be visibly much brighter, refined, premium and clean; no dark cinematic atmosphere. Keep the existing wide aspect ratio."
+    }
+  ]
+}
