@@ -5,6 +5,8 @@ Materiale pentru Cursul 1 — AI și programare (Facultatea de Matematică și I
 ## Conținut
 
 - **`curs.html`** — slide-urile cursului (se deschid direct în browser).
+- **`curs-agent.html`** — curs de laborator: cum se construiește un agent conversațional (studiu de caz AlgoTutor).
+- **`css/curs.css`** — stilurile comune, folosite de ambele cursuri.
 - **`exemplu_colab_ai.ipynb`** — notebook pentru Google Colab: primul apel către un LLM (`google.colab.ai`) și tokenizare cu `tiktoken`.
 - **`exemplu_tokeni.py`** — același exemplu de tokenizare, ca script local.
 - **`img/`** — imaginile folosite în slide-uri.
