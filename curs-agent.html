@@ -6,94 +6,115 @@
 <title>Cum construim un agent conversațional · AlgoTutor</title>
 <link rel="stylesheet" href="css/curs.css">
 <style>
-  /* Sistem de design propriu acestui curs; scheletul de slide vine din css/curs.css. */
+  /* Design editorial-tech, modern. Scheletul de slide vine din css/curs.css;
+     aici suprascriem pentru un aspect propriu (rece, de inginerie). */
   :root{
-    --acc:#ff4931; --ink:#17212b; --navy:#1f3340; --muted:#5c6670;
-    --soft:#faf8f5; --line:#E6E1DB;
+    --ink:#0f1115; --ink-2:#2a2f3a; --muted:#6b7280;
+    --line:#e4e7ec; --panel:#f6f7f9; --accent:#4f46e5; --accent-soft:#eef0fb;
+    --code-bg:#0f1115; --code-fg:#e6e8ec;
   }
-  .ca .content{ max-height:none; }
-  .ca h1{ letter-spacing:-.02em; }
-  .ca-eyebrow{ text-transform:uppercase; letter-spacing:.16em; font-size:20px;
-               font-weight:700; color:var(--acc); margin:0 0 6px; }
-  .ca-lead{ font-size:29px !important; color:#3a444c; max-width:1240px; line-height:1.4; }
+  .ca .content{ max-height:none; color:var(--ink); }
+  .ca h1{ font-weight:800; letter-spacing:-.03em; color:var(--ink); }
+  .ca h2{ letter-spacing:-.01em; }
+
+  /* Antet ca etichetă mono, cu bară de accent */
+  .ca header span{ font-family:ui-monospace,Consolas,monospace !important; text-transform:uppercase;
+    letter-spacing:.14em; font-size:18px !important; color:var(--ink) !important; }
+  .ca:not(.cover) header{ border-bottom:1px solid var(--line); padding-bottom:12px; }
+  .ca:not(.cover) header span:first-child::before{ content:""; display:inline-block; width:22px; height:3px;
+    background:var(--accent); margin-right:12px; vertical-align:middle; }
+
+  /* Fără emoji (aspect „AI assistant") */
+  .ca .ic{ display:none !important; }
+
+  /* Suprascrie accentele calde din tema de bază */
+  .ca code{ color:var(--accent); background:var(--accent-soft); padding:1px 6px; border-radius:5px; font-size:.93em; }
+  .ca pre{ background:var(--code-bg); color:var(--code-fg); border:1px solid #1b1f2a; border-radius:12px; }
+  .ca pre code{ color:var(--code-fg); background:transparent; padding:0; font-size:1em; }
+  .ca th{ color:var(--ink); border-bottom:2px solid var(--accent); }
+  .ca td, .ca th{ border-bottom:1px solid var(--line); }
+  .ca blockquote{ border-left:4px solid var(--accent); }
+
+  /* Eyebrow / lead */
+  .ca-eyebrow{ font-family:ui-monospace,Consolas,monospace; text-transform:uppercase; letter-spacing:.2em;
+    font-size:19px; font-weight:700; color:var(--accent); margin:0 0 10px; }
+  .ca-lead{ font-size:29px !important; color:var(--ink-2); max-width:1260px; line-height:1.4; }
   .ca-small{ font-size:21px !important; color:var(--muted); }
-  .ca-kicker{ margin-top:22px; }
 
   /* Copertă */
   .ca-cover .content{ display:flex; flex-direction:column; justify-content:center; }
-  .ca-cover h1{ font-size:82px !important; line-height:1.02; margin:12px 0 26px; }
-  .ca-cover h1 .accent{ color:var(--acc); }
-  .ca-cover .ca-meta{ margin-top:46px; display:flex; gap:34px; flex-wrap:wrap;
-                      color:var(--muted); font-size:22px; }
-  .ca-cover .ca-meta b{ color:var(--ink); }
+  .ca-cover h1{ font-size:88px !important; line-height:1.0; margin:14px 0 26px; }
+  .ca-cover h1 .accent{ color:var(--accent); }
+  .ca-cover .ca-meta{ margin-top:50px; display:flex; gap:40px; flex-wrap:wrap;
+    font-family:ui-monospace,Consolas,monospace; color:var(--muted); font-size:20px; }
+  .ca-cover .ca-meta b{ color:var(--ink); font-weight:700; }
 
-  /* Carduri */
-  .ca-grid{ display:grid; grid-template-columns:1fr 1fr; gap:26px; margin:26px 0; }
+  /* Carduri — albe, chenar fin, numerotate automat */
+  .ca-grid{ display:grid; grid-template-columns:1fr 1fr; gap:22px; margin:26px 0; counter-reset:card; }
   .ca-grid.three{ grid-template-columns:repeat(3,1fr); }
-  .ca-card{ background:var(--soft); border:1px solid var(--line); border-top:5px solid var(--acc);
-            border-radius:16px; padding:24px 28px; }
-  .ca-card h2{ font-size:27px !important; margin:0 0 10px; color:var(--navy); }
-  .ca-card p{ font-size:23px !important; line-height:1.45; color:#3a444c; margin:0; }
-  .ca-card .ic{ font-size:34px; display:block; margin-bottom:8px; }
+  .ca-card{ position:relative; background:#fff; border:1px solid var(--line); border-radius:12px; padding:24px 26px; }
+  .ca-grid > .ca-card{ counter-increment:card; padding-top:46px; }
+  .ca-grid > .ca-card::before{ content:counter(card,decimal-leading-zero); position:absolute; top:20px; left:26px;
+    font-family:ui-monospace,Consolas,monospace; font-weight:700; font-size:16px; letter-spacing:.1em; color:var(--accent); }
+  .ca-card h2{ font-size:25px !important; margin:0 0 10px; color:var(--ink); }
+  .ca-card p{ font-size:22px !important; line-height:1.45; color:var(--ink-2); margin:0; }
 
-  .ca-note{ border-left:6px solid var(--acc); background:var(--soft); border-radius:0 12px 12px 0;
-            padding:16px 24px; margin:22px 0 0; font-size:24px; color:var(--ink); }
+  /* Notă */
+  .ca-note{ border:1px solid var(--line); border-left:4px solid var(--accent); background:var(--panel);
+    border-radius:0 12px 12px 0; padding:16px 24px; margin:24px 0 0; font-size:23px; color:var(--ink); }
 
-  /* Roluri color-codate */
+  /* Roluri (tonuri reci, bară de accent sus) */
   .ca-roles{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin:30px 0; }
-  .ca-role{ border:1px solid var(--line); border-radius:16px; padding:22px 20px; }
-  .ca-role code{ font-size:24px; font-weight:700; background:transparent; color:var(--ink); }
-  .ca-role p{ font-size:20px !important; color:#3a444c; margin:10px 0 0; line-height:1.4; }
-  .ca-role.system{ background:#eaf6fd; border-color:#bfe6f7; }
-  .ca-role.user{ background:#eafaf1; border-color:#bfe8d1; }
-  .ca-role.assistant{ background:#f1ecfd; border-color:#d8ccf7; }
-  .ca-role.tool{ background:#fdeee8; border-color:#f7d3c3; }
+  .ca-role{ background:#fff; border:1px solid var(--line); border-top:3px solid var(--rc,#94a3b8);
+    border-radius:12px; padding:22px 20px; }
+  .ca-role code{ font-family:ui-monospace,Consolas,monospace; font-size:23px; font-weight:700;
+    background:transparent; color:var(--ink); padding:0; }
+  .ca-role p{ font-size:20px !important; color:var(--ink-2); margin:10px 0 0; line-height:1.4; }
+  .ca-role.system{ --rc:#2563eb; } .ca-role.user{ --rc:#059669; }
+  .ca-role.assistant{ --rc:#7c3aed; } .ca-role.tool{ --rc:#d97706; }
 
-  /* CROFTAFC — grilă */
-  .ca-croft{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin:26px 0 0; }
-  .ca-croft > div{ background:var(--soft); border:1px solid var(--line); border-radius:14px;
-                   padding:16px 18px; }
-  .ca-croft .l{ font-size:40px; font-weight:800; color:var(--acc); line-height:1; }
-  .ca-croft b{ display:block; font-size:21px; color:var(--navy); margin:8px 0 4px; }
-  .ca-croft span{ font-size:18px; color:var(--muted); line-height:1.35; display:block; }
+  /* CROFTAFC */
+  .ca-croft{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:26px 0 0; }
+  .ca-croft > div{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px 18px; }
+  .ca-croft .l{ font-family:ui-monospace,Consolas,monospace; font-size:34px; font-weight:800; color:var(--accent); line-height:1; }
+  .ca-croft b{ display:block; font-size:20px; color:var(--ink); margin:8px 0 4px; }
+  .ca-croft span{ font-size:17px; color:var(--muted); line-height:1.35; display:block; }
 
-  /* Diagrama buclei */
-  .ca-flow{ display:flex; align-items:center; justify-content:center; gap:10px; margin:26px 0 10px; flex-wrap:wrap; }
-  .ca-box{ background:var(--navy); color:#fff; border-radius:14px; padding:20px 30px;
-           font-size:27px; font-weight:700; text-align:center; }
-  .ca-box small{ display:block; font-weight:400; font-size:18px; opacity:.8; margin-top:4px; }
-  .ca-box.alt{ background:#fff; color:var(--navy); border:2px solid var(--navy); }
-  .ca-box.acc{ background:var(--acc); color:#fff; }
-  .ca-arr{ color:var(--acc); font-size:40px; font-weight:800; padding:0 6px; }
-  .ca-arr small{ display:block; font-size:17px; color:var(--muted); font-weight:600; text-align:center; }
-  .ca-loop{ display:flex; align-items:center; justify-content:center; gap:16px; margin-top:10px;
-            background:var(--soft); border:1px dashed var(--acc); border-radius:16px; padding:18px 24px; }
-  .ca-loop .cyc{ color:var(--acc); font-size:30px; font-weight:800; }
-  .ca-loop span{ font-size:21px; color:#3a444c; }
+  /* Flux / diagrame */
+  .ca-flow{ display:flex; align-items:center; justify-content:center; gap:10px; margin:28px 0 12px; flex-wrap:wrap; }
+  .ca-box{ background:var(--ink); color:#fff; border-radius:10px; padding:18px 28px; font-size:25px; font-weight:700;
+    text-align:center; letter-spacing:-.01em; }
+  .ca-box small{ display:block; font-weight:400; font-size:17px; opacity:.72; margin-top:4px; }
+  .ca-box.alt{ background:#fff; color:var(--ink); border:1.5px solid var(--ink); }
+  .ca-box.acc{ background:var(--accent); color:#fff; }
+  .ca-arr{ color:var(--accent); font-size:36px; font-weight:800; padding:0 4px; }
+  .ca-arr small{ display:block; font-size:16px; color:var(--muted); font-weight:600; text-align:center;
+    font-family:ui-monospace,Consolas,monospace; }
+  .ca-loop{ display:flex; align-items:center; justify-content:center; gap:16px; margin-top:12px;
+    background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px 24px; }
+  .ca-loop .cyc{ color:var(--accent); font-size:24px; font-weight:800; font-family:ui-monospace,Consolas,monospace; }
+  .ca-loop span{ font-size:20px; color:var(--ink-2); }
 
   /* Unelte */
-  .ca-tools{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin:24px 0; }
-  .ca-tool{ display:flex; gap:18px; align-items:flex-start; background:var(--soft);
-            border:1px solid var(--line); border-radius:14px; padding:18px 22px; }
-  .ca-tool .ic{ flex:none; width:56px; height:56px; display:grid; place-items:center; font-size:28px;
-                background:#fff; border:1px solid var(--line); border-radius:12px; }
-  .ca-tool b{ font-family:ui-monospace,Consolas,monospace; font-size:22px; color:var(--acc); }
-  .ca-tool p{ margin:4px 0 0; font-size:21px !important; color:#3a444c; line-height:1.4; }
+  .ca-tools{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0; }
+  .ca-tool{ display:block; background:#fff; border:1px solid var(--line); border-left:3px solid var(--accent);
+    border-radius:10px; padding:18px 22px; }
+  .ca-tool b{ font-family:ui-monospace,Consolas,monospace; font-size:22px; color:var(--accent); }
+  .ca-tool p{ margin:6px 0 0; font-size:21px !important; color:var(--ink-2); line-height:1.4; }
 
   /* Arhitectură pe straturi */
   .ca-arch{ margin:24px 0; }
-  .ca-layer{ display:flex; align-items:baseline; gap:20px; background:var(--soft);
-             border:1px solid var(--line); border-left:6px solid var(--acc); border-radius:12px;
-             padding:15px 22px; margin-bottom:12px; }
-  .ca-layer b{ font-family:ui-monospace,Consolas,monospace; font-size:23px; color:var(--navy);
-               min-width:130px; }
-  .ca-layer span{ font-size:21px; color:#5c6670; }
+  .ca-layer{ display:flex; align-items:baseline; gap:20px; background:#fff; border:1px solid var(--line);
+    border-left:3px solid var(--accent); border-radius:10px; padding:15px 22px; margin-bottom:11px; }
+  .ca-layer b{ font-family:ui-monospace,Consolas,monospace; font-size:22px; color:var(--ink); min-width:130px; }
+  .ca-layer span{ font-size:20px; color:var(--muted); }
+  .ca-layer strong{ color:var(--accent); }
 
   /* Pastile */
-  .ca-pill{ display:inline-block; background:#f0ede8; color:var(--acc); font-weight:700;
-            font-size:22px; padding:6px 18px; border-radius:999px; margin:0 8px 10px 0; }
+  .ca-pill{ display:inline-block; background:var(--accent-soft); color:var(--accent); font-weight:700;
+    font-family:ui-monospace,Consolas,monospace; font-size:20px; padding:6px 16px; border-radius:6px; margin:0 8px 10px 0; }
 
-  /* Animație discretă la intrarea în ecran (dezactivată dacă JS lipsește). */
+  /* Animație discretă la intrarea în ecran */
   @media (prefers-reduced-motion: no-preference){
     body.ca-ready .ca .content > *{ opacity:0; transform:translateY(14px); }
     body.ca-ready .ca.ca-in .content > *{ animation:caUp .5s cubic-bezier(.16,1,.3,1) forwards; }
