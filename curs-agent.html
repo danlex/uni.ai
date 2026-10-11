@@ -207,16 +207,18 @@
   <div class="content">
     <h1>Apelul prin OpenRouter</h1>
     <p class="ca-lead">Un singur API (compatibil OpenAI) pentru multe modele. Cheia stă în <code>.env</code>, pe backend.</p>
-    <pre><code>raspuns = client.chat.completions.create(
+    <pre><code>PROMPT = open("prompt.txt").read()   # promptul CROFTAFC (vezi slide-ul anterior)
+
+raspuns = client.chat.completions.create(
     model="openai/gpt-4o-mini",
     messages=[
-        {"role": "system", "content": "Ești un tutor de algoritmi."},
+        {"role": "system", "content": PROMPT},        # instrucțiunile structurate
         {"role": "user",   "content": "Ce este căutarea binară?"},
     ],
     tools=DEFINITIONS,        # uneltele pe care modelul le poate cere
     tool_choice="auto",       # modelul decide dacă le folosește
 )</code></pre>
-    <p class="ca-small">Niciodată cheia în frontend. Clientul validează răspunsul înainte să-l folosească.</p>
+    <p class="ca-small">Mesajul <code>system</code> nu e o propoziție, ci promptul CROFTAFC din <code>prompt.txt</code>. Cheia nu ajunge niciodată în frontend.</p>
   </div>
   <footer><span>AlgoTutor · agent conversațional</span><span>6 / 23</span></footer>
   <aside class="notes">OpenRouterClient trimite exact această cerere și separă erorile de transport (rețea) de cele de răspuns (formă neașteptată).</aside>
