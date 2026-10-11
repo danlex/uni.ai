@@ -6,93 +6,207 @@
 <title>Cum construim un agent conversațional · AlgoTutor</title>
 <link rel="stylesheet" href="css/curs.css">
 <style>
-  /* Mici ajutoare specifice acestui curs; restul stilurilor vin din css/curs.css. */
-  .ca-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
-  .ca-note { border-left: 6px solid #ff4931; background: #faf8f5; padding: 14px 22px; margin: 20px 0; }
-  .ca-small { font-size: 22px; color: #555; }
-  .ca-pill { display:inline-block; background:#f0ede8; color:#A82D22; font-weight:700;
-             font-size:20px; padding:4px 14px; border-radius:999px; margin:0 6px 8px 0; }
+  /* Sistem de design propriu acestui curs; scheletul de slide vine din css/curs.css. */
+  :root{
+    --acc:#ff4931; --ink:#17212b; --navy:#1f3340; --muted:#5c6670;
+    --soft:#faf8f5; --line:#E6E1DB;
+  }
+  .ca .content{ max-height:none; }
+  .ca h1{ letter-spacing:-.02em; }
+  .ca-eyebrow{ text-transform:uppercase; letter-spacing:.16em; font-size:20px;
+               font-weight:700; color:var(--acc); margin:0 0 6px; }
+  .ca-lead{ font-size:29px !important; color:#3a444c; max-width:1240px; line-height:1.4; }
+  .ca-small{ font-size:21px !important; color:var(--muted); }
+  .ca-kicker{ margin-top:22px; }
+
+  /* Copertă */
+  .ca-cover .content{ display:flex; flex-direction:column; justify-content:center; }
+  .ca-cover h1{ font-size:82px !important; line-height:1.02; margin:12px 0 26px; }
+  .ca-cover h1 .accent{ color:var(--acc); }
+  .ca-cover .ca-meta{ margin-top:46px; display:flex; gap:34px; flex-wrap:wrap;
+                      color:var(--muted); font-size:22px; }
+  .ca-cover .ca-meta b{ color:var(--ink); }
+
+  /* Carduri */
+  .ca-grid{ display:grid; grid-template-columns:1fr 1fr; gap:26px; margin:26px 0; }
+  .ca-grid.three{ grid-template-columns:repeat(3,1fr); }
+  .ca-card{ background:var(--soft); border:1px solid var(--line); border-top:5px solid var(--acc);
+            border-radius:16px; padding:24px 28px; }
+  .ca-card h2{ font-size:27px !important; margin:0 0 10px; color:var(--navy); }
+  .ca-card p{ font-size:23px !important; line-height:1.45; color:#3a444c; margin:0; }
+  .ca-card .ic{ font-size:34px; display:block; margin-bottom:8px; }
+
+  .ca-note{ border-left:6px solid var(--acc); background:var(--soft); border-radius:0 12px 12px 0;
+            padding:16px 24px; margin:22px 0 0; font-size:24px; color:var(--ink); }
+
+  /* Roluri color-codate */
+  .ca-roles{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin:30px 0; }
+  .ca-role{ border:1px solid var(--line); border-radius:16px; padding:22px 20px; }
+  .ca-role code{ font-size:24px; font-weight:700; background:transparent; color:var(--ink); }
+  .ca-role p{ font-size:20px !important; color:#3a444c; margin:10px 0 0; line-height:1.4; }
+  .ca-role.system{ background:#eaf6fd; border-color:#bfe6f7; }
+  .ca-role.user{ background:#eafaf1; border-color:#bfe8d1; }
+  .ca-role.assistant{ background:#f1ecfd; border-color:#d8ccf7; }
+  .ca-role.tool{ background:#fdeee8; border-color:#f7d3c3; }
+
+  /* CROFTAFC — grilă */
+  .ca-croft{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin:26px 0 0; }
+  .ca-croft > div{ background:var(--soft); border:1px solid var(--line); border-radius:14px;
+                   padding:16px 18px; }
+  .ca-croft .l{ font-size:40px; font-weight:800; color:var(--acc); line-height:1; }
+  .ca-croft b{ display:block; font-size:21px; color:var(--navy); margin:8px 0 4px; }
+  .ca-croft span{ font-size:18px; color:var(--muted); line-height:1.35; display:block; }
+
+  /* Diagrama buclei */
+  .ca-flow{ display:flex; align-items:center; justify-content:center; gap:10px; margin:26px 0 10px; flex-wrap:wrap; }
+  .ca-box{ background:var(--navy); color:#fff; border-radius:14px; padding:20px 30px;
+           font-size:27px; font-weight:700; text-align:center; }
+  .ca-box small{ display:block; font-weight:400; font-size:18px; opacity:.8; margin-top:4px; }
+  .ca-box.alt{ background:#fff; color:var(--navy); border:2px solid var(--navy); }
+  .ca-box.acc{ background:var(--acc); color:#fff; }
+  .ca-arr{ color:var(--acc); font-size:40px; font-weight:800; padding:0 6px; }
+  .ca-arr small{ display:block; font-size:17px; color:var(--muted); font-weight:600; text-align:center; }
+  .ca-loop{ display:flex; align-items:center; justify-content:center; gap:16px; margin-top:10px;
+            background:var(--soft); border:1px dashed var(--acc); border-radius:16px; padding:18px 24px; }
+  .ca-loop .cyc{ color:var(--acc); font-size:30px; font-weight:800; }
+  .ca-loop span{ font-size:21px; color:#3a444c; }
+
+  /* Unelte */
+  .ca-tools{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin:24px 0; }
+  .ca-tool{ display:flex; gap:18px; align-items:flex-start; background:var(--soft);
+            border:1px solid var(--line); border-radius:14px; padding:18px 22px; }
+  .ca-tool .ic{ flex:none; width:56px; height:56px; display:grid; place-items:center; font-size:28px;
+                background:#fff; border:1px solid var(--line); border-radius:12px; }
+  .ca-tool b{ font-family:ui-monospace,Consolas,monospace; font-size:22px; color:var(--acc); }
+  .ca-tool p{ margin:4px 0 0; font-size:21px !important; color:#3a444c; line-height:1.4; }
+
+  /* Arhitectură pe straturi */
+  .ca-arch{ margin:24px 0; }
+  .ca-layer{ display:flex; align-items:baseline; gap:20px; background:var(--soft);
+             border:1px solid var(--line); border-left:6px solid var(--acc); border-radius:12px;
+             padding:15px 22px; margin-bottom:12px; }
+  .ca-layer b{ font-family:ui-monospace,Consolas,monospace; font-size:23px; color:var(--navy);
+               min-width:130px; }
+  .ca-layer span{ font-size:21px; color:#5c6670; }
+
+  /* Pastile */
+  .ca-pill{ display:inline-block; background:#f0ede8; color:var(--acc); font-weight:700;
+            font-size:22px; padding:6px 18px; border-radius:999px; margin:0 8px 10px 0; }
+
+  /* Animație discretă la intrarea în ecran (dezactivată dacă JS lipsește). */
+  @media (prefers-reduced-motion: no-preference){
+    body.ca-ready .ca .content > *{ opacity:0; transform:translateY(14px); }
+    body.ca-ready .ca.ca-in .content > *{ animation:caUp .5s cubic-bezier(.16,1,.3,1) forwards; }
+    body.ca-ready .ca.ca-in .content > *:nth-child(2){ animation-delay:.06s; }
+    body.ca-ready .ca.ca-in .content > *:nth-child(3){ animation-delay:.12s; }
+    body.ca-ready .ca.ca-in .content > *:nth-child(4){ animation-delay:.18s; }
+    body.ca-ready .ca.ca-in .content > *:nth-child(5){ animation-delay:.24s; }
+    @keyframes caUp{ to{ opacity:1; transform:none; } }
+  }
 </style>
 </head>
 <body>
 <main id="stage">
 
 <!-- 1 · Copertă -->
-<div class="slide-frame"><section class="slide cover" id="s1">
+<div class="slide-frame"><section class="slide cover ca ca-cover" id="s1">
   <header><span>Laborator · AlgoTutor</span></header>
   <div class="content">
-    <h1>Cum construim un<br>agent conversațional</h1>
-    <p>De la un apel către un model, la un agent care caută, citește și explică.</p>
-    <p class="ca-small">Studiu de caz: AlgoTutor — un tutor de algoritmi peste Infoarena.</p>
-    <p class="ca-small">Ingineria algoritmilor pentru sisteme AI · FMI</p>
+    <p class="ca-eyebrow">Ingineria algoritmilor pentru sisteme AI</p>
+    <h1>Cum construim un<br><span class="accent">agent conversațional</span></h1>
+    <p class="ca-lead">De la un simplu apel către un model, la un agent care caută, citește și explică singur.</p>
+    <div class="ca-meta">
+      <span><b>Studiu de caz:</b> AlgoTutor — tutor de algoritmi peste Infoarena</span>
+      <span><b>Cod:</b> github.com/danlex/uni.ai</span>
+    </div>
   </div>
-  <footer><span>AlgoTutor · agent conversațional</span><span>1 / 22</span></footer>
-  <aside class="notes">Acest curs explică, pas cu pas, conceptele din proiectul AlgoTutor: apelul la model, tool use, bucla agentului, arhitectura FastAPI + Vue și operarea. Codul complet e în folderul algotutor/.</aside>
+  <footer><span>AlgoTutor · agent conversațional</span><span>1 / 23</span></footer>
+  <aside class="notes">Acest curs explică, pas cu pas, conceptele din proiectul AlgoTutor: promptul, apelul la model, tool use, bucla agentului, arhitectura FastAPI + Vue și operarea.</aside>
 </section></div>
 
 <!-- 2 · Obiective -->
-<div class="slide-frame"><section class="slide" id="s2">
+<div class="slide-frame"><section class="slide ca" id="s2">
   <header><span>Introducere</span></header>
   <div class="content">
     <h1>Ce vei învăța</h1>
-    <ul>
-      <li>Diferența dintre un <strong>apel simplu la un LLM</strong> și un <strong>agent</strong>.</li>
-      <li>Cum apelezi un model prin <strong>OpenRouter</strong>, cu cheia ținută în siguranță.</li>
-      <li>Ce este <strong>tool use</strong> (function calling) și cum decide modelul ce unealtă folosește.</li>
-      <li>Cum funcționează <strong>bucla agentului</strong>: model → unealtă → model → răspuns.</li>
-      <li>Arhitectura unei aplicații reale: <strong>FastAPI + Vue</strong>, testare și operare.</li>
-    </ul>
+    <div class="ca-grid three">
+      <div class="ca-card"><span class="ic">🧩</span><h2>Agent vs. apel</h2><p>Diferența dintre un apel simplu la un LLM și un agent cu unelte.</p></div>
+      <div class="ca-card"><span class="ic">🔌</span><h2>Apelul modelului</h2><p>Cum apelezi prin OpenRouter, cu cheia ținută în siguranță.</p></div>
+      <div class="ca-card"><span class="ic">🛠️</span><h2>Tool use</h2><p>Cum cere modelul unelte și cum le validăm.</p></div>
+      <div class="ca-card"><span class="ic">🔁</span><h2>Bucla agentului</h2><p>model → unealtă → model → răspuns.</p></div>
+      <div class="ca-card"><span class="ic">🏛️</span><h2>Arhitectură</h2><p>FastAPI + Vue, organizat pe responsabilități.</p></div>
+      <div class="ca-card"><span class="ic">✅</span><h2>Robustețe</h2><p>Validare, limite, erori și testare.</p></div>
+    </div>
   </div>
-  <footer><span>AlgoTutor · agent conversațional</span><span>2 / 22</span></footer>
-  <aside class="notes">Obiectivele urmăresc exact modulele proiectului. La final, studentul poate adăuga singur o unealtă nouă.</aside>
+  <footer><span>AlgoTutor · agent conversațional</span><span>2 / 23</span></footer>
+  <aside class="notes">Obiectivele urmăresc modulele proiectului. La final, studentul poate adăuga singur o unealtă nouă.</aside>
 </section></div>
 
-<!-- 3 · Agent vs apel simplu -->
-<div class="slide-frame"><section class="slide" id="s3">
+<!-- 3 · Agent vs apel -->
+<div class="slide-frame"><section class="slide ca" id="s3">
   <header><span>1. Fundamente</span></header>
   <div class="content">
     <h1>Agent, nu doar un apel</h1>
-    <div class="ca-cols">
-      <div>
-        <h2>Apel simplu</h2>
-        <p>Trimiți un mesaj, primești un răspuns. Modelul folosește doar ce „știe" deja.</p>
-      </div>
-      <div>
-        <h2>Agent</h2>
-        <p>Modelul poate <strong>cere unelte</strong> (caută, citește, salvează), primește rezultatele și
-        continuă până are destule informații pentru un răspuns.</p>
-      </div>
+    <div class="ca-grid">
+      <div class="ca-card"><span class="ic">💬</span><h2>Apel simplu</h2>
+        <p>Trimiți un mesaj, primești un răspuns. Modelul folosește doar ce „știe" deja.</p></div>
+      <div class="ca-card"><span class="ic">🤖</span><h2>Agent</h2>
+        <p>Modelul poate cere unelte (caută, citește, salvează), primește rezultatele și continuă
+        până are destule informații.</p></div>
     </div>
-    <div class="ca-note">Un agent = un model + un set de unelte + o buclă care leagă cererile de unelte de răspunsuri.</div>
+    <div class="ca-note"><b>Un agent</b> = un model + un set de unelte + o buclă care leagă cererile de unelte de răspunsuri.</div>
   </div>
-  <footer><span>AlgoTutor · agent conversațional</span><span>3 / 22</span></footer>
-  <aside class="notes">AlgoTutor nu „inventează" probleme: le caută și le citește de pe Infoarena prin unelte, apoi explică. Asta îl face un agent, nu un simplu chat.</aside>
+  <footer><span>AlgoTutor · agent conversațional</span><span>3 / 23</span></footer>
+  <aside class="notes">AlgoTutor nu „inventează" probleme: le caută și le citește de pe Infoarena prin unelte, apoi explică.</aside>
 </section></div>
 
-<!-- 4 · Recap LLM, tokeni, roluri -->
-<div class="slide-frame"><section class="slide" id="s4">
+<!-- 4 · Roluri -->
+<div class="slide-frame"><section class="slide ca" id="s4">
   <header><span>1. Fundamente</span></header>
   <div class="content">
     <h1>Mesaje cu roluri</h1>
-    <p>Conversația este o <strong>listă de mesaje</strong>, fiecare cu un rol:</p>
-    <ul>
-      <li><code>system</code> — instrucțiunile generale: cine e modelul și cum răspunde.</li>
-      <li><code>user</code> — întrebarea sau cererea.</li>
-      <li><code>assistant</code> — răspunsul modelului, păstrat în istoric.</li>
-      <li><code>tool</code> — rezultatul unei unelte, trimis înapoi modelului.</li>
-    </ul>
+    <p class="ca-lead">Conversația este o listă de mesaje, fiecare cu un rol:</p>
+    <div class="ca-roles">
+      <div class="ca-role system"><code>system</code><p>Instrucțiunile generale: cine e modelul și cum răspunde.</p></div>
+      <div class="ca-role user"><code>user</code><p>Întrebarea sau cererea utilizatorului.</p></div>
+      <div class="ca-role assistant"><code>assistant</code><p>Răspunsul modelului, păstrat în istoric.</p></div>
+      <div class="ca-role tool"><code>tool</code><p>Rezultatul unei unelte, trimis înapoi modelului.</p></div>
+    </div>
     <p class="ca-small">Modelul citește text în bucăți numite <em>tokeni</em>; istoricul întreg se retrimite la fiecare apel.</p>
   </div>
-  <footer><span>AlgoTutor · agent conversațional</span><span>4 / 22</span></footer>
-  <aside class="notes">Recapitulare din cursul 1. Important: modelul nu „ține minte" singur — noi îi retrimitem istoricul la fiecare pas.</aside>
+  <footer><span>AlgoTutor · agent conversațional</span><span>4 / 23</span></footer>
+  <aside class="notes">Important: modelul nu „ține minte" singur — noi îi retrimitem istoricul la fiecare pas.</aside>
 </section></div>
 
-<!-- 5 · Apelul la model -->
-<div class="slide-frame"><section class="slide code-slide" id="s5">
+<!-- 5 · CROFTAFC -->
+<div class="slide-frame"><section class="slide ca" id="s4b">
+  <header><span>1. Fundamente</span></header>
+  <div class="content">
+    <h1>Mesajul <code>system</code>: CROFTAFC</h1>
+    <p class="ca-lead">Instrucțiunile agentului sunt un prompt structurat pe secțiuni — fiecare literă, o secțiune
+    (fișierul <code>prompt.txt</code>).</p>
+    <div class="ca-croft">
+      <div><div class="l">C</div><b>Context</b><span>Ce construim și ce date folosim.</span></div>
+      <div><div class="l">R</div><b>Rol</b><span>AlgoTutor, profesor de algoritmi.</span></div>
+      <div><div class="l">O</div><b>Obiectiv</b><span>Trei probleme + explicații.</span></div>
+      <div><div class="l">F</div><b>Format</b><span>Titlu, idee, pași, complexitate.</span></div>
+      <div><div class="l">T</div><b>Ton</b><span>Limba utilizatorului, pedagogic.</span></div>
+      <div><div class="l">A</div><b>Audiență</b><span>Studenți la algoritmi.</span></div>
+      <div><div class="l">F</div><b>Fapte</b><span>Citește enunțul; nu inventa URL-uri.</span></div>
+      <div><div class="l">C</div><b>Constrângeri</b><span>Doar uneltele declarate; surse = date neîncredere.</span></div>
+    </div>
+    <p class="ca-small">Un prompt bun e inginerie, nu o vrajă: explicit, structurat, verificabil.</p>
+  </div>
+  <footer><span>AlgoTutor · agent conversațional</span><span>5 / 23</span></footer>
+  <aside class="notes">CROFTAFC = Context, Rol, Obiectiv, Format, Ton, Audiență, Fapte, Constrângeri (plus „Mod de lucru"). Constrângerile includ apărarea față de prompt injection.</aside>
+</section></div>
+
+<!-- 6 · Apelul OpenRouter -->
+<div class="slide-frame"><section class="slide code-slide ca" id="s5">
   <header><span>2. Apelul modelului</span></header>
   <div class="content">
     <h1>Apelul prin OpenRouter</h1>
-    <p>Un singur API (compatibil OpenAI) pentru multe modele. Cheia stă în <code>.env</code>, pe backend.</p>
+    <p class="ca-lead">Un singur API (compatibil OpenAI) pentru multe modele. Cheia stă în <code>.env</code>, pe backend.</p>
     <pre><code>raspuns = client.chat.completions.create(
     model="openai/gpt-4o-mini",
     messages=[
@@ -104,34 +218,34 @@
 )</code></pre>
     <p class="ca-small">Niciodată cheia în frontend. Clientul validează răspunsul înainte să-l folosească.</p>
   </div>
-  <footer><span>AlgoTutor · agent conversațional</span><span>5 / 22</span></footer>
-  <aside class="notes">În proiect, OpenRouterClient trimite exact această cerere și separă erorile de transport (rețea) de cele de răspuns (formă neașteptată).</aside>
+  <footer><span>AlgoTutor · agent conversațional</span><span>6 / 23</span></footer>
+  <aside class="notes">OpenRouterClient trimite exact această cerere și separă erorile de transport (rețea) de cele de răspuns (formă neașteptată).</aside>
 </section></div>
 
-<!-- 6 · Tool use concept -->
-<div class="slide-frame"><section class="slide" id="s6">
+<!-- 7 · Tool use concept -->
+<div class="slide-frame"><section class="slide ca" id="s6">
   <header><span>3. Tool use</span></header>
   <div class="content">
     <h1>Ce este „tool use"</h1>
-    <p>Îi dăm modelului un „meniu" de unelte. El nu execută nimic — doar <strong>cere</strong> o unealtă,
-    cu argumente. Codul nostru o execută și îi trimite rezultatul înapoi.</p>
-    <ul>
-      <li>Modelul alege unealta potrivită și completează argumentele.</li>
-      <li>Noi <strong>validăm</strong> argumentele și rulăm unealta în siguranță.</li>
-      <li>Rezultatul se întoarce la model, care decide pasul următor.</li>
-    </ul>
-    <div class="ca-note">Modelul propune; codul dispune. Niciun apel de unealtă nu rulează fără validare.</div>
+    <p class="ca-lead">Îi dăm modelului un „meniu" de unelte. El nu execută nimic — doar <strong>cere</strong> o
+    unealtă, cu argumente. Codul nostru o execută și îi trimite rezultatul.</p>
+    <div class="ca-grid three">
+      <div class="ca-card"><span class="ic">1️⃣</span><h2>Modelul cere</h2><p>Alege unealta potrivită și completează argumentele.</p></div>
+      <div class="ca-card"><span class="ic">2️⃣</span><h2>Noi validăm</h2><p>Verificăm argumentele și rulăm unealta în siguranță.</p></div>
+      <div class="ca-card"><span class="ic">3️⃣</span><h2>Modelul continuă</h2><p>Primește rezultatul și decide pasul următor.</p></div>
+    </div>
+    <div class="ca-note"><b>Modelul propune; codul dispune.</b> Niciun apel de unealtă nu rulează fără validare.</div>
   </div>
-  <footer><span>AlgoTutor · agent conversațional</span><span>6 / 22</span></footer>
+  <footer><span>AlgoTutor · agent conversațional</span><span>7 / 23</span></footer>
   <aside class="notes">Analogie: modelul e un stagiar care cere „caută-mi X"; noi suntem biblioteca care verifică cererea și aduce cartea.</aside>
 </section></div>
 
-<!-- 7 · Definirea unei unelte -->
-<div class="slide-frame"><section class="slide code-slide" id="s7">
+<!-- 8 · Definirea unei unelte -->
+<div class="slide-frame"><section class="slide code-slide ca" id="s7">
   <header><span>3. Tool use</span></header>
   <div class="content">
     <h1>Definirea unei unelte</h1>
-    <p>Fiecare unealtă are un nume, o descriere și o <strong>schemă JSON</strong> a argumentelor:</p>
+    <p class="ca-lead">Fiecare unealtă are un nume, o descriere și o schemă JSON a argumentelor:</p>
     <pre><code>{
   "type": "function",
   "function": {
@@ -146,36 +260,36 @@
 }</code></pre>
     <p class="ca-small">Schema spune modelului ce poate cere; tot ea validează ce a cerut.</p>
   </div>
-  <footer><span>AlgoTutor · agent conversațional</span><span>7 / 22</span></footer>
-  <aside class="notes">În proiect, aceste definiții sunt în app/tools/definitions.py și sunt folosite și la validarea argumentelor (jsonschema).</aside>
+  <footer><span>AlgoTutor · agent conversațional</span><span>8 / 23</span></footer>
+  <aside class="notes">Definițiile sunt în app/tools/definitions.py și sunt folosite și la validarea argumentelor (jsonschema).</aside>
 </section></div>
 
-<!-- 8 · Bucla agentului (diagrama) -->
-<div class="slide-frame"><section class="slide" id="s8">
+<!-- 9 · Bucla (diagrama) -->
+<div class="slide-frame"><section class="slide ca" id="s8">
   <header><span>4. Bucla agentului</span></header>
   <div class="content">
     <h1>Bucla agentului</h1>
-    <pre><code>  utilizator
-      │
-      ▼
-   ┌────────┐   cere o unealtă?   nu   ┌──────────────┐
-   │ MODEL  │ ───────────────────────▶ │ răspuns final │
-   └────────┘                          └──────────────┘
-      ▲   │ da
-      │   ▼
-   ┌──────────────────┐
-   │ execută unealta  │  (căutare, citire, salvare)
-   └──────────────────┘
-      │ rezultatul intră în istoric
-      └──────────────────────────────▶ (reia cu MODEL)</code></pre>
+    <div class="ca-flow">
+      <div class="ca-box alt">Utilizator</div>
+      <span class="ca-arr">→</span>
+      <div class="ca-box">MODEL</div>
+      <span class="ca-arr">→<small>fără unelte</small></span>
+      <div class="ca-box acc">Răspuns final</div>
+    </div>
+    <div class="ca-loop">
+      <div class="ca-box">MODEL</div>
+      <span class="cyc">↓ cere o unealtă</span>
+      <div class="ca-box alt">Execută unealta<small>căutare · citire · salvare</small></div>
+      <span class="cyc">↑ rezultatul intră în istoric</span>
+    </div>
     <p class="ca-small">Se repetă până modelul răspunde cu text sau se atinge un buget de pași.</p>
   </div>
-  <footer><span>AlgoTutor · agent conversațional</span><span>8 / 22</span></footer>
+  <footer><span>AlgoTutor · agent conversațional</span><span>9 / 23</span></footer>
   <aside class="notes">Aceasta este inima oricărui agent cu tool use. Bugetul de pași previne buclele infinite.</aside>
 </section></div>
 
-<!-- 9 · Bucla in cod -->
-<div class="slide-frame"><section class="slide code-slide" id="s9">
+<!-- 10 · Bucla in cod -->
+<div class="slide-frame"><section class="slide code-slide ca" id="s9">
   <header><span>4. Bucla agentului</span></header>
   <div class="content">
     <h1>Bucla, în cod</h1>
@@ -194,85 +308,83 @@
                                   "tool_call_id": call["id"],
                                   "content": json.dumps(result)})</code></pre>
   </div>
-  <footer><span>AlgoTutor · agent conversațional</span><span>9 / 22</span></footer>
-  <aside class="notes">Simplificare din app/services/agent.py (clasa Tutor). Observă cum rezultatul fiecărei unelte se adaugă în istoric înainte de următorul apel la model.</aside>
+  <footer><span>AlgoTutor · agent conversațional</span><span>10 / 23</span></footer>
+  <aside class="notes">Simplificare din app/services/agent.py (clasa Tutor). Rezultatul fiecărei unelte se adaugă în istoric înainte de următorul apel la model.</aside>
 </section></div>
 
-<!-- 10 · Rezultatul in istoric -->
-<div class="slide-frame"><section class="slide" id="s10">
+<!-- 11 · Rezultatul in istoric -->
+<div class="slide-frame"><section class="slide ca" id="s10">
   <header><span>4. Bucla agentului</span></header>
   <div class="content">
     <h1>Rezultatul se întoarce la model</h1>
-    <p>Fiecare rezultat de unealtă e un mesaj cu rolul <code>tool</code>, legat de cererea modelului
-    prin <code>tool_call_id</code>:</p>
-    <ul>
-      <li>Modelul vede exact ce a întors unealta și continuă raționamentul.</li>
-      <li>Răspunsul uneltei e uniform: <code>{ "ok": true, "data": ... }</code> sau <code>{ "ok": false, "error": ... }</code>.</li>
-      <li>Astfel, și o eroare „așteptată" devine ceva ce modelul poate citi și gestiona.</li>
-    </ul>
-    <div class="ca-note">Istoricul crește: user → assistant(tool_calls) → tool(result) → assistant(text).</div>
+    <p class="ca-lead">Fiecare rezultat e un mesaj cu rolul <code>tool</code>, legat de cererea modelului prin
+    <code>tool_call_id</code>. Istoricul crește pas cu pas:</p>
+    <div class="ca-flow" style="justify-content:flex-start">
+      <div class="ca-box alt">user</div><span class="ca-arr">→</span>
+      <div class="ca-box">assistant<small>cere unealtă</small></div><span class="ca-arr">→</span>
+      <div class="ca-box alt">tool<small>rezultat</small></div><span class="ca-arr">→</span>
+      <div class="ca-box acc">assistant<small>text</small></div>
+    </div>
+    <div class="ca-note">Răspunsul uneltei e uniform: <code>{ "ok": true, "data": … }</code> sau <code>{ "ok": false, "error": … }</code> — astfel și o eroare devine ceva ce modelul poate citi.</div>
   </div>
-  <footer><span>AlgoTutor · agent conversațional</span><span>10 / 22</span></footer>
+  <footer><span>AlgoTutor · agent conversațional</span><span>11 / 23</span></footer>
   <aside class="notes">tool_call_id leagă rezultatul de cererea corectă atunci când modelul cere mai multe unelte deodată.</aside>
 </section></div>
 
-<!-- 11 · Uneltele din AlgoTutor -->
-<div class="slide-frame"><section class="slide dense" id="s11">
+<!-- 12 · Uneltele -->
+<div class="slide-frame"><section class="slide ca" id="s11">
   <header><span>5. Uneltele din AlgoTutor</span></header>
   <div class="content">
     <h1>Cele patru unelte</h1>
-    <table>
-      <thead><tr><th>Unealtă</th><th>Ce face</th></tr></thead>
-      <tbody>
-        <tr><td>search_problems</td><td>Caută probleme după titlu în arhiva educațională.</td></tr>
-        <tr><td>fetch_problem</td><td>Citește o problemă (din cache dacă a fost deja citită).</td></tr>
-        <tr><td>read_problem</td><td>Citește în tranșe un enunț mai lung.</td></tr>
-        <tr><td>save_problem</td><td>Salvează pe disc o problemă (HTML, Markdown, JSON).</td></tr>
-      </tbody>
-    </table>
-    <p class="ca-small">Pentru o unealtă nouă: adaugi schema în definitions.py și un handler în Tools. Atât.</p>
+    <div class="ca-tools">
+      <div class="ca-tool"><div class="ic">🔍</div><div><b>search_problems</b><p>Caută probleme după titlu în arhiva educațională.</p></div></div>
+      <div class="ca-tool"><div class="ic">📄</div><div><b>fetch_problem</b><p>Citește o problemă (din cache dacă a fost deja citită).</p></div></div>
+      <div class="ca-tool"><div class="ic">📖</div><div><b>read_problem</b><p>Citește în tranșe un enunț mai lung.</p></div></div>
+      <div class="ca-tool"><div class="ic">💾</div><div><b>save_problem</b><p>Salvează pe disc (HTML, Markdown, JSON).</p></div></div>
+    </div>
+    <div class="ca-note">O unealtă nouă = o schemă în <code>definitions.py</code> + un handler în <code>Tools</code>. Atât.</div>
   </div>
-  <footer><span>AlgoTutor · agent conversațional</span><span>11 / 22</span></footer>
+  <footer><span>AlgoTutor · agent conversațional</span><span>12 / 23</span></footer>
   <aside class="notes">Tools (app/tools/tools.py) mapează numele uneltei la metoda care o execută și validează argumentele cu schema.</aside>
 </section></div>
 
-<!-- 12 · Sursa responsabila -->
-<div class="slide-frame"><section class="slide" id="s12">
+<!-- 13 · Sursa responsabila -->
+<div class="slide-frame"><section class="slide ca" id="s12">
   <header><span>5. Uneltele din AlgoTutor</span></header>
   <div class="content">
     <h1>Date din web, responsabil</h1>
-    <ul>
-      <li><strong>robots.txt</strong>: verificăm ce avem voie să citim înainte de a descărca.</li>
-      <li><strong>Rate limiting</strong>: nu lovim prea des același site, chiar cu mai multe conversații.</li>
-      <li><strong>Limite de mărime</strong>: nu descărcăm pagini uriașe; citim enunțul în tranșe.</li>
-      <li><strong>Validarea adreselor</strong>: doar domeniul permis, fără acțiuni de editare.</li>
-    </ul>
-    <div class="ca-note">Un agent care atinge internetul trebuie să fie politicos și prudent, nu doar funcțional.</div>
+    <div class="ca-grid">
+      <div class="ca-card"><span class="ic">🤝</span><h2>robots.txt</h2><p>Verificăm ce avem voie să citim înainte de a descărca.</p></div>
+      <div class="ca-card"><span class="ic">⏱️</span><h2>Rate limiting</h2><p>Nu lovim prea des același site, chiar cu mai multe conversații.</p></div>
+      <div class="ca-card"><span class="ic">📏</span><h2>Limite de mărime</h2><p>Nu descărcăm pagini uriașe; citim enunțul în tranșe.</p></div>
+      <div class="ca-card"><span class="ic">🔒</span><h2>Adrese validate</h2><p>Doar domeniul permis, fără acțiuni de editare.</p></div>
+    </div>
+    <div class="ca-note">Un agent care atinge internetul trebuie să fie <b>politicos și prudent</b>, nu doar funcțional.</div>
   </div>
-  <footer><span>AlgoTutor · agent conversațional</span><span>12 / 22</span></footer>
-  <aside class="notes">Logica specifică site-ului stă în app/sources/. Pentru alt site, se rescrie doar acest strat; restul agentului rămâne neschimbat.</aside>
+  <footer><span>AlgoTutor · agent conversațional</span><span>13 / 23</span></footer>
+  <aside class="notes">Logica specifică site-ului stă în app/sources/. Pentru alt site, se rescrie doar acest strat.</aside>
 </section></div>
 
-<!-- 13 · Validarea raspunsului -->
-<div class="slide-frame"><section class="slide" id="s13">
+<!-- 14 · Validarea raspunsului -->
+<div class="slide-frame"><section class="slide ca" id="s13">
   <header><span>6. Robustețe</span></header>
   <div class="content">
     <h1>Nu avea încredere oarbă în model</h1>
-    <p>Răspunsul modelului vine prin rețea și poate fi incomplet sau ciudat. Îl <strong>validăm</strong>
-    cu Pydantic înainte să-l folosim.</p>
-    <ul>
-      <li>Verificăm că are forma așteptată (mesaj, eventual <code>tool_calls</code> corecte).</li>
-      <li>Dacă nu, dăm o eroare clară și lăsăm utilizatorul să reîncerce.</li>
-      <li>Păstrăm câmpurile necunoscute ale furnizorului, fără să ne bazăm pe ele.</li>
-    </ul>
+    <p class="ca-lead">Răspunsul vine prin rețea și poate fi incomplet sau ciudat. Îl <strong>validăm</strong> cu
+    Pydantic înainte să-l folosim.</p>
+    <div class="ca-grid three">
+      <div class="ca-card"><span class="ic">🧪</span><h2>Verificăm forma</h2><p>Mesaj valid, eventual <code>tool_calls</code> corecte.</p></div>
+      <div class="ca-card"><span class="ic">↩️</span><h2>Eroare clară</h2><p>Dacă nu, lăsăm utilizatorul să reîncerce.</p></div>
+      <div class="ca-card"><span class="ic">🧷</span><h2>Păstrăm necunoscutul</h2><p>Câmpurile furnizorului rămân, fără să ne bazăm pe ele.</p></div>
+    </div>
     <div class="ca-note">Granița cu exteriorul (model, rețea) este locul unde verificăm totul.</div>
   </div>
-  <footer><span>AlgoTutor · agent conversațional</span><span>13 / 22</span></footer>
+  <footer><span>AlgoTutor · agent conversațional</span><span>14 / 23</span></footer>
   <aside class="notes">CompletionResponse în app/schemas.py. OpenRouterClient separă ModelTransportError (rețea) de ModelResponseError (formă).</aside>
 </section></div>
 
-<!-- 14 · Bugete si limite -->
-<div class="slide-frame"><section class="slide dense" id="s14">
+<!-- 15 · Bugete -->
+<div class="slide-frame"><section class="slide dense ca" id="s14">
   <header><span>6. Robustețe</span></header>
   <div class="content">
     <h1>Bugete și limite</h1>
@@ -285,76 +397,68 @@
         <tr><td>Interval între cereri HTTP</td><td>Politețe față de sursa de date.</td></tr>
       </tbody>
     </table>
-    <p class="ca-small">Toate au nume, într-un singur loc (app/core/config.py → clasa Limits). Fără „numere magice".</p>
+    <div class="ca-note">Toate au nume, într-un singur loc (<code>app/core/config.py</code> → clasa <code>Limits</code>). Fără „numere magice".</div>
   </div>
-  <footer><span>AlgoTutor · agent conversațional</span><span>14 / 22</span></footer>
+  <footer><span>AlgoTutor · agent conversațional</span><span>15 / 23</span></footer>
   <aside class="notes">A pune limitele într-un singur loc, cu nume, este o practică bună: le vezi, le explici, le modifici ușor.</aside>
 </section></div>
 
-<!-- 15 · Erori si rollback -->
-<div class="slide-frame"><section class="slide" id="s15">
+<!-- 16 · Erori -->
+<div class="slide-frame"><section class="slide ca" id="s15">
   <header><span>6. Robustețe</span></header>
   <div class="content">
     <h1>Erori: așteptate vs. bug-uri</h1>
-    <div class="ca-cols">
-      <div>
-        <h2>Așteptate</h2>
+    <div class="ca-grid">
+      <div class="ca-card"><span class="ic">🟢</span><h2>Așteptate</h2>
         <p>Rețea picată, sursă indisponibilă, argumente greșite. Devin un rezultat <code>ok: false</code>
-        pe care modelul sau utilizatorul îl poate gestiona.</p>
-      </div>
-      <div>
-        <h2>Neașteptate (bug-uri)</h2>
-        <p>Greșeli de programare. Le <strong>logăm cu traceback</strong> și le propagăm — nu le ascundem
-        sub un mesaj vag.</p>
-      </div>
+        pe care modelul sau utilizatorul îl poate gestiona.</p></div>
+      <div class="ca-card" style="border-top-color:#b4261b"><span class="ic">🔴</span><h2>Neașteptate (bug-uri)</h2>
+        <p>Greșeli de programare. Le logăm cu traceback și le propagăm — nu le ascundem sub un mesaj vag.</p></div>
     </div>
-    <div class="ca-note">Dacă un tur eșuează la mijloc, revenim la istoricul de dinainte (rollback): nicio conversație pe jumătate construită.</div>
+    <div class="ca-note">Dacă un tur eșuează la mijloc, revenim la istoricul de dinainte (<b>rollback</b>): nicio conversație pe jumătate construită.</div>
   </div>
-  <footer><span>AlgoTutor · agent conversațional</span><span>15 / 22</span></footer>
-  <aside class="notes">Tutor.ask face deepcopy la istoric și revine la el pe orice excepție. API-ul nu expune diagnostice interne utilizatorului.</aside>
+  <footer><span>AlgoTutor · agent conversațional</span><span>16 / 23</span></footer>
+  <aside class="notes">Tutor.ask face deepcopy la istoric și revine la el pe orice excepție. API-ul nu expune diagnostice interne.</aside>
 </section></div>
 
-<!-- 16 · Arhitectura -->
-<div class="slide-frame"><section class="slide code-slide" id="s16">
+<!-- 17 · Arhitectura -->
+<div class="slide-frame"><section class="slide ca" id="s16">
   <header><span>7. Arhitectură</span></header>
   <div class="content">
     <h1>Pachetul <code>app</code></h1>
-    <pre><code>backend/app/
-├── main.py        # creează aplicația FastAPI (punctul de intrare)
-├── cli.py         # aceeași logică, în terminal
-├── schemas.py     # Pydantic: domeniu + răspuns model + cereri HTTP
-├── core/          # config (Limits) și erori
-├── api/           # rutele HTTP (health, conversations, chat)
-├── services/      # chat_service, conversations, agent, bootstrap, repository
-├── sources/       # infoarena, openrouter, http, parsing (integrări externe)
-└── tools/         # uneltele + definițiile lor JSON</code></pre>
-    <p class="ca-small">Fiecare folder, o responsabilitate. Ușor de citit, ușor de testat.</p>
+    <p class="ca-lead">Fiecare folder, o responsabilitate. Ușor de citit, ușor de testat.</p>
+    <div class="ca-arch">
+      <div class="ca-layer"><b>api/</b><span>rutele HTTP: health, conversations, chat</span></div>
+      <div class="ca-layer"><b>services/</b><span>chat_service, conversations, <strong>agent</strong>, bootstrap, repository</span></div>
+      <div class="ca-layer"><b>tools/</b><span>uneltele + definițiile lor JSON</span></div>
+      <div class="ca-layer"><b>sources/</b><span>infoarena, openrouter, http, parsing (integrări externe)</span></div>
+      <div class="ca-layer"><b>core/</b><span>config (Limits) și erori · <b>schemas.py</b> — contractele Pydantic</span></div>
+    </div>
   </div>
-  <footer><span>AlgoTutor · agent conversațional</span><span>16 / 22</span></footer>
+  <footer><span>AlgoTutor · agent conversațional</span><span>17 / 23</span></footer>
   <aside class="notes">Separarea pe straturi (convenția FastAPI) face codul navigabil: știi unde să cauți și unde să adaugi.</aside>
 </section></div>
 
-<!-- 17 · Backend web -->
-<div class="slide-frame"><section class="slide" id="s17">
+<!-- 18 · Backend -->
+<div class="slide-frame"><section class="slide ca" id="s17">
   <header><span>7. Arhitectură</span></header>
   <div class="content">
     <h1>Backend: FastAPI</h1>
-    <p>Trei rute leagă interfața de agent:</p>
-    <ul>
-      <li><code>POST /api/conversations</code> — creează o conversație, întoarce un id.</li>
-      <li><code>POST /api/chat</code> — trimite un mesaj, primește răspuns + surse.</li>
-      <li><code>DELETE /api/conversations/{id}</code> — șterge conversația.</li>
-    </ul>
-    <p>Conversațiile stau în <strong>memorie</strong> (<code>ConversationStore</code>): fiecare are propriul
+    <div class="ca-grid three">
+      <div class="ca-card"><span class="ic">➕</span><h2>POST /conversations</h2><p>Creează o conversație, întoarce un id.</p></div>
+      <div class="ca-card"><span class="ic">💬</span><h2>POST /chat</h2><p>Trimite un mesaj, primește răspuns + surse.</p></div>
+      <div class="ca-card"><span class="ic">🗑️</span><h2>DELETE /conversations/{id}</h2><p>Șterge conversația.</p></div>
+    </div>
+    <p class="ca-lead">Conversațiile stau în <strong>memorie</strong> (<code>ConversationStore</code>): fiecare are propriul
     agent și un <strong>lock</strong>, ca două mesaje să nu se amestece. Cele vechi expiră automat.</p>
     <div class="ca-note">În memorie = simplu. La refresh începi o conversație nouă; la repornire, istoricul se pierde.</div>
   </div>
-  <footer><span>AlgoTutor · agent conversațional</span><span>17 / 22</span></footer>
+  <footer><span>AlgoTutor · agent conversațional</span><span>18 / 23</span></footer>
   <aside class="notes">Pentru producție ar urma autentificare, limitarea consumului și persistență. Pentru curs, varianta în memorie e cea mai clară.</aside>
 </section></div>
 
-<!-- 18 · Frontend -->
-<div class="slide-frame"><section class="slide" id="s18">
+<!-- 19 · Frontend -->
+<div class="slide-frame"><section class="slide ca" id="s18">
   <header><span>7. Arhitectură</span></header>
   <div class="content">
     <h1>Frontend: Vue 3</h1>
@@ -364,14 +468,14 @@
       <li>Markdown-ul primit e <strong>sanitizat</strong> (DOMPurify) înainte de afișare.</li>
       <li>La eroare, utilizatorul reîncearcă sau începe o conversație nouă.</li>
     </ul>
-    <div class="ca-note">Cheia API nu ajunge niciodată în browser — tot ce e secret rămâne pe backend.</div>
+    <div class="ca-note">Cheia API <b>nu ajunge niciodată</b> în browser — tot ce e secret rămâne pe backend.</div>
   </div>
-  <footer><span>AlgoTutor · agent conversațional</span><span>18 / 22</span></footer>
+  <footer><span>AlgoTutor · agent conversațional</span><span>19 / 23</span></footer>
   <aside class="notes">Logica de stare e în frontend/src/composables/useConversation.js; apelurile HTTP în api.js.</aside>
 </section></div>
 
-<!-- 19 · Cum rulezi -->
-<div class="slide-frame"><section class="slide code-slide" id="s19">
+<!-- 20 · Cum rulezi -->
+<div class="slide-frame"><section class="slide code-slide ca" id="s19">
   <header><span>8. Operare</span></header>
   <div class="content">
     <h1>Cum rulezi</h1>
@@ -388,31 +492,29 @@ python -m uvicorn app.main:app --app-dir backend   # http://127.0.0.1:8000
 # 3b. sau în terminal
 cd backend && python -m app.cli</code></pre>
   </div>
-  <footer><span>AlgoTutor · agent conversațional</span><span>19 / 22</span></footer>
+  <footer><span>AlgoTutor · agent conversațional</span><span>20 / 23</span></footer>
   <aside class="notes">Modelul se alege din .env (orice model cu tool calling). Documentația API interactivă e la /docs.</aside>
 </section></div>
 
-<!-- 20 · Testare -->
-<div class="slide-frame"><section class="slide" id="s20">
+<!-- 21 · Testare -->
+<div class="slide-frame"><section class="slide ca" id="s20">
   <header><span>8. Operare</span></header>
   <div class="content">
     <h1>Testare și calitate</h1>
-    <ul>
-      <li><strong>pytest</strong> cu un <strong>model simulat</strong>: testăm bucla, uneltele și API-ul <em>fără</em> rețea și fără costuri.</li>
-      <li><strong>Fixturi</strong> partajate (conftest.py) elimină codul repetat din teste.</li>
-      <li><strong>Acoperire</strong> (coverage) arată ce a rămas netestat.</li>
-      <li><strong>Ruff</strong> pentru stil consecvent; <strong>type hints</strong> peste tot.</li>
-    </ul>
-    <pre><code>cd backend
-pytest --cov=app --cov-report=term-missing
-ruff check . && ruff format --check .</code></pre>
+    <div class="ca-grid">
+      <div class="ca-card"><span class="ic">🧪</span><h2>pytest + model simulat</h2><p>Testăm bucla, uneltele și API-ul <em>fără</em> rețea și fără costuri.</p></div>
+      <div class="ca-card"><span class="ic">📊</span><h2>coverage</h2><p>Arată ce a rămas netestat (~89%).</p></div>
+      <div class="ca-card"><span class="ic">🧹</span><h2>ruff</h2><p>Stil consecvent, importuri sortate, format.</p></div>
+      <div class="ca-card"><span class="ic">🔤</span><h2>type hints</h2><p>Tipuri peste tot, pentru claritate și unelte.</p></div>
+    </div>
+    <p class="ca-small">cd backend &nbsp;·&nbsp; pytest --cov=app &nbsp;·&nbsp; ruff check .</p>
   </div>
-  <footer><span>AlgoTutor · agent conversațional</span><span>20 / 22</span></footer>
+  <footer><span>AlgoTutor · agent conversațional</span><span>21 / 23</span></footer>
   <aside class="notes">A testa un agent fără a apela modelul real e esențial: rapid, gratuit, repetabil. Modelul fals întoarce răspunsuri prestabilite.</aside>
 </section></div>
 
-<!-- 21 · Limite si etica -->
-<div class="slide-frame"><section class="slide" id="s21">
+<!-- 22 · Limite si etica -->
+<div class="slide-frame"><section class="slide ca" id="s21">
   <header><span>Încheiere</span></header>
   <div class="content">
     <h1>Limite și responsabilitate</h1>
@@ -422,32 +524,44 @@ ruff check . && ruff format --check .</code></pre>
       <li>Citirea din web respectă robots.txt și un ritm politicos.</li>
       <li>Un răspuns bine scris poate fi totuși greșit — verificarea rămâne la om.</li>
     </ul>
-    <div class="ca-note">Un agent bun nu e doar „deștept", ci și prudent, verificabil și onest despre limitele lui.</div>
+    <div class="ca-note">Un agent bun nu e doar „deștept", ci și <b>prudent, verificabil și onest</b> despre limitele lui.</div>
   </div>
-  <footer><span>AlgoTutor · agent conversațional</span><span>21 / 22</span></footer>
-  <aside class="notes">Mesaj-cheie pentru studenți: inginerie, nu magie. Validare, limite, teste și onestitate despre ce poate și ce nu poate agentul.</aside>
+  <footer><span>AlgoTutor · agent conversațional</span><span>22 / 23</span></footer>
+  <aside class="notes">Mesaj-cheie: inginerie, nu magie. Validare, limite, teste și onestitate despre ce poate și ce nu poate agentul.</aside>
 </section></div>
 
-<!-- 22 · Recapitulare + laborator -->
-<div class="slide-frame"><section class="slide" id="s22">
+<!-- 23 · Recapitulare -->
+<div class="slide-frame"><section class="slide ca" id="s22">
   <header><span>Încheiere</span></header>
   <div class="content">
     <h1>Recapitulare și laborator</h1>
-    <p>Un agent = <span class="ca-pill">model</span><span class="ca-pill">unelte</span><span class="ca-pill">buclă</span>
-    plus validare, limite și teste.</p>
-    <h2>La laborator</h2>
-    <ul>
-      <li>Rulează AlgoTutor (web sau CLI) și urmărește, în cod, un tur complet.</li>
-      <li><strong>Adaugă o unealtă nouă</strong>: o schemă în <code>definitions.py</code> + un handler în <code>Tools</code>.</li>
-      <li>Scrie un test pentru ea, cu modelul simulat.</li>
-    </ul>
+    <p class="ca-lead">Un agent =
+      <span class="ca-pill">model</span><span class="ca-pill">prompt</span><span class="ca-pill">unelte</span><span class="ca-pill">buclă</span>
+      plus validare, limite și teste.</p>
+    <div class="ca-card" style="margin-top:8px">
+      <h2>🧪 La laborator</h2>
+      <p>1. Rulează AlgoTutor (web sau CLI) și urmărește, în cod, un tur complet.<br>
+      2. <strong>Adaugă o unealtă nouă</strong>: o schemă în <code>definitions.py</code> + un handler în <code>Tools</code>.<br>
+      3. Scrie un test pentru ea, cu modelul simulat.</p>
+    </div>
     <p class="ca-small">Cod &amp; materiale: github.com/danlex/uni.ai (folderul algotutor/).</p>
   </div>
-  <footer><span>AlgoTutor · agent conversațional</span><span>22 / 22</span></footer>
-  <aside class="notes">Tema de laborator consolidează ideea: extinderea unui agent înseamnă o unealtă nouă + testul ei, fără a atinge bucla.</aside>
+  <footer><span>AlgoTutor · agent conversațional</span><span>23 / 23</span></footer>
+  <aside class="notes">Tema consolidează ideea: extinderea unui agent înseamnă o unealtă nouă + testul ei, fără a atinge bucla.</aside>
 </section></div>
 
 </main>
-<script>function fitSlides(){document.documentElement.style.setProperty('--slide-scale',Math.min(1,Math.max(0.1,(window.innerWidth-32)/1600)))}fitSlides();window.addEventListener('resize',fitSlides);</script>
+<script>
+  function fitSlides(){document.documentElement.style.setProperty('--slide-scale',Math.min(1,Math.max(0.1,(window.innerWidth-32)/1600)))}
+  fitSlides(); window.addEventListener('resize', fitSlides);
+  // Animație discretă la intrarea fiecărui slide în ecran (opțională, degradează elegant).
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.body.classList.add('ca-ready');
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) { e.target.classList.add('ca-in'); io.unobserve(e.target); }
+    }, { threshold: 0.25 });
+    document.querySelectorAll('.ca').forEach((s) => io.observe(s));
+  }
+</script>
 </body>
 </html>
