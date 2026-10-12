@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Cum construim un agent conversațional · AlgoTutor</title>
-<link rel="stylesheet" href="css/curs.css">
+<link rel="stylesheet" href="css/curs.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap">
 <style>
   /* Design editorial-tech, modern. Scheletul de slide vine din css/curs.css;
      aici suprascriem pentru un aspect propriu (rece, de inginerie). */
@@ -124,6 +124,18 @@
     body.ca-ready .ca.ca-in .content > *:nth-child(5){ animation-delay:.24s; }
     @keyframes caUp{ to{ opacity:1; transform:none; } }
   }
+
+  /* ---- Beauty pass: fonturi, centrare verticală, adâncime ---- */
+  .ca, .ca .content{ font-family:'Inter','Open Sans',system-ui,-apple-system,sans-serif; }
+  .ca h1, .ca h2, .ca-box{ font-family:'Space Grotesk','Inter',system-ui,sans-serif; letter-spacing:-.02em; }
+  .ca.slide{ display:flex !important; flex-direction:column; }
+  .ca .content{ flex:1; display:flex; flex-direction:column; justify-content:center; }
+  .ca-card, .ca-role, .ca-croft > div, .ca-tool, .ca-layer, .ca-loop{
+    box-shadow:0 1px 2px rgba(16,17,21,.045), 0 14px 34px -22px rgba(16,17,21,.22); }
+  .ca pre{ box-shadow:0 16px 44px -24px rgba(16,17,21,.55); }
+  .ca-note{ box-shadow:0 1px 2px rgba(16,17,21,.04); }
+  /* coperta e vizibilă imediat, nu depinde de animație */
+  body.ca-ready .ca-cover .content > *{ opacity:1 !important; transform:none !important; animation:none !important; }
 </style>
 </head>
 <body>
