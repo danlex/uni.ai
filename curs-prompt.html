@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ro">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Prompt Engineering · Ingineria algoritmilor pentru sisteme AI</title>
+<title>Prompt Engineering · Algorithm Engineering for AI Systems</title>
 <link rel="stylesheet" href="css/curs.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap">
 <style>
   /* Design editorial-tech, modern. Scheletul de slide vine din css/curs.css;
@@ -145,287 +145,461 @@
   #s4c pre{ font-size:18px !important; line-height:1.45 !important; }
   .ca a{ color:var(--accent); text-decoration-color:rgba(79,70,229,.4); }
 
+
+  /* ---- Mai colorat ---- */
+  .ca-grid > .ca-card:nth-child(6n+1){ --c:#2563eb } .ca-grid > .ca-card:nth-child(6n+2){ --c:#059669 }
+  .ca-grid > .ca-card:nth-child(6n+3){ --c:#7c3aed } .ca-grid > .ca-card:nth-child(6n+4){ --c:#d97706 }
+  .ca-grid > .ca-card:nth-child(6n+5){ --c:#0891b2 } .ca-grid > .ca-card:nth-child(6n+6){ --c:#db2777 }
+  .ca-grid > .ca-card{ border-top:3px solid var(--c, var(--accent)); }
+  .ca-grid > .ca-card::before{ color:var(--c, var(--accent)); }
+  .ca-croft .l{ } /* ramane accent */
+
+  /* Exemple „copy prompt" colorate, cu ilustrație */
+  .ca-example{ display:grid; grid-template-columns:96px 1fr; gap:22px; align-items:start; background:#fff;
+    border:1px solid var(--line); border-left:5px solid var(--ex,#2563eb); border-radius:16px; padding:22px 26px;
+    box-shadow:0 1px 2px rgba(16,17,21,.05), 0 16px 36px -22px rgba(16,17,21,.22); }
+  .ca-example .ill{ width:96px; height:96px; display:grid; place-items:center; color:var(--ex,#2563eb);
+    background:color-mix(in srgb, var(--ex,#2563eb) 13%, #fff); border-radius:18px; }
+  .ca-example h3{ margin:0 0 6px; font-size:26px; color:var(--ink); font-family:'Space Grotesk','Inter',sans-serif; letter-spacing:-.01em; }
+  .ca-example .scenario{ margin:0 0 16px; font-size:20px; color:var(--muted); }
+  .ca-prompt{ position:relative; background:var(--panel); border:1.5px dashed var(--ex,#2563eb); border-radius:12px;
+    padding:18px 20px; font-size:19px; line-height:1.55; color:var(--ink); white-space:pre-wrap; }
+  .ca-prompt::before{ content:"PROMPT · copiază"; position:absolute; top:-12px; left:16px; background:var(--ex,#2563eb);
+    color:#fff; font-family:ui-monospace,Consolas,monospace; font-weight:700; font-size:12px; letter-spacing:.08em;
+    padding:3px 10px; border-radius:6px; }
+  .ex-blue{ --ex:#2563eb } .ex-green{ --ex:#059669 } .ex-violet{ --ex:#7c3aed }
+  .ex-amber{ --ex:#d97706 } .ex-teal{ --ex:#0891b2 } .ex-rose{ --ex:#db2777 }
+
+  /* Pastile de modele (de ce merge pe orice model) */
+  .ca-models{ display:flex; gap:14px; flex-wrap:wrap; margin:26px 0; }
+  .ca-models span{ font-family:ui-monospace,Consolas,monospace; font-weight:700; font-size:21px; color:#fff;
+    padding:10px 22px; border-radius:12px; }
+  .ca-models span:nth-child(1){ background:#10a37f } .ca-models span:nth-child(2){ background:#d2795f }
+  .ca-models span:nth-child(3){ background:#4285f4 } .ca-models span:nth-child(4){ background:#7c3aed }
+  .ca-models span:nth-child(5){ background:#111827 }
+
+  /* Copertă mai colorată: titlu cu degrade */
+  .ca-cover h1 .accent{ background:linear-gradient(90deg,#4f46e5,#0891b2,#db2777); -webkit-background-clip:text;
+    background-clip:text; -webkit-text-fill-color:transparent; color:transparent; }
 </style>
 </head>
 <body>
 <main id="stage">
 
-<!-- 1 Coperta -->
+<!-- 1 Cover -->
 <div class="slide-frame"><section class="slide cover ca ca-cover" id="s1">
-  <header><span>Ingineria algoritmilor pentru sisteme AI</span></header>
+  <header><span>Algorithm Engineering for AI Systems</span></header>
   <div class="content">
-    <p class="ca-eyebrow">Modul · Prompt Engineering</p>
+    <p class="ca-eyebrow">Module · Prompt Engineering</p>
     <h1>Prompt<br><span class="accent">Engineering</span></h1>
-    <p class="ca-lead">Cum ceri bine unui model, ca să primești răspunsuri utile, consecvente și verificabile.</p>
-    <div class="ca-meta"><span><b>Framework:</b> CROFC</span><span><b>De la:</b> prompt vag &rarr; prompt de inginerie</span></div>
+    <p class="ca-lead">How to ask a model well — so you get useful, consistent and verifiable answers.</p>
+    <div class="ca-meta"><span><b>Framework:</b> CROFC</span><span><b>From:</b> vague prompt &rarr; engineering prompt</span></div>
   </div>
-  <footer><span>Prompt Engineering</span><span>1 / 16</span></footer>
-  <aside class="notes">Curs separat despre prompt engineering. Aceleași principii se folosesc și în agentul AlgoTutor.</aside>
+  <footer><span>Prompt Engineering</span><span>1 / 22</span></footer>
+  <aside class="notes">A standalone prompt engineering course. The same principles power the AlgoTutor agent.</aside>
 </section></div>
 
-<!-- 2 Obiective -->
+<!-- 2 What you'll learn -->
 <div class="slide-frame"><section class="slide ca" id="s2">
-  <header><span>Introducere</span></header>
+  <header><span>Introduction</span></header>
   <div class="content">
-    <h1>Ce vei învăța</h1>
+    <h1>What you'll learn</h1>
     <div class="ca-grid three">
-      <div class="ca-card"><h2>Mesaje cu roluri</h2><p>system, user, assistant — și ce rol are fiecare.</p></div>
-      <div class="ca-card"><h2>Framework CROFC</h2><p>Un prompt bun în 5 pași: Context, Rol, Obiectiv, Format, Constrângeri.</p></div>
-      <div class="ca-card"><h2>Tehnici</h2><p>Few-shot, chain-of-thought, format &amp; constrângeri.</p></div>
-      <div class="ca-card"><h2>Metaprompting</h2><p>Pune AI-ul să scrie și să-ți îmbunătățească promptul.</p></div>
-      <div class="ca-card"><h2>Capcane &amp; siguranță</h2><p>Ambiguitate, prompt injection, date personale.</p></div>
-      <div class="ca-card"><h2>Verificare</h2><p>Recunoaște halucinațiile; verifică înainte de a folosi.</p></div>
+      <div class="ca-card"><h2>Messages with roles</h2><p>system, user, assistant — and each one's job.</p></div>
+      <div class="ca-card"><h2>Framework CROFC</h2><p>A good prompt in 5 steps: Context, Role, Objective, Format, Constraints.</p></div>
+      <div class="ca-card"><h2>Techniques</h2><p>Few-shot, chain-of-thought, format &amp; constraints.</p></div>
+      <div class="ca-card"><h2>Metaprompting</h2><p>Make the AI write and improve your prompt.</p></div>
+      <div class="ca-card"><h2>Pitfalls &amp; safety</h2><p>Ambiguity, prompt injection, personal data.</p></div>
+      <div class="ca-card"><h2>Verification</h2><p>Spot hallucinations; check before you use.</p></div>
     </div>
   </div>
-  <footer><span>Prompt Engineering</span><span>2 / 16</span></footer>
-  <aside class="notes">Parcurs practic: de la ce e un prompt, la un framework și tehnici, apoi capcane și verificare.</aside>
+  <footer><span>Prompt Engineering</span><span>2 / 22</span></footer>
+  <aside class="notes">A practical path: from what a prompt is, to a framework and techniques, then pitfalls and verification.</aside>
 </section></div>
 
-<!-- 3 Ce este un prompt -->
+<!-- 3 What is a prompt -->
 <div class="slide-frame"><section class="slide ca" id="s3">
-  <header><span>1. Fundamente</span></header>
+  <header><span>1. Fundamentals</span></header>
   <div class="content">
-    <h1>Ce este un prompt</h1>
-    <p class="ca-lead">Promptul este instrucțiunea pe care o dai modelului. <strong>Același model, prompturi diferite &rarr; rezultate diferite.</strong></p>
+    <h1>What is a prompt</h1>
+    <p class="ca-lead">A prompt is the instruction you give the model. <strong>Same model, different prompts &rarr; different results.</strong></p>
     <div class="ca-grid">
-      <div class="ca-card"><h2>Vag</h2><p>„Scrie despre Paris." &rarr; răspuns generic, imprevizibil.</p></div>
-      <div class="ca-card"><h2>Bun</h2><p>„Scrie 3 propoziții despre Paris pentru un elev de clasa a 5-a, în română." &rarr; util și controlat.</p></div>
+      <div class="ca-card"><h2>Vague</h2><p>„Write about Paris." &rarr; generic, unpredictable answer.</p></div>
+      <div class="ca-card"><h2>Good</h2><p>„Write 3 sentences about Paris for a 5th-grade student, in simple English." &rarr; useful and controlled.</p></div>
     </div>
-    <div class="ca-note">Prompt engineering = arta de a fi <b>explicit</b>: ce vrei, pentru cine, în ce formă.</div>
+    <div class="ca-note">Prompt engineering = the art of being <b>explicit</b>: what you want, for whom, in what form.</div>
   </div>
-  <footer><span>Prompt Engineering</span><span>3 / 16</span></footer>
-  <aside class="notes">Ideea-cheie: controlul vine din specificitate. Un prompt bun reduce ambiguitatea.</aside>
+  <footer><span>Prompt Engineering</span><span>3 / 22</span></footer>
+  <aside class="notes">Key idea: control comes from specificity. A good prompt reduces ambiguity.</aside>
 </section></div>
 
-<!-- 4 Roluri -->
+<!-- 4 Messages with roles -->
 <div class="slide-frame"><section class="slide ca" id="s4">
-  <header><span>1. Fundamente</span></header>
+  <header><span>1. Fundamentals</span></header>
   <div class="content">
-    <h1>Mesaje cu roluri</h1>
-    <p class="ca-lead">O conversație este o listă de mesaje, fiecare cu un rol:</p>
+    <h1>Messages with roles</h1>
+    <p class="ca-lead">A conversation is a list of messages, each with a role:</p>
     <div class="ca-roles">
-      <div class="ca-role system"><code>system</code><p>Instrucțiunile generale: cine e modelul și cum răspunde.</p></div>
-      <div class="ca-role user"><code>user</code><p>Întrebarea sau cererea concretă.</p></div>
-      <div class="ca-role assistant"><code>assistant</code><p>Răspunsul modelului, păstrat în istoric.</p></div>
-      <div class="ca-role tool"><code>tool</code><p>Rezultatul unei unelte (la agenți).</p></div>
+      <div class="ca-role system"><code>system</code><p>General instructions: who the model is and how it answers.</p></div>
+      <div class="ca-role user"><code>user</code><p>The concrete question or request.</p></div>
+      <div class="ca-role assistant"><code>assistant</code><p>The model's answer, kept in history.</p></div>
+      <div class="ca-role tool"><code>tool</code><p>The result of a tool (for agents).</p></div>
     </div>
-    <p class="ca-small">Promptul „de sistem" e locul unde pui regulile stabile ale conversației.</p>
+    <p class="ca-small">The „system" prompt is where you put the stable rules of the conversation.</p>
   </div>
-  <footer><span>Prompt Engineering</span><span>4 / 16</span></footer>
-  <aside class="notes">system = reguli; user = cerere; assistant = răspuns. Modelul nu ține minte singur — istoricul se retrimite.</aside>
+  <footer><span>Prompt Engineering</span><span>4 / 22</span></footer>
+  <aside class="notes">system = rules; user = request; assistant = answer. The model has no memory of its own — history is resent each time.</aside>
 </section></div>
 
-<!-- 5 Anatomia -->
+<!-- 5 Anatomy = CROTATFC -->
 <div class="slide-frame"><section class="slide ca" id="s5">
   <header><span>2. Framework</span></header>
   <div class="content">
-    <h1>Anatomia unui prompt bun</h1>
-    <div class="ca-grid three">
-      <div class="ca-card"><h2>Context</h2><p>Fundalul relevant de care are nevoie modelul.</p></div>
-      <div class="ca-card"><h2>Sarcină clară</h2><p>Ce anume vrei, cu un verb concret.</p></div>
-      <div class="ca-card"><h2>Format dorit</h2><p>Listă, tabel, JSON, număr de cuvinte.</p></div>
-      <div class="ca-card"><h2>Exemple</h2><p>Arată o mostră de intrare &rarr; ieșire.</p></div>
-      <div class="ca-card"><h2>Ton &amp; audiență</h2><p>Pentru cine și în ce stil.</p></div>
-      <div class="ca-card"><h2>Constrângeri</h2><p>Ce să NU facă; limite de lungime, surse.</p></div>
+    <h1>Anatomy of a good prompt: CROTATFC</h1>
+    <p class="ca-lead">Eight possible components — one section per letter. Use the ones you need.</p>
+    <div class="ca-croft">
+      <div><div class="l">C</div><b>Context</b><span>The background and relevant data.</span></div>
+      <div><div class="l">R</div><b>Role</b><span>Who the AI should be.</span></div>
+      <div><div class="l">O</div><b>Objective</b><span>What you want to get.</span></div>
+      <div><div class="l">T</div><b>Tasks</b><span>The concrete steps to do.</span></div>
+      <div><div class="l">A</div><b>Audience</b><span>Who it's for.</span></div>
+      <div><div class="l">T</div><b>Tone</b><span>The style of the answer.</span></div>
+      <div><div class="l">F</div><b>Format</b><span>The shape of the output.</span></div>
+      <div><div class="l">C</div><b>Constraints</b><span>What NOT to do.</span></div>
     </div>
+    <p class="ca-small">For most tasks, the simpler <b>CROFC</b> (5 steps) is enough — next slide.</p>
   </div>
-  <footer><span>Prompt Engineering</span><span>5 / 16</span></footer>
-  <aside class="notes">Aceste ingrediente se regăsesc, structurate, în framework-ul CROFC de pe slide-ul următor.</aside>
+  <footer><span>Prompt Engineering</span><span>5 / 22</span></footer>
+  <aside class="notes">CROTATFC = Context, Role, Objective, Tasks, Audience, Tone, Format, Constraints. The „full anatomy"; CROFC is the starting version.</aside>
 </section></div>
 
 <!-- 6 CROFC -->
 <div class="slide-frame"><section class="slide ca" id="s6">
   <header><span>2. Framework</span></header>
   <div class="content">
-    <h1>CROFC — un prompt bun în 5 pași</h1>
-    <p class="ca-lead">Pentru majoritatea sarcinilor, începe cu cinci elemente.</p>
+    <h1>CROFC — a good prompt in 5 steps</h1>
+    <p class="ca-lead">For most tasks, start with five elements.</p>
     <div class="ca-croft" style="grid-template-columns:repeat(5,1fr)">
-      <div><div class="l">C</div><b>Context</b><span>Situația, informațiile și audiența.</span></div>
-      <div><div class="l">R</div><b>Rol</b><span>Cine trebuie să fie AI.</span></div>
-      <div><div class="l">O</div><b>Obiectiv</b><span>Ce vrei să obții de la AI.</span></div>
-      <div><div class="l">F</div><b>Format</b><span>Cum trebuie să arate răspunsul.</span></div>
-      <div><div class="l">C</div><b>Constrângeri</b><span>Reguli, limite și tonul dorit.</span></div>
+      <div><div class="l">C</div><b>Context</b><span>The situation, information and audience.</span></div>
+      <div><div class="l">R</div><b>Role</b><span>Who the AI should be.</span></div>
+      <div><div class="l">O</div><b>Objective</b><span>What you want from the AI.</span></div>
+      <div><div class="l">F</div><b>Format</b><span>How the answer should look.</span></div>
+      <div><div class="l">C</div><b>Constraints</b><span>Rules, limits and the desired tone.</span></div>
     </div>
-    <div class="ca-note">Pentru <b>agenți</b> (sarcini complexe) extinzi la <b>CROTATFC</b> — adaugi Tasks, Audience, Tone. Vezi cursul despre agenți.</div>
+    <div class="ca-note">For <b>agents</b> (complex tasks) extend to <b>CROTATFC</b> — add Tasks, Audience, Tone. See the agents course.</div>
   </div>
-  <footer><span>Prompt Engineering</span><span>6 / 16</span></footer>
-  <aside class="notes">CROFC = Context, Rol, Obiectiv, Format, Constrângeri (din RO.1M.AI). Framework simplu pentru majoritatea sarcinilor; CROTATFC e varianta extinsă pentru agenți.</aside>
+  <footer><span>Prompt Engineering</span><span>6 / 22</span></footer>
+  <aside class="notes">CROFC = Context, Role, Objective, Format, Constraints (from RO.1M.AI). A simple framework for most tasks; CROTATFC is the extended version for agents.</aside>
 </section></div>
 
-<!-- 7 Vag vs structurat -->
+<!-- Why one prompt works on any model -->
+<div class="slide-frame"><section class="slide ca" id="s6b">
+  <header><span>2. Framework</span></header>
+  <div class="content">
+    <h1>Why one prompt works on any model</h1>
+    <p class="ca-lead">CROFC is plain language, not model syntax. Every chat model takes the same thing:
+    <strong>messages with roles + clear instructions.</strong></p>
+    <div class="ca-models"><span>ChatGPT</span><span>Claude</span><span>Gemini</span><span>Llama</span><span>local</span></div>
+    <div class="ca-grid three">
+      <div class="ca-card"><h2>No special tokens</h2><p>You write natural language, not model-specific markup.</p></div>
+      <div class="ca-card"><h2>Same roles everywhere</h2><p>system / user / assistant are a shared standard.</p></div>
+      <div class="ca-card"><h2>Structure, not tricks</h2><p>Context, goal, format, constraints help any model.</p></div>
+    </div>
+    <p class="ca-small">Switching models? A CROFC prompt usually works as-is — maybe a small tweak to tone or length.</p>
+  </div>
+  <footer><span>Prompt Engineering</span><span>7 / 22</span></footer>
+  <aside class="notes">Modelele diferă în capacitate, dar interfața e aceeași: text cu roluri. De aceea un prompt structurat e portabil între ChatGPT, Claude, Gemini, modele locale.</aside>
+</section></div>
+
+<!-- Example: compare products -->
+<div class="slide-frame"><section class="slide ca" id="s6c">
+  <header><span>In practice · examples</span></header>
+  <div class="content">
+    <h1>Example — compare two products</h1>
+    <div class="ca-example ex-blue">
+      <div class="ill"><svg viewBox="0 0 48 48" width="50" height="50" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><rect x="13" y="3" width="22" height="42" rx="5"/><line x1="20" y1="39" x2="28" y2="39"/></svg></div>
+      <div>
+        <h3>Which phone fits my needs?</h3>
+        <p class="scenario">A buyer choosing between two phones on a budget.</p>
+        <div class="ca-prompt">Context: I want a phone for WhatsApp, photos and video calls. Budget: 1500 lei.
+Role: act as an impartial tech advisor.
+Objective: recommend between Samsung A26 and A36 for my needs.
+Format: a short table — price, battery, camera, verdict.
+Constraints: max 150 words, no jargon.</div>
+      </div>
+    </div>
+    <p class="ca-small">The same CROFC shape, filled for a real decision. Inspired by RO.1M.AI.</p>
+  </div>
+  <footer><span>Prompt Engineering</span><span>8 / 22</span></footer>
+  <aside class="notes">Exemplu concret de CROFC pentru o decizie de cumpărare. Observă Context + Rol + Obiectiv + Format + Constrângeri.</aside>
+</section></div>
+
+<!-- Example: weekend plan -->
+<div class="slide-frame"><section class="slide ca" id="s6d">
+  <header><span>In practice · examples</span></header>
+  <div class="content">
+    <h1>Example — a weekend in Sibiu</h1>
+    <div class="ca-example ex-green">
+      <div class="ill"><svg viewBox="0 0 48 48" width="50" height="50" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"><path d="M24 45s14-13 14-25a14 14 0 10-28 0c0 12 14 25 14 25z"/><circle cx="24" cy="20" r="5"/></svg></div>
+      <div>
+        <h3>Plan two days with the family</h3>
+        <p class="scenario">A parent planning a short trip.</p>
+        <div class="ca-prompt">Context: a weekend (Sat–Sun) in Sibiu with two kids (6 and 9).
+Role: act as a local guide.
+Objective: a 2-day plan of things to do.
+Format: a schedule per day, 3–4 activities each, with rough times.
+Constraints: family-friendly, mostly walking distance, include one rainy-day option.</div>
+      </div>
+    </div>
+    <p class="ca-small">Change the Context and Constraints, reuse the structure.</p>
+  </div>
+  <footer><span>Prompt Engineering</span><span>9 / 22</span></footer>
+  <aside class="notes">Reutilizarea șablonului CROFC pentru planificare. Constrângerile fac planul realist.</aside>
+</section></div>
+
+<!-- Example: cover letter -->
+<div class="slide-frame"><section class="slide ca" id="s6e">
+  <header><span>In practice · examples</span></header>
+  <div class="content">
+    <h1>Example — a cover letter</h1>
+    <div class="ca-example ex-violet">
+      <div class="ill"><svg viewBox="0 0 48 48" width="50" height="50" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"><path d="M12 4h16l8 8v32H12z"/><path d="M28 4v8h8"/><line x1="18" y1="26" x2="30" y2="26"/><line x1="18" y1="33" x2="30" y2="33"/></svg></div>
+      <div>
+        <h3>Apply for a junior role</h3>
+        <p class="scenario">A student applying for a first job.</p>
+        <div class="ca-prompt">Context: I'm applying for a junior developer role. My CV: [paste it here].
+Role: act as a career coach.
+Objective: write a cover letter for this role.
+Format: three short paragraphs.
+Constraints: under 200 words, confident but not arrogant, in English, no clichés.</div>
+      </div>
+    </div>
+    <p class="ca-small">Paste your real CV in the Context — the structure stays the same.</p>
+  </div>
+  <footer><span>Prompt Engineering</span><span>10 / 22</span></footer>
+  <aside class="notes">Exemplu pentru carieră. „[paste it here]" arată unde pui datele tale reale.</aside>
+</section></div>
+
+<!-- Example: live iPhone prices (eMAG) -->
+<div class="slide-frame"><section class="slide ca" id="s6f">
+  <header><span>In practice &middot; examples</span></header>
+  <div class="content">
+    <h1>Example &mdash; live iPhone prices (eMAG)</h1>
+    <div class="ca-example ex-amber">
+      <div class="ill"><svg viewBox="0 0 48 48" width="50" height="50" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"><path d="M25 4H8a4 4 0 00-4 4v17l19 19 21-21z"/><circle cx="15" cy="15" r="3.2"/></svg></div>
+      <div>
+        <h3>Fetch today's prices into a table</h3>
+        <p class="scenario">Live data &mdash; needs an AI with web access (an agent).</p>
+        <div class="ca-prompt">Context: I'm comparing iPhone models on eMAG.ro.
+Role: act as a price researcher with web access.
+Objective: find today's price for iPhone 15, 15 Pro, 16 and 16 Pro.
+Format: a table &mdash; model, price (RON), seller, link.
+Constraints: only eMAG.ro; add the date; do not invent prices; if a model is missing, say so.</div>
+      </div>
+    </div>
+    <p class="ca-small">Plain chat can't fetch live prices &mdash; this needs tools/browsing, i.e. an <b>agent</b> (see the agents course).</p>
+  </div>
+  <footer><span>Prompt Engineering</span><span>11 / 22</span></footer>
+  <aside class="notes">Exemplu care face puntea către agenți: promptul e bun (CROFC), dar execuția cere acces web. Un LLM simplu ar inventa prețuri — de aceea constrângerea „nu inventa".</aside>
+</section></div>
+
+<!-- Example: synthetic CV dataset -->
+<div class="slide-frame"><section class="slide ca" id="s6g">
+  <header><span>In practice &middot; examples</span></header>
+  <div class="content">
+    <h1>Example &mdash; a synthetic CV dataset</h1>
+    <div class="ca-example ex-teal">
+      <div class="ill"><svg viewBox="0 0 48 48" width="50" height="50" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"><ellipse cx="24" cy="10" rx="15" ry="5.5"/><path d="M9 10v13c0 3 6.7 5.5 15 5.5s15-2.5 15-5.5V10"/><path d="M9 23v13c0 3 6.7 5.5 15 5.5s15-2.5 15-5.5V23"/></svg></div>
+      <div>
+        <h3>Generate fake-but-realistic test data</h3>
+        <p class="scenario">Synthetic data &mdash; works on any model, no internet.</p>
+        <div class="ca-prompt">Context: I need test data for a CV-parsing tool. No real people.
+Role: act as a synthetic data generator.
+Objective: create 5 realistic but fictional CVs for junior developers.
+Format: a JSON array; each item has name, email, skills[], experience[], education.
+Constraints: invented data only (GDPR-safe), diverse profiles, Romanian context.</div>
+      </div>
+    </div>
+    <p class="ca-small">Great for testing, demos and training &mdash; without touching real personal data.</p>
+  </div>
+  <footer><span>Prompt Engineering</span><span>12 / 22</span></footer>
+  <aside class="notes">Date sintetice: modelul generează exemple plauzibile, dar fictive. Util pentru teste/demo fără date reale. Format JSON = ușor de folosit automat.</aside>
+</section></div>
+
+<!-- 7 Vague vs structured -->
 <div class="slide-frame"><section class="slide code-slide ca" id="s7">
   <header><span>2. Framework</span></header>
   <div class="content">
-    <h1>Vag vs. structurat</h1>
+    <h1>Vague vs. structured</h1>
     <div class="ca-grid">
-      <div class="ca-card"><h2>Vag</h2><p>„Scrie-mi o ofertă pentru un client."</p></div>
-      <div class="ca-card"><h2>CROFC</h2><p>Context + Rol + Obiectiv + Format + Constrângeri &rarr; răspuns gata de folosit.</p></div>
+      <div class="ca-card"><h2>Vague</h2><p>„Write me an offer for a client."</p></div>
+      <div class="ca-card"><h2>CROFC</h2><p>Context + Role + Objective + Format + Constraints &rarr; ready to use.</p></div>
     </div>
-    <pre><code>C — Context      Pregătesc o ofertă pentru un client nou, fără experiență tehnică.
-R — Rol          Acționează ca un consultant de business.
-O — Obiectiv     Scrie oferta pe baza serviciilor mele.
-F — Format       Răspunde în 5 puncte clare.
-C — Constrângeri Maximum 120 de cuvinte, ton profesionist, fără jargon.</code></pre>
+    <pre><code>C — Context      I'm preparing an offer for a new, non-technical client.
+R — Role         Act as a business consultant.
+O — Objective    Write the offer based on my services.
+F — Format       Answer in 5 clear bullet points.
+C — Constraints  Max 120 words, professional tone, no jargon.</code></pre>
   </div>
-  <footer><span>Prompt Engineering</span><span>7 / 16</span></footer>
-  <aside class="notes">Același obiectiv, dar structura face rezultatul predictibil și reutilizabil (șablon).</aside>
+  <footer><span>Prompt Engineering</span><span>13 / 22</span></footer>
+  <aside class="notes">Same objective, but structure makes the result predictable and reusable (a template).</aside>
 </section></div>
 
 <!-- 8 Few-shot -->
 <div class="slide-frame"><section class="slide code-slide ca" id="s8">
-  <header><span>3. Tehnici</span></header>
+  <header><span>3. Techniques</span></header>
   <div class="content">
     <h1>Zero-shot vs. few-shot</h1>
-    <p class="ca-lead">La <b>few-shot</b> dai câteva exemple de intrare &rarr; ieșire. Modelul imită tiparul.</p>
-    <pre><code>Clasifică sentimentul (pozitiv / negativ):
+    <p class="ca-lead">With <b>few-shot</b> you give a few input &rarr; output examples. The model imitates the pattern.</p>
+    <pre><code>Classify the sentiment (positive / negative):
 
-Text: „Livrare rapidă, sunt încântat!"   -> pozitiv
-Text: „Produsul s-a stricat în 2 zile."   -> negativ
-Text: „Ambalaj frumos, dar scump."        -></code></pre>
-    <p class="ca-small">2–5 exemple sunt de obicei suficiente. Exemplele arată formatul exact al răspunsului.</p>
+Text: „Fast delivery, I'm delighted!"   -> positive
+Text: „The product broke in 2 days."    -> negative
+Text: „Nice packaging, but pricey."     -></code></pre>
+    <p class="ca-small">2–5 examples are usually enough. Examples show the exact output format.</p>
   </div>
-  <footer><span>Prompt Engineering</span><span>8 / 16</span></footer>
-  <aside class="notes">Zero-shot = fără exemple. Few-shot = cu exemple. Exemplele fixează atât sarcina, cât și forma ieșirii.</aside>
+  <footer><span>Prompt Engineering</span><span>14 / 22</span></footer>
+  <aside class="notes">Zero-shot = no examples. Few-shot = with examples. Examples pin down both the task and the output shape.</aside>
 </section></div>
 
 <!-- 9 Chain of thought -->
 <div class="slide-frame"><section class="slide ca" id="s9">
-  <header><span>3. Tehnici</span></header>
+  <header><span>3. Techniques</span></header>
   <div class="content">
-    <h1>Gândește pas cu pas</h1>
-    <p class="ca-lead">La probleme cu raționament, cere modelului să explice pașii înainte de răspuns (<em>chain-of-thought</em>).</p>
+    <h1>Think step by step</h1>
+    <p class="ca-lead">For reasoning tasks, ask the model to show the steps before the answer (<em>chain-of-thought</em>).</p>
     <div class="ca-grid">
-      <div class="ca-card"><h2>Fără</h2><p>„Cât fac 17 × 24?" &rarr; răspuns direct, uneori greșit.</p></div>
-      <div class="ca-card"><h2>Cu</h2><p>„Rezolvă pas cu pas, apoi dă rezultatul." &rarr; mai fiabil la calcul și logică.</p></div>
+      <div class="ca-card"><h2>Without</h2><p>„What is 17 × 24?" &rarr; direct answer, sometimes wrong.</p></div>
+      <div class="ca-card"><h2>With</h2><p>„Solve step by step, then give the result." &rarr; more reliable for math and logic.</p></div>
     </div>
-    <div class="ca-note">Util pentru matematică, logică, decizii. Dezavantaj: răspuns mai lung și mai lent.</div>
+    <div class="ca-note">Useful for math, logic, decisions. Downside: longer and slower answer.</div>
   </div>
-  <footer><span>Prompt Engineering</span><span>9 / 16</span></footer>
-  <aside class="notes">„Let's think step by step" îmbunătățește raționamentul. Pentru răspuns final curat, cere la final doar rezultatul.</aside>
+  <footer><span>Prompt Engineering</span><span>15 / 22</span></footer>
+  <aside class="notes">„Let's think step by step" improves reasoning. For a clean final answer, ask for just the result at the end.</aside>
 </section></div>
 
-<!-- 10 Format & constrangeri -->
+<!-- 10 Format & constraints -->
 <div class="slide-frame"><section class="slide ca" id="s10">
-  <header><span>3. Tehnici</span></header>
+  <header><span>3. Techniques</span></header>
   <div class="content">
-    <h1>Format și constrângeri</h1>
+    <h1>Format and constraints</h1>
     <div class="ca-grid three">
-      <div class="ca-card"><h2>Cere forma</h2><p>„Răspunde doar cu JSON", „listă cu 5 puncte", „tabel".</p></div>
-      <div class="ca-card"><h2>Limitează</h2><p>„Sub 100 de cuvinte", „maxim 3 variante".</p></div>
-      <div class="ca-card"><h2>Spune ce să NU facă</h2><p>„Fără introduceri", „nu inventa surse".</p></div>
+      <div class="ca-card"><h2>Ask for the shape</h2><p>„Answer only with JSON", „a 5-point list", „a table".</p></div>
+      <div class="ca-card"><h2>Limit it</h2><p>„Under 100 words", „at most 3 options".</p></div>
+      <div class="ca-card"><h2>Say what NOT to do</h2><p>„No intro", „don't invent sources".</p></div>
     </div>
-    <div class="ca-note">Un format explicit face răspunsul <b>ușor de folosit automat</b> (parsare, copiere, integrare).</div>
+    <div class="ca-note">An explicit format makes the answer <b>easy to use automatically</b> (parse, copy, integrate).</div>
   </div>
-  <footer><span>Prompt Engineering</span><span>10 / 16</span></footer>
-  <aside class="notes">Constrângerile negative („nu face X") sunt la fel de importante ca cele pozitive.</aside>
+  <footer><span>Prompt Engineering</span><span>16 / 22</span></footer>
+  <aside class="notes">Negative constraints („don't do X") matter as much as positive ones.</aside>
 </section></div>
 
 <!-- 11 Metaprompting -->
 <div class="slide-frame"><section class="slide ca" id="s11">
-  <header><span>3. Tehnici</span></header>
+  <header><span>3. Techniques</span></header>
   <div class="content">
-    <h1>Metaprompting cu CROFC</h1>
-    <p class="ca-lead">Nu compui promptul de la zero — îi ceri modelului să-l genereze sau să-l îmbunătățească.</p>
-    <div class="ca-note" style="font-style:italic">„Scrie un prompt în stil CROFC pentru un asistent de scris CV-uri. Întoarce doar promptul, pe secțiuni."</div>
+    <h1>Metaprompting with CROFC</h1>
+    <p class="ca-lead">Don't write the prompt from scratch — ask the model to generate or improve it.</p>
+    <div class="ca-note" style="font-style:italic">„Write a CROFC-style prompt for a CV-writing assistant. Return only the prompt, in sections."</div>
     <div class="ca-grid three">
-      <div class="ca-card"><h2>Descrie scopul</h2><p>Ce vrei să facă asistentul.</p></div>
-      <div class="ca-card"><h2>Cere structura</h2><p>„Pe secțiuni CROFC".</p></div>
-      <div class="ca-card"><h2>Rafinează</h2><p>„Fă Constraints mai stricte", „adaugă un exemplu".</p></div>
+      <div class="ca-card"><h2>Describe the goal</h2><p>What you want the assistant to do.</p></div>
+      <div class="ca-card"><h2>Ask for the structure</h2><p>„In CROFC sections".</p></div>
+      <div class="ca-card"><h2>Refine</h2><p>„Make Constraints stricter", „add an example".</p></div>
     </div>
-    <p class="ca-small">Verifici și editezi rezultatul — nu îl accepți orbește. Inspirat din RO.1M.AI.</p>
+    <p class="ca-small">Check and edit the result — don't accept it blindly. Inspired by RO.1M.AI.</p>
   </div>
-  <footer><span>Prompt Engineering</span><span>11 / 16</span></footer>
-  <aside class="notes">Modelul e bun la a-și structura propriile instrucțiuni. Folosește-l ca asistent de prompting.</aside>
+  <footer><span>Prompt Engineering</span><span>17 / 22</span></footer>
+  <aside class="notes">The model is good at structuring its own instructions. Use it as a prompting assistant.</aside>
 </section></div>
 
-<!-- 12 Iterarea -->
+<!-- 12 Iteration -->
 <div class="slide-frame"><section class="slide ca" id="s12">
-  <header><span>3. Tehnici</span></header>
+  <header><span>3. Techniques</span></header>
   <div class="content">
-    <h1>Promptul e un proces</h1>
+    <h1>A prompt is a process</h1>
     <div class="ca-flow">
-      <div class="ca-box">Scrie</div><span class="ca-arr">&rarr;</span>
-      <div class="ca-box alt">Rulează</div><span class="ca-arr">&rarr;</span>
-      <div class="ca-box alt">Observă</div><span class="ca-arr">&rarr;</span>
-      <div class="ca-box acc">Rafinează</div>
+      <div class="ca-box">Write</div><span class="ca-arr">&rarr;</span>
+      <div class="ca-box alt">Run</div><span class="ca-arr">&rarr;</span>
+      <div class="ca-box alt">Observe</div><span class="ca-arr">&rarr;</span>
+      <div class="ca-box acc">Refine</div>
     </div>
-    <div class="ca-note">Rar nimerești din prima. Schimbă <b>un singur lucru</b> pe rând și compară rezultatele.</div>
+    <div class="ca-note">You rarely nail it on the first try. Change <b>one thing at a time</b> and compare the results.</div>
   </div>
-  <footer><span>Prompt Engineering</span><span>12 / 16</span></footer>
-  <aside class="notes">Iterarea controlată (o schimbare pe rând) te ajută să înțelegi ce anume a îmbunătățit răspunsul.</aside>
+  <footer><span>Prompt Engineering</span><span>18 / 22</span></footer>
+  <aside class="notes">Controlled iteration (one change at a time) helps you learn what actually improved the answer.</aside>
 </section></div>
 
-<!-- 13 Capcane & injection -->
+<!-- 13 Pitfalls & injection -->
 <div class="slide-frame"><section class="slide ca" id="s13">
-  <header><span>4. Capcane &amp; siguranță</span></header>
+  <header><span>4. Pitfalls &amp; safety</span></header>
   <div class="content">
-    <h1>Capcane și prompt injection</h1>
+    <h1>Pitfalls and prompt injection</h1>
     <div class="ca-grid three">
-      <div class="ca-card"><h2>Ambiguitate</h2><p>Cereri vagi &rarr; răspunsuri imprevizibile.</p></div>
-      <div class="ca-card"><h2>Suprasolicitare</h2><p>Prea multe cerințe deodată &rarr; modelul ratează unele.</p></div>
-      <div class="ca-card"><h2>Prompt injection</h2><p>Text din surse care „dă ordine" modelului.</p></div>
+      <div class="ca-card"><h2>Ambiguity</h2><p>Vague requests &rarr; unpredictable answers.</p></div>
+      <div class="ca-card"><h2>Overload</h2><p>Too many requirements at once &rarr; the model misses some.</p></div>
+      <div class="ca-card"><h2>Prompt injection</h2><p>Text from sources that „gives orders" to the model.</p></div>
     </div>
-    <div class="ca-note"><b>Regulă de aur:</b> tratează textul din documente, pagini sau fișiere ca <b>date</b>, nu ca instrucțiuni. Nu lipi date personale în prompt.</div>
+    <div class="ca-note"><b>Golden rule:</b> treat text from documents, pages or files as <b>data</b>, not instructions. Don't paste personal data into the prompt.</div>
   </div>
-  <footer><span>Prompt Engineering</span><span>13 / 16</span></footer>
-  <aside class="notes">Prompt injection: o pagină poate conține „ignoră instrucțiunile și fă X". Modelul nu trebuie să execute ce scrie în surse.</aside>
+  <footer><span>Prompt Engineering</span><span>19 / 22</span></footer>
+  <aside class="notes">Prompt injection: a page may contain „ignore your instructions and do X". The model must not execute what sources say.</aside>
 </section></div>
 
-<!-- 14 Verifica -->
+<!-- 14 Verify -->
 <div class="slide-frame"><section class="slide ca" id="s14">
-  <header><span>4. Capcane &amp; siguranță</span></header>
+  <header><span>4. Pitfalls &amp; safety</span></header>
   <div class="content">
-    <h1>Verifică mereu răspunsul</h1>
-    <p class="ca-lead">Un răspuns bine scris poate fi totuși <strong>greșit</strong>. Modelele pot inventa fapte, surse și citdate (halucinații).</p>
+    <h1>Always verify the answer</h1>
+    <p class="ca-lead">A well-written answer can still be <strong>wrong</strong>. Models can invent facts, sources and quotes (hallucinations).</p>
     <div class="ca-grid">
-      <div class="ca-card"><h2>Semne de alarmă</h2><p>Surse care „sună credibil", cifre precise fără sursă, siguranță excesivă.</p></div>
-      <div class="ca-card"><h2>Ce faci</h2><p>Cere sursele, verifică-le, recitește; la decizii, confirmă cu un om.</p></div>
+      <div class="ca-card"><h2>Warning signs</h2><p>Sources that „sound credible", precise numbers with no source, excessive confidence.</p></div>
+      <div class="ca-card"><h2>What to do</h2><p>Ask for the sources, check them, re-read; for decisions, confirm with a human.</p></div>
     </div>
-    <div class="ca-note">Exemplu real: un raport livrat cu surse inventate. Verificarea rămâne responsabilitatea omului.</div>
+    <div class="ca-note">Real example: a report delivered with invented sources. Verification stays the human's responsibility.</div>
   </div>
-  <footer><span>Prompt Engineering</span><span>14 / 16</span></footer>
-  <aside class="notes">Halucinație = conținut plauzibil dar fals. Niciun prompt nu elimină complet riscul; verificarea e obligatorie.</aside>
+  <footer><span>Prompt Engineering</span><span>20 / 22</span></footer>
+  <aside class="notes">Hallucination = plausible but false content. No prompt fully removes the risk; verification is mandatory.</aside>
 </section></div>
 
 <!-- 15 Use cases -->
 <div class="slide-frame"><section class="slide ca" id="s15">
-  <header><span>5. În practică</span></header>
+  <header><span>5. In practice</span></header>
   <div class="content">
-    <h1>Prompting în viața reală</h1>
-    <p class="ca-lead">Aceleași principii se aplică departe de cod:</p>
+    <h1>Prompting in real life</h1>
+    <p class="ca-lead">The same principles apply far from code:</p>
     <div class="ca-grid three">
-      <div class="ca-card"><h2>Plan de weekend</h2><p>„Caută activități turistice în Sibiu pentru două zile."</p></div>
-      <div class="ca-card"><h2>CV &amp; scrisoare</h2><p>CV Europass în engleză; scrisoare de intenție.</p></div>
-      <div class="ca-card"><h2>Compară produse</h2><p>Două variante, după nevoile tale.</p></div>
-      <div class="ca-card"><h2>Decizii din date</h2><p>Analizează competiția; transformă datele într-o decizie.</p></div>
-      <div class="ca-card"><h2>Marketing</h2><p>O campanie dintr-un brief, într-un pas.</p></div>
-      <div class="ca-card"><h2>Servicii publice</h2><p>Pașaport, cazier online, medic de familie.</p></div>
+      <div class="ca-card"><h2>Weekend plan</h2><p>„Find tourist activities in Sibiu for two days."</p></div>
+      <div class="ca-card"><h2>CV &amp; letter</h2><p>Europass CV in English; a cover letter.</p></div>
+      <div class="ca-card"><h2>Compare products</h2><p>Two options, by your needs.</p></div>
+      <div class="ca-card"><h2>Decisions from data</h2><p>Analyze the competition; turn data into a decision.</p></div>
+      <div class="ca-card"><h2>Marketing</h2><p>A campaign from a brief, in one step.</p></div>
+      <div class="ca-card"><h2>Public services</h2><p>Passport, online criminal record, family doctor.</p></div>
     </div>
-    <p class="ca-small">Exemple din <a href="https://academy.tvl.tech/1M.AI/" target="_blank" rel="noopener">RO.1M.AI — academy.tvl.tech/1M.AI</a>.</p>
+    <p class="ca-small">Examples from <a href="https://academy.tvl.tech/1M.AI/" target="_blank" rel="noopener">RO.1M.AI — academy.tvl.tech/1M.AI</a>.</p>
   </div>
-  <footer><span>Prompt Engineering</span><span>15 / 16</span></footer>
-  <aside class="notes">Prompting-ul bun ajută în viața și munca de zi cu zi, nu doar în proiecte tehnice.</aside>
+  <footer><span>Prompt Engineering</span><span>21 / 22</span></footer>
+  <aside class="notes">Good prompting helps in everyday life and work, not only in technical projects.</aside>
 </section></div>
 
-<!-- 16 Recapitulare -->
+<!-- 16 Recap -->
 <div class="slide-frame"><section class="slide ca" id="s16">
-  <header><span>Încheiere</span></header>
+  <header><span>Closing</span></header>
   <div class="content">
-    <h1>Recapitulare și exercițiu</h1>
-    <p class="ca-lead">Un prompt bun =
-      <span class="ca-pill">context</span><span class="ca-pill">sarcină clară</span><span class="ca-pill">format</span><span class="ca-pill">constrângeri</span>
-      — plus iterare și verificare.</p>
+    <h1>Recap and exercise</h1>
+    <p class="ca-lead">A good prompt =
+      <span class="ca-pill">context</span><span class="ca-pill">clear task</span><span class="ca-pill">format</span><span class="ca-pill">constraints</span>
+      — plus iteration and verification.</p>
     <div class="ca-card" style="margin-top:8px">
-      <h2>Exercițiu</h2>
-      <p>1. Alege o sarcină reală (email, rezumat, plan).<br>
-      2. Scrie un prompt <strong>CROFC</strong> pentru ea.<br>
-      3. Rulează, observă, apoi schimbă o singură secțiune și compară.<br>
-      4. Cere modelului, prin metaprompting, să-ți îmbunătățească promptul.</p>
+      <h2>Exercise</h2>
+      <p>1. Pick a real task (email, summary, plan).<br>
+      2. Write a <strong>CROFC</strong> prompt for it.<br>
+      3. Run it, observe, then change one section and compare.<br>
+      4. Use metaprompting to have the model improve your prompt.</p>
     </div>
-    <p class="ca-small">Vezi și cursul „Cum construim un agent conversațional" — unde promptul devine creierul unui agent.</p>
+    <p class="ca-small">See also „How we build a conversational agent" — where the prompt becomes an agent's brain.</p>
   </div>
-  <footer><span>Prompt Engineering</span><span>16 / 16</span></footer>
-  <aside class="notes">Exercițiul consolidează: structură (CROFC), iterare (o schimbare pe rând) și metaprompting.</aside>
+  <footer><span>Prompt Engineering</span><span>22 / 22</span></footer>
+  <aside class="notes">The exercise reinforces: structure (CROFC), iteration (one change at a time) and metaprompting.</aside>
 </section></div>
 
 </main>
