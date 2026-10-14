@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prompt Engineering · Ingineria algoritmilor pentru sisteme AI</title>
+<link rel="stylesheet" href="css/curs.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  /* Design editorial-tech, modern. Scheletul de slide vine din css/curs.css;
+     aici suprascriem pentru un aspect propriu (rece, de inginerie). */
+  :root{
+    --ink:#0f1115; --ink-2:#2a2f3a; --muted:#6b7280;
+    --line:#e4e7ec; --panel:#f6f7f9; --accent:#4f46e5; --accent-soft:#eef0fb;
+    --code-bg:#0f1115; --code-fg:#e6e8ec;
+  }
+  .ca .content{ max-height:none; color:var(--ink); }
+  .ca h1{ font-weight:800; letter-spacing:-.03em; color:var(--ink); }
+  .ca h2{ letter-spacing:-.01em; }
+
+  /* Antet ca etichetă mono, cu bară de accent */
+  .ca header span{ font-family:ui-monospace,Consolas,monospace !important; text-transform:uppercase;
+    letter-spacing:.14em; font-size:18px !important; color:var(--ink) !important; }
+  .ca:not(.cover) header{ border-bottom:1px solid var(--line); padding-bottom:12px; }
+  .ca:not(.cover) header span:first-child::before{ content:""; display:inline-block; width:22px; height:3px;
+    background:var(--accent); margin-right:12px; vertical-align:middle; }
+
+  /* Fără emoji (aspect „AI assistant") */
+  .ca .ic{ display:none !important; }
+
+  /* Suprascrie accentele calde din tema de bază */
+  .ca code{ color:var(--accent); background:var(--accent-soft); padding:1px 6px; border-radius:5px; font-size:.93em; }
+  .ca pre{ background:var(--code-bg); color:var(--code-fg); border:1px solid #1b1f2a; border-radius:12px; }
+  .ca pre code{ color:var(--code-fg); background:transparent; padding:0; font-size:1em; }
+  .ca th{ color:var(--ink); border-bottom:2px solid var(--accent); }
+  .ca td, .ca th{ border-bottom:1px solid var(--line); }
+  .ca blockquote{ border-left:4px solid var(--accent); }
+
+  /* Eyebrow / lead */
+  .ca-eyebrow{ font-family:ui-monospace,Consolas,monospace; text-transform:uppercase; letter-spacing:.2em;
+    font-size:19px; font-weight:700; color:var(--accent); margin:0 0 10px; }
+  .ca-lead{ font-size:29px !important; color:var(--ink-2); max-width:1260px; line-height:1.4; }
+  .ca-small{ font-size:21px !important; color:var(--muted); }
+
+  /* Copertă */
+  .ca-cover .content{ display:flex; flex-direction:column; justify-content:center; }
+  .ca-cover h1{ font-size:88px !important; line-height:1.0; margin:14px 0 26px; }
+  .ca-cover h1 .accent{ color:var(--accent); }
+  .ca-cover .ca-meta{ margin-top:50px; display:flex; gap:40px; flex-wrap:wrap;
+    font-family:ui-monospace,Consolas,monospace; color:var(--muted); font-size:20px; }
+  .ca-cover .ca-meta b{ color:var(--ink); font-weight:700; }
+
+  /* Carduri — albe, chenar fin, numerotate automat */
+  .ca-grid{ display:grid; grid-template-columns:1fr 1fr; gap:22px; margin:26px 0; counter-reset:card; }
+  .ca-grid.three{ grid-template-columns:repeat(3,1fr); }
+  .ca-card{ position:relative; background:#fff; border:1px solid var(--line); border-radius:12px; padding:24px 26px; }
+  .ca-grid > .ca-card{ counter-increment:card; padding-top:46px; }
+  .ca-grid > .ca-card::before{ content:counter(card,decimal-leading-zero); position:absolute; top:20px; left:26px;
+    font-family:ui-monospace,Consolas,monospace; font-weight:700; font-size:16px; letter-spacing:.1em; color:var(--accent); }
+  .ca-card h2{ font-size:25px !important; margin:0 0 10px; color:var(--ink); }
+  .ca-card p{ font-size:22px !important; line-height:1.45; color:var(--ink-2); margin:0; }
+
+  /* Notă */
+  .ca-note{ border:1px solid var(--line); border-left:4px solid var(--accent); background:var(--panel);
+    border-radius:0 12px 12px 0; padding:16px 24px; margin:24px 0 0; font-size:23px; color:var(--ink); }
+
+  /* Roluri (tonuri reci, bară de accent sus) */
+  .ca-roles{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin:30px 0; }
+  .ca-role{ background:#fff; border:1px solid var(--line); border-top:3px solid var(--rc,#94a3b8);
+    border-radius:12px; padding:22px 20px; }
+  .ca-role code{ font-family:ui-monospace,Consolas,monospace; font-size:23px; font-weight:700;
+    background:transparent; color:var(--ink); padding:0; }
+  .ca-role p{ font-size:20px !important; color:var(--ink-2); margin:10px 0 0; line-height:1.4; }
+  .ca-role.system{ --rc:#2563eb; } .ca-role.user{ --rc:#059669; }
+  .ca-role.assistant{ --rc:#7c3aed; } .ca-role.tool{ --rc:#d97706; }
+
+  /* Grila de framework (CROFC / CROTATFC) */
+  .ca-croft{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:26px 0 0; }
+  .ca-croft > div{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px 18px; }
+  .ca-croft .l{ font-family:ui-monospace,Consolas,monospace; font-size:34px; font-weight:800; color:var(--accent); line-height:1; }
+  .ca-croft b{ display:block; font-size:20px; color:var(--ink); margin:8px 0 4px; }
+  .ca-croft span{ font-size:17px; color:var(--muted); line-height:1.35; display:block; }
+
+  /* Flux / diagrame */
+  .ca-flow{ display:flex; align-items:center; justify-content:center; gap:10px; margin:28px 0 12px; flex-wrap:wrap; }
+  .ca-box{ background:var(--ink); color:#fff; border-radius:10px; padding:18px 28px; font-size:25px; font-weight:700;
+    text-align:center; letter-spacing:-.01em; }
+  .ca-box small{ display:block; font-weight:400; font-size:17px; opacity:.72; margin-top:4px; }
+  .ca-box.alt{ background:#fff; color:var(--ink); border:1.5px solid var(--ink); }
+  .ca-box.acc{ background:var(--accent); color:#fff; }
+  .ca-arr{ color:var(--accent); font-size:36px; font-weight:800; padding:0 4px; }
+  .ca-arr small{ display:block; font-size:16px; color:var(--muted); font-weight:600; text-align:center;
+    font-family:ui-monospace,Consolas,monospace; }
+  .ca-loop{ display:flex; align-items:center; justify-content:center; gap:16px; margin-top:12px;
+    background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px 24px; }
+  .ca-loop .cyc{ color:var(--accent); font-size:24px; font-weight:800; font-family:ui-monospace,Consolas,monospace; }
+  .ca-loop span{ font-size:20px; color:var(--ink-2); }
+
+  /* Unelte */
+  .ca-tools{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0; }
+  .ca-tool{ display:block; background:#fff; border:1px solid var(--line); border-left:3px solid var(--accent);
+    border-radius:10px; padding:18px 22px; }
+  .ca-tool b{ font-family:ui-monospace,Consolas,monospace; font-size:22px; color:var(--accent); }
+  .ca-tool p{ margin:6px 0 0; font-size:21px !important; color:var(--ink-2); line-height:1.4; }
+
+  /* Arhitectură pe straturi */
+  .ca-arch{ margin:24px 0; }
+  .ca-layer{ display:flex; align-items:baseline; gap:20px; background:#fff; border:1px solid var(--line);
+    border-left:3px solid var(--accent); border-radius:10px; padding:15px 22px; margin-bottom:11px; }
+  .ca-layer b{ font-family:ui-monospace,Consolas,monospace; font-size:22px; color:var(--ink); min-width:130px; }
+  .ca-layer span{ font-size:20px; color:var(--muted); }
+  .ca-layer strong{ color:var(--accent); }
+
+  /* Pastile */
+  .ca-pill{ display:inline-block; background:var(--accent-soft); color:var(--accent); font-weight:700;
+    font-family:ui-monospace,Consolas,monospace; font-size:20px; padding:6px 16px; border-radius:6px; margin:0 8px 10px 0; }
+
+  /* Animație discretă la intrarea în ecran */
+  @media (prefers-reduced-motion: no-preference){
+    body.ca-ready .ca .content > *{ opacity:0; transform:translateY(14px); }
+    body.ca-ready .ca.ca-in .content > *{ animation:caUp .5s cubic-bezier(.16,1,.3,1) forwards; }
+    body.ca-ready .ca.ca-in .content > *:nth-child(2){ animation-delay:.06s; }
+    body.ca-ready .ca.ca-in .content > *:nth-child(3){ animation-delay:.12s; }
+    body.ca-ready .ca.ca-in .content > *:nth-child(4){ animation-delay:.18s; }
+    body.ca-ready .ca.ca-in .content > *:nth-child(5){ animation-delay:.24s; }
+    @keyframes caUp{ to{ opacity:1; transform:none; } }
+  }
+
+  /* ---- Beauty pass: fonturi, centrare verticală, adâncime ---- */
+  .ca, .ca .content{ font-family:'Inter','Open Sans',system-ui,-apple-system,sans-serif; }
+  .ca h1, .ca h2, .ca-box{ font-family:'Space Grotesk','Inter',system-ui,sans-serif; letter-spacing:-.02em; }
+  .ca.slide{ display:flex !important; flex-direction:column; }
+  .ca .content{ flex:1; display:flex; flex-direction:column; justify-content:center; }
+  .ca-card, .ca-role, .ca-croft > div, .ca-tool, .ca-layer, .ca-loop{
+    box-shadow:0 1px 2px rgba(16,17,21,.045), 0 14px 34px -22px rgba(16,17,21,.22); }
+  .ca pre{ box-shadow:0 16px 44px -24px rgba(16,17,21,.55); }
+  .ca-note{ box-shadow:0 1px 2px rgba(16,17,21,.04); }
+  /* coperta e vizibilă imediat, nu depinde de animație */
+  body.ca-ready .ca-cover .content > *{ opacity:1 !important; transform:none !important; animation:none !important; }
+
+  /* ---- Fix suprapunere cu footer ---- */
+  .ca .content{ padding-bottom:48px; justify-content:safe center; }
+  .ca.code-slide .content, .ca.dense .content{ justify-content:flex-start; }
+  .ca pre{ font-size:21px !important; line-height:1.45 !important; margin:16px 0 !important; }
+  .ca.code-slide .ca-lead{ font-size:24px !important; margin-bottom:12px; }
+  #s4c pre{ font-size:18px !important; line-height:1.45 !important; }
+  .ca a{ color:var(--accent); text-decoration-color:rgba(79,70,229,.4); }
+
+</style>
+</head>
+<body>
+<main id="stage">
+
+<!-- 1 Coperta -->
+<div class="slide-frame"><section class="slide cover ca ca-cover" id="s1">
+  <header><span>Ingineria algoritmilor pentru sisteme AI</span></header>
+  <div class="content">
+    <p class="ca-eyebrow">Modul · Prompt Engineering</p>
+    <h1>Prompt<br><span class="accent">Engineering</span></h1>
+    <p class="ca-lead">Cum ceri bine unui model, ca să primești răspunsuri utile, consecvente și verificabile.</p>
+    <div class="ca-meta"><span><b>Framework:</b> CROFC</span><span><b>De la:</b> prompt vag &rarr; prompt de inginerie</span></div>
+  </div>
+  <footer><span>Prompt Engineering</span><span>1 / 16</span></footer>
+  <aside class="notes">Curs separat despre prompt engineering. Aceleași principii se folosesc și în agentul AlgoTutor.</aside>
+</section></div>
+
+<!-- 2 Obiective -->
+<div class="slide-frame"><section class="slide ca" id="s2">
+  <header><span>Introducere</span></header>
+  <div class="content">
+    <h1>Ce vei învăța</h1>
+    <div class="ca-grid three">
+      <div class="ca-card"><h2>Mesaje cu roluri</h2><p>system, user, assistant — și ce rol are fiecare.</p></div>
+      <div class="ca-card"><h2>Framework CROFC</h2><p>Un prompt bun în 5 pași: Context, Rol, Obiectiv, Format, Constrângeri.</p></div>
+      <div class="ca-card"><h2>Tehnici</h2><p>Few-shot, chain-of-thought, format &amp; constrângeri.</p></div>
+      <div class="ca-card"><h2>Metaprompting</h2><p>Pune AI-ul să scrie și să-ți îmbunătățească promptul.</p></div>
+      <div class="ca-card"><h2>Capcane &amp; siguranță</h2><p>Ambiguitate, prompt injection, date personale.</p></div>
+      <div class="ca-card"><h2>Verificare</h2><p>Recunoaște halucinațiile; verifică înainte de a folosi.</p></div>
+    </div>
+  </div>
+  <footer><span>Prompt Engineering</span><span>2 / 16</span></footer>
+  <aside class="notes">Parcurs practic: de la ce e un prompt, la un framework și tehnici, apoi capcane și verificare.</aside>
+</section></div>
+
+<!-- 3 Ce este un prompt -->
+<div class="slide-frame"><section class="slide ca" id="s3">
+  <header><span>1. Fundamente</span></header>
+  <div class="content">
+    <h1>Ce este un prompt</h1>
+    <p class="ca-lead">Promptul este instrucțiunea pe care o dai modelului. <strong>Același model, prompturi diferite &rarr; rezultate diferite.</strong></p>
+    <div class="ca-grid">
+      <div class="ca-card"><h2>Vag</h2><p>„Scrie despre Paris." &rarr; răspuns generic, imprevizibil.</p></div>
+      <div class="ca-card"><h2>Bun</h2><p>„Scrie 3 propoziții despre Paris pentru un elev de clasa a 5-a, în română." &rarr; util și controlat.</p></div>
+    </div>
+    <div class="ca-note">Prompt engineering = arta de a fi <b>explicit</b>: ce vrei, pentru cine, în ce formă.</div>
+  </div>
+  <footer><span>Prompt Engineering</span><span>3 / 16</span></footer>
+  <aside class="notes">Ideea-cheie: controlul vine din specificitate. Un prompt bun reduce ambiguitatea.</aside>
+</section></div>
+
+<!-- 4 Roluri -->
+<div class="slide-frame"><section class="slide ca" id="s4">
+  <header><span>1. Fundamente</span></header>
+  <div class="content">
+    <h1>Mesaje cu roluri</h1>
+    <p class="ca-lead">O conversație este o listă de mesaje, fiecare cu un rol:</p>
+    <div class="ca-roles">
+      <div class="ca-role system"><code>system</code><p>Instrucțiunile generale: cine e modelul și cum răspunde.</p></div>
+      <div class="ca-role user"><code>user</code><p>Întrebarea sau cererea concretă.</p></div>
+      <div class="ca-role assistant"><code>assistant</code><p>Răspunsul modelului, păstrat în istoric.</p></div>
+      <div class="ca-role tool"><code>tool</code><p>Rezultatul unei unelte (la agenți).</p></div>
+    </div>
+    <p class="ca-small">Promptul „de sistem" e locul unde pui regulile stabile ale conversației.</p>
+  </div>
+  <footer><span>Prompt Engineering</span><span>4 / 16</span></footer>
+  <aside class="notes">system = reguli; user = cerere; assistant = răspuns. Modelul nu ține minte singur — istoricul se retrimite.</aside>
+</section></div>
+
+<!-- 5 Anatomia -->
+<div class="slide-frame"><section class="slide ca" id="s5">
+  <header><span>2. Framework</span></header>
+  <div class="content">
+    <h1>Anatomia unui prompt bun</h1>
+    <div class="ca-grid three">
+      <div class="ca-card"><h2>Context</h2><p>Fundalul relevant de care are nevoie modelul.</p></div>
+      <div class="ca-card"><h2>Sarcină clară</h2><p>Ce anume vrei, cu un verb concret.</p></div>
+      <div class="ca-card"><h2>Format dorit</h2><p>Listă, tabel, JSON, număr de cuvinte.</p></div>
+      <div class="ca-card"><h2>Exemple</h2><p>Arată o mostră de intrare &rarr; ieșire.</p></div>
+      <div class="ca-card"><h2>Ton &amp; audiență</h2><p>Pentru cine și în ce stil.</p></div>
+      <div class="ca-card"><h2>Constrângeri</h2><p>Ce să NU facă; limite de lungime, surse.</p></div>
+    </div>
+  </div>
+  <footer><span>Prompt Engineering</span><span>5 / 16</span></footer>
+  <aside class="notes">Aceste ingrediente se regăsesc, structurate, în framework-ul CROFC de pe slide-ul următor.</aside>
+</section></div>
+
+<!-- 6 CROFC -->
+<div class="slide-frame"><section class="slide ca" id="s6">
+  <header><span>2. Framework</span></header>
+  <div class="content">
+    <h1>CROFC — un prompt bun în 5 pași</h1>
+    <p class="ca-lead">Pentru majoritatea sarcinilor, începe cu cinci elemente.</p>
+    <div class="ca-croft" style="grid-template-columns:repeat(5,1fr)">
+      <div><div class="l">C</div><b>Context</b><span>Situația, informațiile și audiența.</span></div>
+      <div><div class="l">R</div><b>Rol</b><span>Cine trebuie să fie AI.</span></div>
+      <div><div class="l">O</div><b>Obiectiv</b><span>Ce vrei să obții de la AI.</span></div>
+      <div><div class="l">F</div><b>Format</b><span>Cum trebuie să arate răspunsul.</span></div>
+      <div><div class="l">C</div><b>Constrângeri</b><span>Reguli, limite și tonul dorit.</span></div>
+    </div>
+    <div class="ca-note">Pentru <b>agenți</b> (sarcini complexe) extinzi la <b>CROTATFC</b> — adaugi Tasks, Audience, Tone. Vezi cursul despre agenți.</div>
+  </div>
+  <footer><span>Prompt Engineering</span><span>6 / 16</span></footer>
+  <aside class="notes">CROFC = Context, Rol, Obiectiv, Format, Constrângeri (din RO.1M.AI). Framework simplu pentru majoritatea sarcinilor; CROTATFC e varianta extinsă pentru agenți.</aside>
+</section></div>
+
+<!-- 7 Vag vs structurat -->
+<div class="slide-frame"><section class="slide code-slide ca" id="s7">
+  <header><span>2. Framework</span></header>
+  <div class="content">
+    <h1>Vag vs. structurat</h1>
+    <div class="ca-grid">
+      <div class="ca-card"><h2>Vag</h2><p>„Scrie-mi o ofertă pentru un client."</p></div>
+      <div class="ca-card"><h2>CROFC</h2><p>Context + Rol + Obiectiv + Format + Constrângeri &rarr; răspuns gata de folosit.</p></div>
+    </div>
+    <pre><code>C — Context      Pregătesc o ofertă pentru un client nou, fără experiență tehnică.
+R — Rol          Acționează ca un consultant de business.
+O — Obiectiv     Scrie oferta pe baza serviciilor mele.
+F — Format       Răspunde în 5 puncte clare.
+C — Constrângeri Maximum 120 de cuvinte, ton profesionist, fără jargon.</code></pre>
+  </div>
+  <footer><span>Prompt Engineering</span><span>7 / 16</span></footer>
+  <aside class="notes">Același obiectiv, dar structura face rezultatul predictibil și reutilizabil (șablon).</aside>
+</section></div>
+
+<!-- 8 Few-shot -->
+<div class="slide-frame"><section class="slide code-slide ca" id="s8">
+  <header><span>3. Tehnici</span></header>
+  <div class="content">
+    <h1>Zero-shot vs. few-shot</h1>
+    <p class="ca-lead">La <b>few-shot</b> dai câteva exemple de intrare &rarr; ieșire. Modelul imită tiparul.</p>
+    <pre><code>Clasifică sentimentul (pozitiv / negativ):
+
+Text: „Livrare rapidă, sunt încântat!"   -> pozitiv
+Text: „Produsul s-a stricat în 2 zile."   -> negativ
+Text: „Ambalaj frumos, dar scump."        -></code></pre>
+    <p class="ca-small">2–5 exemple sunt de obicei suficiente. Exemplele arată formatul exact al răspunsului.</p>
+  </div>
+  <footer><span>Prompt Engineering</span><span>8 / 16</span></footer>
+  <aside class="notes">Zero-shot = fără exemple. Few-shot = cu exemple. Exemplele fixează atât sarcina, cât și forma ieșirii.</aside>
+</section></div>
+
+<!-- 9 Chain of thought -->
+<div class="slide-frame"><section class="slide ca" id="s9">
+  <header><span>3. Tehnici</span></header>
+  <div class="content">
+    <h1>Gândește pas cu pas</h1>
+    <p class="ca-lead">La probleme cu raționament, cere modelului să explice pașii înainte de răspuns (<em>chain-of-thought</em>).</p>
+    <div class="ca-grid">
+      <div class="ca-card"><h2>Fără</h2><p>„Cât fac 17 × 24?" &rarr; răspuns direct, uneori greșit.</p></div>
+      <div class="ca-card"><h2>Cu</h2><p>„Rezolvă pas cu pas, apoi dă rezultatul." &rarr; mai fiabil la calcul și logică.</p></div>
+    </div>
+    <div class="ca-note">Util pentru matematică, logică, decizii. Dezavantaj: răspuns mai lung și mai lent.</div>
+  </div>
+  <footer><span>Prompt Engineering</span><span>9 / 16</span></footer>
+  <aside class="notes">„Let's think step by step" îmbunătățește raționamentul. Pentru răspuns final curat, cere la final doar rezultatul.</aside>
+</section></div>
+
+<!-- 10 Format & constrangeri -->
+<div class="slide-frame"><section class="slide ca" id="s10">
+  <header><span>3. Tehnici</span></header>
+  <div class="content">
+    <h1>Format și constrângeri</h1>
+    <div class="ca-grid three">
+      <div class="ca-card"><h2>Cere forma</h2><p>„Răspunde doar cu JSON", „listă cu 5 puncte", „tabel".</p></div>
+      <div class="ca-card"><h2>Limitează</h2><p>„Sub 100 de cuvinte", „maxim 3 variante".</p></div>
+      <div class="ca-card"><h2>Spune ce să NU facă</h2><p>„Fără introduceri", „nu inventa surse".</p></div>
+    </div>
+    <div class="ca-note">Un format explicit face răspunsul <b>ușor de folosit automat</b> (parsare, copiere, integrare).</div>
+  </div>
+  <footer><span>Prompt Engineering</span><span>10 / 16</span></footer>
+  <aside class="notes">Constrângerile negative („nu face X") sunt la fel de importante ca cele pozitive.</aside>
+</section></div>
+
+<!-- 11 Metaprompting -->
+<div class="slide-frame"><section class="slide ca" id="s11">
+  <header><span>3. Tehnici</span></header>
+  <div class="content">
+    <h1>Metaprompting cu CROFC</h1>
+    <p class="ca-lead">Nu compui promptul de la zero — îi ceri modelului să-l genereze sau să-l îmbunătățească.</p>
+    <div class="ca-note" style="font-style:italic">„Scrie un prompt în stil CROFC pentru un asistent de scris CV-uri. Întoarce doar promptul, pe secțiuni."</div>
+    <div class="ca-grid three">
+      <div class="ca-card"><h2>Descrie scopul</h2><p>Ce vrei să facă asistentul.</p></div>
+      <div class="ca-card"><h2>Cere structura</h2><p>„Pe secțiuni CROFC".</p></div>
+      <div class="ca-card"><h2>Rafinează</h2><p>„Fă Constraints mai stricte", „adaugă un exemplu".</p></div>
+    </div>
+    <p class="ca-small">Verifici și editezi rezultatul — nu îl accepți orbește. Inspirat din RO.1M.AI.</p>
+  </div>
+  <footer><span>Prompt Engineering</span><span>11 / 16</span></footer>
+  <aside class="notes">Modelul e bun la a-și structura propriile instrucțiuni. Folosește-l ca asistent de prompting.</aside>
+</section></div>
+
+<!-- 12 Iterarea -->
+<div class="slide-frame"><section class="slide ca" id="s12">
+  <header><span>3. Tehnici</span></header>
+  <div class="content">
+    <h1>Promptul e un proces</h1>
+    <div class="ca-flow">
+      <div class="ca-box">Scrie</div><span class="ca-arr">&rarr;</span>
+      <div class="ca-box alt">Rulează</div><span class="ca-arr">&rarr;</span>
+      <div class="ca-box alt">Observă</div><span class="ca-arr">&rarr;</span>
+      <div class="ca-box acc">Rafinează</div>
+    </div>
+    <div class="ca-note">Rar nimerești din prima. Schimbă <b>un singur lucru</b> pe rând și compară rezultatele.</div>
+  </div>
+  <footer><span>Prompt Engineering</span><span>12 / 16</span></footer>
+  <aside class="notes">Iterarea controlată (o schimbare pe rând) te ajută să înțelegi ce anume a îmbunătățit răspunsul.</aside>
+</section></div>
+
+<!-- 13 Capcane & injection -->
+<div class="slide-frame"><section class="slide ca" id="s13">
+  <header><span>4. Capcane &amp; siguranță</span></header>
+  <div class="content">
+    <h1>Capcane și prompt injection</h1>
+    <div class="ca-grid three">
+      <div class="ca-card"><h2>Ambiguitate</h2><p>Cereri vagi &rarr; răspunsuri imprevizibile.</p></div>
+      <div class="ca-card"><h2>Suprasolicitare</h2><p>Prea multe cerințe deodată &rarr; modelul ratează unele.</p></div>
+      <div class="ca-card"><h2>Prompt injection</h2><p>Text din surse care „dă ordine" modelului.</p></div>
+    </div>
+    <div class="ca-note"><b>Regulă de aur:</b> tratează textul din documente, pagini sau fișiere ca <b>date</b>, nu ca instrucțiuni. Nu lipi date personale în prompt.</div>
+  </div>
+  <footer><span>Prompt Engineering</span><span>13 / 16</span></footer>
+  <aside class="notes">Prompt injection: o pagină poate conține „ignoră instrucțiunile și fă X". Modelul nu trebuie să execute ce scrie în surse.</aside>
+</section></div>
+
+<!-- 14 Verifica -->
+<div class="slide-frame"><section class="slide ca" id="s14">
+  <header><span>4. Capcane &amp; siguranță</span></header>
+  <div class="content">
+    <h1>Verifică mereu răspunsul</h1>
+    <p class="ca-lead">Un răspuns bine scris poate fi totuși <strong>greșit</strong>. Modelele pot inventa fapte, surse și citdate (halucinații).</p>
+    <div class="ca-grid">
+      <div class="ca-card"><h2>Semne de alarmă</h2><p>Surse care „sună credibil", cifre precise fără sursă, siguranță excesivă.</p></div>
+      <div class="ca-card"><h2>Ce faci</h2><p>Cere sursele, verifică-le, recitește; la decizii, confirmă cu un om.</p></div>
+    </div>
+    <div class="ca-note">Exemplu real: un raport livrat cu surse inventate. Verificarea rămâne responsabilitatea omului.</div>
+  </div>
+  <footer><span>Prompt Engineering</span><span>14 / 16</span></footer>
+  <aside class="notes">Halucinație = conținut plauzibil dar fals. Niciun prompt nu elimină complet riscul; verificarea e obligatorie.</aside>
+</section></div>
+
+<!-- 15 Use cases -->
+<div class="slide-frame"><section class="slide ca" id="s15">
+  <header><span>5. În practică</span></header>
+  <div class="content">
+    <h1>Prompting în viața reală</h1>
+    <p class="ca-lead">Aceleași principii se aplică departe de cod:</p>
+    <div class="ca-grid three">
+      <div class="ca-card"><h2>Plan de weekend</h2><p>„Caută activități turistice în Sibiu pentru două zile."</p></div>
+      <div class="ca-card"><h2>CV &amp; scrisoare</h2><p>CV Europass în engleză; scrisoare de intenție.</p></div>
+      <div class="ca-card"><h2>Compară produse</h2><p>Două variante, după nevoile tale.</p></div>
+      <div class="ca-card"><h2>Decizii din date</h2><p>Analizează competiția; transformă datele într-o decizie.</p></div>
+      <div class="ca-card"><h2>Marketing</h2><p>O campanie dintr-un brief, într-un pas.</p></div>
+      <div class="ca-card"><h2>Servicii publice</h2><p>Pașaport, cazier online, medic de familie.</p></div>
+    </div>
+    <p class="ca-small">Exemple din <a href="https://academy.tvl.tech/1M.AI/" target="_blank" rel="noopener">RO.1M.AI — academy.tvl.tech/1M.AI</a>.</p>
+  </div>
+  <footer><span>Prompt Engineering</span><span>15 / 16</span></footer>
+  <aside class="notes">Prompting-ul bun ajută în viața și munca de zi cu zi, nu doar în proiecte tehnice.</aside>
+</section></div>
+
+<!-- 16 Recapitulare -->
+<div class="slide-frame"><section class="slide ca" id="s16">
+  <header><span>Încheiere</span></header>
+  <div class="content">
+    <h1>Recapitulare și exercițiu</h1>
+    <p class="ca-lead">Un prompt bun =
+      <span class="ca-pill">context</span><span class="ca-pill">sarcină clară</span><span class="ca-pill">format</span><span class="ca-pill">constrângeri</span>
+      — plus iterare și verificare.</p>
+    <div class="ca-card" style="margin-top:8px">
+      <h2>Exercițiu</h2>
+      <p>1. Alege o sarcină reală (email, rezumat, plan).<br>
+      2. Scrie un prompt <strong>CROFC</strong> pentru ea.<br>
+      3. Rulează, observă, apoi schimbă o singură secțiune și compară.<br>
+      4. Cere modelului, prin metaprompting, să-ți îmbunătățească promptul.</p>
+    </div>
+    <p class="ca-small">Vezi și cursul „Cum construim un agent conversațional" — unde promptul devine creierul unui agent.</p>
+  </div>
+  <footer><span>Prompt Engineering</span><span>16 / 16</span></footer>
+  <aside class="notes">Exercițiul consolidează: structură (CROFC), iterare (o schimbare pe rând) și metaprompting.</aside>
+</section></div>
+
+</main>
+<script>
+  function fitSlides(){document.documentElement.style.setProperty('--slide-scale',Math.min(1,Math.max(0.1,(window.innerWidth-32)/1600)))}
+  fitSlides(); window.addEventListener('resize', fitSlides);
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.body.classList.add('ca-ready');
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) { e.target.classList.add('ca-in'); io.unobserve(e.target); }
+    }, { threshold: 0.25 });
+    document.querySelectorAll('.ca').forEach((s) => io.observe(s));
+  }
+</script>
+</body>
+</html>
