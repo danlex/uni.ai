@@ -136,6 +136,7 @@
   .ca-note{ box-shadow:0 1px 2px rgba(16,17,21,.04); }
   /* coperta e vizibilă imediat, nu depinde de animație */
   body.ca-ready .ca-cover .content > *{ opacity:1 !important; transform:none !important; animation:none !important; }
+  body.ca-ready .slide-frame.tall .content > *{ opacity:1 !important; transform:none !important; animation:none !important; }
 
   /* ---- Fix suprapunere cu footer ---- */
   .ca .content{ padding-bottom:48px; justify-content:safe center; }
@@ -1234,16 +1235,24 @@ Return only the finished prompt, ready to paste.</code></pre>
 <div class="slide-frame"><section class="slide ca" id="smj">
   <header><span>3. Techniques</span></header>
   <div class="content">
-    <h1>A Midjourney prompt</h1>
-    <p class="ca-lead">A finished Midjourney prompt and the image it produced. Subject first, then style and lighting, then the parameters.</p>
+    <h1>Metaprompt: a Midjourney image</h1>
+    <p class="ca-lead">Metaprompting is not only for text. Describe what you want; let the model write the Midjourney prompt, with the right style words and parameters.</p>
     <div class="md-two">
-      <div class="ca-prompt ex-violet">front view of a fully chrome-plated classic Mercedes-Benz 300 SLR coupe driving fast down a narrow forest road, mirror-polished metal body reflecting the surrounding trees, a driver faintly visible through the windshield, dappled sunlight, strong motion blur on the asphalt and the background, photorealistic automotive photography, shallow depth of field, cinematic --ar 4:3 --style raw --v 6</div>
+      <div class="ca-prompt meta ex-violet">Act as an expert Midjourney prompt engineer.
+Based on my brief, write ONE Midjourney prompt I can paste directly.
+Brief: a chrome-plated classic Mercedes sports car driving on a forest road.
+Rules:
+- Start with the subject, then style, composition, lighting and medium.
+- Use concrete visual words, not abstract ones.
+- End with parameters: --ar for aspect ratio, --style raw, --v 6.
+- Two or three comma-separated clauses.
+Return only the prompt.</div>
       <figure class="ca-figure" style="margin:0"><img src="img/midjourney-chrome-mercedes.png" alt="A chrome-plated classic Mercedes coupe on a forest road, made with Midjourney"><figcaption>Made with Midjourney</figcaption></figure>
     </div>
-    <p class="ca-small">Midjourney reads keywords, not sentences. You can have a model write a prompt like this for you (metaprompting); the next slide does the same for music.</p>
+    <p class="ca-small">Midjourney reads keywords, not sentences: subject first, then style and lighting, then parameters like <code>--ar 16:9</code>, <code>--style raw</code>, <code>--v 6</code>.</p>
   </div>
   <footer><span>Prompt Engineering</span><span>22 / 37</span></footer>
-  <aside class="notes">A concrete Midjourney prompt and its result. Note the order (subject, style, lighting) and the trailing parameters --ar, --style raw, --v 6.</aside>
+  <aside class="notes">Metaprompting applied to image generation. The model turns a plain brief into a keyword-style Midjourney prompt with parameters; the image is one such result.</aside>
 </section></div>
 
 <div class="slide-frame"><section class="slide ca" id="ssuno">
@@ -1254,7 +1263,7 @@ Return only the finished prompt, ready to paste.</code></pre>
     <div class="md-two">
       <div class="ca-prompt meta ex-rose">Act as an expert Suno prompt engineer.
 Based on my brief, write a song in two parts: a Style line and the Lyrics.
-Brief: [theme, mood, genre, language].
+Brief: a cinematic classical-orchestra piece in the style of the Interstellar soundtrack: epic and emotional, swelling strings and pipe organ, a slow build, instrumental.
 Rules:
 - Style: one line under 200 characters (genre, mood, tempo, instruments, vocals).
 - Lyrics: use tags like [Intro], [Verse], [Chorus], [Bridge], [Outro].
