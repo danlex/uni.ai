@@ -272,7 +272,7 @@
   .biz > div:nth-child(5){ --bc:#0891b2 } .biz > div:nth-child(6){ --bc:#db2777 }
   .biz > div:nth-child(7){ --bc:#2563eb } .biz > div:nth-child(8){ --bc:#059669 }
   /* widget-ul de prompt: pliabil (preview scurt implicit, Expand creste slide-ul) */
-  .ca-prompt.collapsible{ max-height:200px; overflow:hidden; }
+  .ca-prompt.collapsible{ max-height:105px; overflow:hidden; }
   .ca-prompt.collapsible.open{ max-height:none; overflow:visible; }
   .ca-prompt.collapsible:not(.open)::after{ content:""; position:absolute; left:1px; right:1px; bottom:1px; height:66px;
     background:linear-gradient(to bottom, rgba(246,247,249,0), var(--panel)); pointer-events:none; border-radius:0 0 11px 11px; }
@@ -304,6 +304,8 @@
   .uct .tools{ font-size:19px; font-weight:600; color:var(--rc,#4f46e5); }
   #sbiz h1, #sind h1{ margin-bottom:12px; }
   #sbiz .ca-lead, #sind .ca-lead{ margin:6px 0 2px; }
+  .ca-produces{ font-family:ui-monospace,Consolas,monospace; font-size:13px; letter-spacing:.04em; color:var(--muted); margin:12px 0 5px; }
+  .exc .ca-example .ca-prompt.meta{ margin-top:4px; }
   .slide-frame.tall{ overflow:hidden; }
   .ca.dense .content{ justify-content:flex-start; }
   .ca-prompt::before{ content:"PROMPT · copiază"; position:absolute; top:-12px; left:16px; background:var(--ex,#2563eb);
@@ -632,6 +634,8 @@ Return only the finished prompt, ready to paste.</code></pre>
       <div>
         <h3>Pick the right store for a RAG system</h3>
         <p class="scenario">A technical decision with real trade-offs.</p>
+        <div class="ca-prompt meta">Act as an expert prompt engineer. Using the CROTATFC framework, write a complete Markdown prompt for: choosing between pgvector, Qdrant and Pinecone for a RAG system over ~2M internal documents (team of 3, on GCP, 6-week deadline). Give each section its own ## heading. Return only the prompt.</div>
+        <p class="ca-produces">The model returns this prompt:</p>
         <div class="ca-prompt collapsible"><b class="mh">## Context</b>
 
 The retrieval-augmented-generation system is a critical component of our organization's information management strategy, designed to efficiently process and retrieve insights from approximately 2 million internal documents. These documents are hosted on Google Cloud, and the team is tasked with selecting the optimal vector search solution among pgvector, Qdrant, and Pinecone. The decision must account for the team's expertise in Postgres, the hosting environment, and the project timeline of 6 weeks. The system must ensure high retrieval accuracy, scalability, and seamless integration with existing infrastructure.
@@ -727,6 +731,8 @@ The report should be formatted as a formal technical document, including:
       <div>
         <h3>An olympiad algorithms tutor with search</h3>
         <p class="scenario">Search a real problem archive, then teach the full solution. Same spirit as the AlgoTutor project.</p>
+        <div class="ca-prompt meta">Act as an expert prompt engineer. Using the CROTATFC framework, write a complete Markdown prompt for: a tutor that searches a competitive-programming archive and teaches full solutions to olympiad problems. Give each section its own ## heading. Return only the prompt.</div>
+        <p class="ca-produces">The model returns this prompt:</p>
         <div class="ca-prompt collapsible"><b class="mh">## Context</b>
 
 In the competitive programming and computer science olympiad community, participants aim to enhance their problem-solving skills by tackling a wide range of algorithmic challenges. These challenges cover diverse topics such as graphs, dynamic programming, number theory, and geometry, with difficulty levels spanning from national olympiads up to the International Olympiad in Informatics (IOI). A tutoring assistant is crucial for providing structured learning experiences by identifying and explaining solutions to real-world problems, thereby aiding learners in their quest for excellence.
@@ -868,6 +874,8 @@ The tone should be **educational, supportive, and engaging**. Aim to inspire lea
       <div>
         <h3>Generate a runnable lesson cell</h3>
         <p class="scenario">An LLM call plus tokenization, ready for students to run.</p>
+        <div class="ca-prompt meta">Act as an expert prompt engineer. Using the CROTATFC framework, write a complete Markdown prompt for: a runnable Google Colab cell that calls an LLM and demonstrates tokenization with tiktoken. Give each section its own ## heading. Return only the prompt.</div>
+        <p class="ca-produces">The model returns this prompt:</p>
         <div class="ca-prompt collapsible"><b class="mh">## Context</b>
 
 Large Language Models (LLMs) are transformative in the field of artificial intelligence, enabling machines to understand and generate human-like text. These models are trained on vast datasets and have the ability to perform a wide range of language tasks. Understanding how these models tokenize and process text is crucial for students who are diving into the world of AI and NLP. This Google Colab notebook cell aims to provide a hands-on learning experience, demonstrating the tokenization process using the `tiktoken` library and showcasing how to interact with a language model via a simple API. By using a fallback mechanism with OpenRouter, the notebook ensures robustness and reliability, allowing students to focus on learning without technical interruptions.
@@ -953,6 +961,8 @@ The tone of the notebook should be **educational** and **encouraging**, aiming t
       <div>
         <h3>Teach at the right level</h3>
         <p class="scenario">Definition, analogy, worked example and a check question.</p>
+        <div class="ca-prompt meta">Act as an expert prompt engineer. Using the CROTATFC framework, write a complete Markdown prompt for: explaining an AI or CS concept to a student at a chosen level, with an analogy, a worked example and a check question. Give each section its own ## heading. Return only the prompt.</div>
+        <p class="ca-produces">The model returns this prompt:</p>
         <div class="ca-prompt collapsible"><b class="mh">## Context</b>
 
 The user is requesting a comprehensive, educational, and tailored explanation of a specific AI or computer science concept. This explanation needs to be accessible and engaging, ensuring that the student can grasp the concept's fundamentals, relate it to real-world scenarios, and avoid common pitfalls. The explanation should be thorough and pedagogically sound, providing a solid foundation for further learning.
@@ -1072,6 +1082,8 @@ The tone should be **informative, engaging, and supportive**. Aim to inspire cur
       <div>
         <h3>Fetch today's prices into a table</h3>
         <p class="scenario">Live data: needs an AI with web access (an agent).</p>
+        <div class="ca-prompt meta">Act as an expert prompt engineer. Using the CROTATFC framework, write a complete Markdown prompt for: an agent with web access that fetches today's iPhone prices from eMAG.ro into a verifiable table. Give each section its own ## heading. Return only the prompt.</div>
+        <p class="ca-produces">The model returns this prompt:</p>
         <div class="ca-prompt collapsible"><b class="mh">## Context</b>
 
 In October 2026, a comprehensive consumer buying guide is being developed to assist potential buyers in making informed decisions about purchasing the latest iPhone models. The guide requires accurate and up-to-date pricing information for the iPhone 15, 15 Pro, 16, and 16 Pro models from eMAG.ro, a leading e-commerce platform in Romania. This information is crucial for comparing prices, understanding market trends, and identifying the best purchase options available. The data must be fetched in real-time and presented in a verifiable format to ensure reliability and accuracy. The guide aims to provide insights into price variations, stock availability, and seller reputations.
@@ -1167,6 +1179,8 @@ The tone should be professional, precise, and informative. Use clear and concise
       <div>
         <h3>Generate fake-but-realistic test data</h3>
         <p class="scenario">Synthetic data: works on any model, no internet.</p>
+        <div class="ca-prompt meta">Act as an expert prompt engineer. Using the CROTATFC framework, write a complete Markdown prompt for: a GDPR-safe synthetic dataset of five junior-developer CVs as JSON. Give each section its own ## heading. Return only the prompt.</div>
+        <p class="ca-produces">The model returns this prompt:</p>
         <div class="ca-prompt collapsible"><b class="mh">## Context</b>
 
 In the context of developing and testing a CV-parsing pipeline, there is a need for a synthetic dataset that simulates junior-developer CVs from Romania. This dataset should be GDPR-compliant, meaning that it must not contain any real personal data. The dataset will be used to evaluate the performance of the parsing system under various conditions, ensuring that it can handle a wide range of inputs, including edge cases. The Romanian context is crucial, as it requires the dataset to reflect the specific educational, linguistic, and professional landscape of Romania. This includes typical Romanian educational paths, common career trajectories for junior developers, and prevalent skills in the Romanian tech industry.
