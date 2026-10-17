@@ -214,7 +214,6 @@
   #sdt .ca-grid{ margin:18px 0; }
   #sdt .ca-card p{ font-size:20px !important; }
   #sdt .ca-note{ margin-top:14px; }
-  #salgo{ height:2290px; }
   /* exemple de prompt injection */
   .inj{ font-family:ui-monospace,Consolas,monospace; font-size:16px; line-height:1.45; white-space:pre-wrap;
     background:#fdf2f6; border-left:3px solid #db2777; border-radius:8px; padding:11px 14px; margin:10px 0; color:#1b1f2a; }
@@ -230,7 +229,6 @@
   #sste .ca-prompt{ font-size:15px; }
   #sste .ca-note{ margin-top:16px; }
   #smj .ca-figure img{ width:auto !important; max-height:360px; margin:0 auto; }
-  #sexp{ height:3491px; }
   #sind .ca-grid{ margin:16px 0; }
   #sind .ca-grid > .ca-card{ padding:34px 20px 16px; }
   #sind .ca-card h2{ font-size:22px; margin-bottom:6px; }
@@ -274,12 +272,23 @@
   .biz > div:nth-child(3){ --bc:#7c3aed } .biz > div:nth-child(4){ --bc:#d97706 }
   .biz > div:nth-child(5){ --bc:#0891b2 } .biz > div:nth-child(6){ --bc:#db2777 }
   .biz > div:nth-child(7){ --bc:#2563eb } .biz > div:nth-child(8){ --bc:#059669 }
+  /* widget-ul de prompt: pliabil (preview scurt implicit, Expand creste slide-ul) */
+  .ca-prompt.collapsible{ max-height:200px; overflow:hidden; }
+  .ca-prompt.collapsible.open{ max-height:none; overflow:visible; }
+  .ca-prompt.collapsible:not(.open)::after{ content:""; position:absolute; left:1px; right:1px; bottom:1px; height:66px;
+    background:linear-gradient(to bottom, rgba(246,247,249,0), var(--panel)); pointer-events:none; border-radius:0 0 11px 11px; }
+  .ca-expand{ display:inline-flex; align-items:center; gap:7px; margin-top:12px; cursor:pointer;
+    font-family:ui-monospace,Consolas,monospace; font-size:14px; font-weight:700; color:var(--ex,var(--accent));
+    background:#fff; border:1px solid var(--line); border-radius:999px; padding:7px 16px; }
+  .ca-expand:hover{ background:var(--accent-soft); color:var(--accent); }
+  /* slide-uri exemplu compacte in starea collapsed */
+  .exc .content{ padding-bottom:16px; }
+  .exc h1{ margin-bottom:14px; }
+  .exc .ca-example{ padding:16px 22px; }
+  .exc .ca-example .ill{ width:42px; height:42px; margin-bottom:8px; }
+  .exc .ca-example .scenario{ margin-bottom:10px; }
+  .exc .ca-small{ margin-top:10px; }
   .slide-frame.tall{ overflow:hidden; }
-  #s6c{ height:2943px; }
-  #s6d{ height:3925px; }
-  #s6e{ height:3057px; }
-  #s6f{ height:3029px; }
-  #s6g{ height:2874px; }
   .ca.dense .content{ justify-content:flex-start; }
   .ca-prompt::before{ content:"PROMPT · copiază"; position:absolute; top:-12px; left:16px; background:var(--ex,#2563eb);
     color:#fff; font-family:ui-monospace,Consolas,monospace; font-weight:700; font-size:12px; letter-spacing:.08em;
@@ -572,7 +581,7 @@ C · Constraints  Max 300 words; state assumptions; don't promise dates I didn't
   <aside class="notes">An index of the six example prompts; each card jumps to the full slide. Use it to navigate during the lab.</aside>
 </section></div>
 
-<div class="slide-frame tall" style="height:calc(2943px * var(--slide-scale))"><section class="slide ca dense" id="s6c">
+<div class="slide-frame"><section class="slide ca dense exc" id="s6c">
   <header><span>In practice · examples</span></header>
   <div class="content">
     <h1>Example: choose a vector database</h1>
@@ -581,7 +590,7 @@ C · Constraints  Max 300 words; state assumptions; don't promise dates I didn't
       <div>
         <h3>Pick the right store for a RAG system</h3>
         <p class="scenario">A technical decision with real trade-offs.</p>
-        <div class="ca-prompt"><b class="mh">## Context</b>
+        <div class="ca-prompt collapsible"><b class="mh">## Context</b>
 
 The retrieval-augmented-generation system is a critical component of our organization's information management strategy, designed to efficiently process and retrieve insights from approximately 2 million internal documents. These documents are hosted on Google Cloud, and the team is tasked with selecting the optimal vector search solution among pgvector, Qdrant, and Pinecone. The decision must account for the team's expertise in Postgres, the hosting environment, and the project timeline of 6 weeks. The system must ensure high retrieval accuracy, scalability, and seamless integration with existing infrastructure.
 
@@ -667,7 +676,7 @@ The report should be formatted as a formal technical document, including:
   <aside class="notes">Prompt CROTATFC complet pentru o decizie tehnică. Tasks duce munca reală, Constraints mărginesc răspunsul.</aside>
 </section></div>
 
-<div class="slide-frame tall" style="height:calc(3925px * var(--slide-scale))"><section class="slide ca dense" id="s6d">
+<div class="slide-frame"><section class="slide ca dense exc" id="s6d">
   <header><span>In practice · examples</span></header>
   <div class="content">
     <h1>Example: search and solve olympiad problems</h1>
@@ -676,7 +685,7 @@ The report should be formatted as a formal technical document, including:
       <div>
         <h3>An olympiad algorithms tutor with search</h3>
         <p class="scenario">Search a real problem archive, then teach the full solution. Same spirit as the AlgoTutor project.</p>
-        <div class="ca-prompt"><b class="mh">## Context</b>
+        <div class="ca-prompt collapsible"><b class="mh">## Context</b>
 
 In the competitive programming and computer science olympiad community, participants aim to enhance their problem-solving skills by tackling a wide range of algorithmic challenges. These challenges cover diverse topics such as graphs, dynamic programming, number theory, and geometry, with difficulty levels spanning from national olympiads up to the International Olympiad in Informatics (IOI). A tutoring assistant is crucial for providing structured learning experiences by identifying and explaining solutions to real-world problems, thereby aiding learners in their quest for excellence.
 
@@ -808,7 +817,7 @@ The tone should be **educational, supportive, and engaging**. Aim to inspire lea
   <aside class="notes">An olympiad problem-solving assistant that searches a real archive and teaches full solutions. Mirrors the AlgoTutor project, written as a complete CROTATFC prompt.</aside>
 </section></div>
 
-<div class="slide-frame tall" style="height:calc(3057px * var(--slide-scale))"><section class="slide ca dense" id="s6e">
+<div class="slide-frame"><section class="slide ca dense exc" id="s6e">
   <header><span>In practice · examples</span></header>
   <div class="content">
     <h1>Example: a Colab teaching notebook</h1>
@@ -817,7 +826,7 @@ The tone should be **educational, supportive, and engaging**. Aim to inspire lea
       <div>
         <h3>Generate a runnable lesson cell</h3>
         <p class="scenario">An LLM call plus tokenization, ready for students to run.</p>
-        <div class="ca-prompt"><b class="mh">## Context</b>
+        <div class="ca-prompt collapsible"><b class="mh">## Context</b>
 
 Large Language Models (LLMs) are transformative in the field of artificial intelligence, enabling machines to understand and generate human-like text. These models are trained on vast datasets and have the ability to perform a wide range of language tasks. Understanding how these models tokenize and process text is crucial for students who are diving into the world of AI and NLP. This Google Colab notebook cell aims to provide a hands-on learning experience, demonstrating the tokenization process using the `tiktoken` library and showcasing how to interact with a language model via a simple API. By using a fallback mechanism with OpenRouter, the notebook ensures robustness and reliability, allowing students to focus on learning without technical interruptions.
 
@@ -893,7 +902,7 @@ The tone of the notebook should be **educational** and **encouraging**, aiming t
   <aside class="notes">A prompt that produces a runnable Colab cell: an LLM call plus tokenization with tiktoken. Ties the course to the hands-on notebook.</aside>
 </section></div>
 
-<div class="slide-frame tall" style="height:calc(3491px * var(--slide-scale))"><section class="slide ca dense" id="sexp">
+<div class="slide-frame"><section class="slide ca dense exc" id="sexp">
   <header><span>In practice · examples</span></header>
   <div class="content">
     <h1>Example: explain a concept to students</h1>
@@ -902,7 +911,7 @@ The tone of the notebook should be **educational** and **encouraging**, aiming t
       <div>
         <h3>Teach at the right level</h3>
         <p class="scenario">Definition, analogy, worked example and a check question.</p>
-        <div class="ca-prompt"><b class="mh">## Context</b>
+        <div class="ca-prompt collapsible"><b class="mh">## Context</b>
 
 The user is requesting a comprehensive, educational, and tailored explanation of a specific AI or computer science concept. This explanation needs to be accessible and engaging, ensuring that the student can grasp the concept's fundamentals, relate it to real-world scenarios, and avoid common pitfalls. The explanation should be thorough and pedagogically sound, providing a solid foundation for further learning.
 
@@ -1012,7 +1021,7 @@ The tone should be **informative, engaging, and supportive**. Aim to inspire cur
   <aside class="notes">A reusable teaching prompt: explain any concept at a chosen level with analogy, example, misconceptions and a check question.</aside>
 </section></div>
 
-<div class="slide-frame tall" style="height:calc(3029px * var(--slide-scale))"><section class="slide ca dense" id="s6f">
+<div class="slide-frame"><section class="slide ca dense exc" id="s6f">
   <header><span>In practice · examples</span></header>
   <div class="content">
     <h1>Example: live iPhone prices (eMAG)</h1>
@@ -1021,7 +1030,7 @@ The tone should be **informative, engaging, and supportive**. Aim to inspire cur
       <div>
         <h3>Fetch today's prices into a table</h3>
         <p class="scenario">Live data: needs an AI with web access (an agent).</p>
-        <div class="ca-prompt"><b class="mh">## Context</b>
+        <div class="ca-prompt collapsible"><b class="mh">## Context</b>
 
 In October 2026, a comprehensive consumer buying guide is being developed to assist potential buyers in making informed decisions about purchasing the latest iPhone models. The guide requires accurate and up-to-date pricing information for the iPhone 15, 15 Pro, 16, and 16 Pro models from eMAG.ro, a leading e-commerce platform in Romania. This information is crucial for comparing prices, understanding market trends, and identifying the best purchase options available. The data must be fetched in real-time and presented in a verifiable format to ensure reliability and accuracy. The guide aims to provide insights into price variations, stock availability, and seller reputations.
 
@@ -1107,7 +1116,7 @@ The tone should be professional, precise, and informative. Use clear and concise
   <aside class="notes">Exemplu care face puntea către agenți: promptul e bun (CROTATFC complet), dar execuția cere acces web. Un LLM simplu ar inventa prețuri, de aceea constrângerea „nu inventa".</aside>
 </section></div>
 
-<div class="slide-frame tall" style="height:calc(2874px * var(--slide-scale))"><section class="slide ca dense" id="s6g">
+<div class="slide-frame"><section class="slide ca dense exc" id="s6g">
   <header><span>In practice · examples</span></header>
   <div class="content">
     <h1>Example: a synthetic CV dataset</h1>
@@ -1116,7 +1125,7 @@ The tone should be professional, precise, and informative. Use clear and concise
       <div>
         <h3>Generate fake-but-realistic test data</h3>
         <p class="scenario">Synthetic data: works on any model, no internet.</p>
-        <div class="ca-prompt"><b class="mh">## Context</b>
+        <div class="ca-prompt collapsible"><b class="mh">## Context</b>
 
 In the context of developing and testing a CV-parsing pipeline, there is a need for a synthetic dataset that simulates junior-developer CVs from Romania. This dataset should be GDPR-compliant, meaning that it must not contain any real personal data. The dataset will be used to evaluate the performance of the parsing system under various conditions, ensuring that it can handle a wide range of inputs, including edge cases. The Romanian context is crucial, as it requires the dataset to reflect the specific educational, linguistic, and professional landscape of Romania. This includes typical Romanian educational paths, common career trajectories for junior developers, and prevalent skills in the Romanian tech industry.
 
@@ -1557,7 +1566,7 @@ I want to spend a two-day weekend in Sibiu with my family this next weekend. My 
   <aside class="notes">Good prompting helps in everyday life and work, not only in technical projects.</aside>
 </section></div>
 
-<div class="slide-frame tall" style="height:calc(2290px * var(--slide-scale))"><section class="slide ca dense" id="salgo">
+<div class="slide-frame"><section class="slide ca dense exc" id="salgo">
   <header><span>5. In practice</span></header>
   <div class="content">
     <h1>A real prompt in production: AlgoTutor</h1>
@@ -1566,7 +1575,7 @@ I want to spend a two-day weekend in Sibiu with my family this next weekend. My 
       <div>
         <h3>The system prompt behind the lab agent</h3>
         <p class="scenario">The actual <code>prompt.txt</code> from the AlgoTutor project. Same CROTATFC shape, plus a WORKFLOW section.</p>
-        <div class="ca-prompt meta2"><b class="mh">CONTEXT</b>
+        <div class="ca-prompt meta2 collapsible"><b class="mh">CONTEXT</b>
 We build a conversational tutor for computer-science problems from Infoarena.
 The user describes the topic, level and kind of explanation. We do not collect the whole archive.
 
@@ -1687,6 +1696,26 @@ not suitable. On errors, adapt the next action or explain the limit.</div>
       else if(e.key==='End'){ e.preventDefault(); go(frames.length-1); }
     });
   })();
+  document.querySelectorAll('.ca-prompt.collapsible').forEach(function(el){
+    var section=el.closest('section'), frame=el.closest('.slide-frame');
+    var btn=document.createElement('button'); btn.type='button'; btn.className='ca-expand';
+    btn.innerHTML='Expand \u25be';
+    btn.addEventListener('click',function(e){ e.stopPropagation();
+      if(!el.classList.contains('open')){
+        el.classList.add('open');
+        var h=section.scrollHeight+12;
+        section.style.height=h+'px';
+        if(frame) frame.style.height='calc('+h+'px * var(--slide-scale))';
+        btn.innerHTML='Collapse \u25b4';
+      } else {
+        el.classList.remove('open');
+        section.style.height=''; if(frame) frame.style.height='';
+        btn.innerHTML='Expand \u25be';
+        if(frame) frame.scrollIntoView({behavior:'smooth',block:'start'});
+      }
+    });
+    el.parentNode.insertBefore(btn, el.nextSibling);
+  });
 </script>
 </body>
 </html>
