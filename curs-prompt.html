@@ -307,6 +307,12 @@
   #sbiz .ca-lead, #sind .ca-lead{ margin:6px 0 2px; }
   .ca-produces{ font-family:ui-monospace,Consolas,monospace; font-size:13px; letter-spacing:.04em; color:var(--muted); margin:12px 0 5px; }
   .exc .ca-example .ca-prompt.meta{ margin-top:4px; }
+  .ca-qr{ position:absolute; top:132px; right:100px; z-index:4; display:flex; flex-direction:column; align-items:center; gap:9px;
+    text-decoration:none; background:#fff; border:1px solid var(--line); border-radius:16px; padding:15px;
+    box-shadow:0 16px 38px -22px rgba(16,17,21,.45); }
+  .ca-qr img{ width:134px; height:134px; display:block; }
+  .ca-qr span{ font-family:ui-monospace,Consolas,monospace; font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+  @media print{ .ca-qr{ box-shadow:none; } }
   .slide-frame.tall{ overflow:hidden; }
   .ca.dense .content{ justify-content:flex-start; }
   .ca-prompt::before{ content:"PROMPT · copiază"; position:absolute; top:-12px; left:16px; background:var(--ex,#2563eb);
@@ -353,6 +359,10 @@
     <p class="ca-lead">How to ask a model well, so you get useful, consistent and verifiable answers.</p>
     <div class="ca-meta"><span><b>Framework:</b> CROTATFC</span><span><b>Duration:</b> 90 min</span><span><b>From:</b> vague prompt &rarr; engineering prompt</span></div>
   </div>
+  <a class="ca-qr" href="https://danlex.github.io/uni.ai/curs-prompt.html" target="_blank" rel="noopener" aria-label="Open this course on your phone">
+    <img src="img/qr-curs-prompt.svg" alt="QR code to the course">
+    <span>Scan to open</span>
+  </a>
   <footer><span>Prompt Engineering</span><span>1 / 34</span></footer>
   <aside class="notes">A standalone prompt engineering course. The same principles power the AlgoTutor agent.</aside>
 </section></div>
@@ -1321,12 +1331,12 @@ Brief: a chrome-plated classic Mercedes sports car driving on a forest road.
 Rules:
 - Start with the subject, then style, composition, lighting and medium.
 - Use concrete visual words, not abstract ones.
-- End with parameters: --ar for aspect ratio, --style raw, --v 6.
+- End with parameters: --ar for aspect ratio, --style raw, --v 8.
 - Two or three comma-separated clauses.
 Return only the prompt.</div>
       <figure class="ca-figure" style="margin:0"><img src="img/midjourney-chrome-mercedes.png" alt="A chrome-plated classic Mercedes coupe on a forest road, made with Midjourney"><figcaption>Made with Midjourney</figcaption></figure>
     </div>
-    <p class="ca-small">Midjourney reads keywords, not sentences: subject first, then style and lighting, then parameters like <code>--ar 16:9</code>, <code>--style raw</code>, <code>--v 6</code>.</p>
+    <p class="ca-small">Midjourney reads keywords, not sentences: subject first, then style and lighting, then parameters like <code>--ar 16:9</code>, <code>--style raw</code>, <code>--v 8</code>.</p>
   </div>
   <footer><span>Prompt Engineering</span><span>24 / 34</span></footer>
   <aside class="notes">Metaprompting applied to image generation. The model turns a plain brief into a keyword-style Midjourney prompt with parameters; the image is one such result.</aside>
