@@ -37,7 +37,7 @@ ENCODER = MODEL
 # True = încarcă encoderul doar din cache, fără verificare pe internet.
 OFFLINE = False
 # Modelul Ollama pentru generare; None = doar căutare, fără răspuns generat.
-LLM = None
+LLM = 'mistral-nemo:latest'
 # ----------------------------------------------------------------------
 
 
