@@ -2,73 +2,63 @@
 """GraphRAG: extragem relații și conectăm paragrafele (slide 8 din rag.html).
 
 Din fiecare paragraf extragem o afirmație structurată (subiect, relație, obiect,
-sursă). Entitatea comună „Fabrica Brașov”, prezentă în P2 și P3, devine același
-nod (pasul de rezolvare a identității). Apoi urmărim lanțul de relații pentru a
-răspunde la întrebarea compusă, recuperând și pasajele-suport pentru verificare.
+sursă). Entitatea „Fabrica Brașov" apare în P2 și P3 și devine același nod, deci
+putem urmări un lanț care trece prin mai multe paragrafe:
+
+    Pegas --produce--> Vela --asamblată la--> Fabrica Brașov --energie de la--> Solaris
 """
 
-from collections import deque
-
-# Pas 1 — afirmații structurate extrase din cele trei paragrafe (slide 8).
-# Fiecare muchie își păstrează sursa (proveniența).
-TRIPLES = [
-    {"subject": "Pegas", "relation": "produce", "object": "Vela", "source": "P1"},
-    {"subject": "Vela", "relation": "asamblată la", "object": "Fabrica Brașov", "source": "P2"},
-    {"subject": "Fabrica Brașov", "relation": "energie de la", "object": "Solaris", "source": "P3"},
+# Pas 1 — afirmațiile extrase din cele trei paragrafe (slide 8).
+# Fiecare relație își păstrează sursa (din ce paragraf provine).
+RELATIONS = [
+    {"from": "Pegas", "label": "produce", "to": "Vela", "source": "P1"},
+    {"from": "Vela", "label": "asamblată la", "to": "Fabrica Brașov", "source": "P2"},
+    {"from": "Fabrica Brașov", "label": "energie de la", "to": "Solaris", "source": "P3"},
 ]
 
 
-def build_graph(triples=TRIPLES):
-    """Construiește lista de adiacență: nod -> [(obiect, relație, sursă)]."""
-    graph = {}
-    for t in triples:
-        graph.setdefault(t["subject"], []).append(
-            (t["object"], t["relation"], t["source"])
-        )
-        graph.setdefault(t["object"], [])  # ne asigurăm că nodul există
-    return graph
+def relatii_din(nod):
+    """Toate relațiile care pornesc dintr-un nod dat."""
+    return [r for r in RELATIONS if r["from"] == nod]
 
 
-def traverse(start, graph=None):
-    """BFS din `start`, urmărind relațiile.
+def follow_chain(start):
+    """Urmărește lanțul de relații pornind dintr-un nod.
 
-    Întoarce (ordinea nodurilor vizitate, sursele pasajelor folosite,
-    lista de pași subiect -> obiect [sursă]).
+    La fiecare pas mergem de la nodul curent la vecinul lui prin relația găsită,
+    strângând pașii și sursele parcurse. Întoarce:
+      - nodul final al lanțului (răspunsul),
+      - sursele folosite, în ordine,
+      - descrierea fiecărui pas (pentru verificare).
     """
-    if graph is None:
-        graph = build_graph()
+    nod_curent = start
+    surse = []
+    pasi = []
 
-    visited = [start]
-    seen = {start}
-    sources = []
-    steps = []
-    queue = deque([start])
-    while queue:
-        node = queue.popleft()
-        for obj, rel, src in graph.get(node, []):
-            steps.append(f"{node} --{rel}--> {obj} [{src}]")
-            if src not in sources:
-                sources.append(src)
-            if obj not in seen:
-                seen.add(obj)
-                visited.append(obj)
-                queue.append(obj)
-    return visited, sources, steps
+    relatii = relatii_din(nod_curent)
+    while relatii:
+        relatie = relatii[0]  # lanțul nostru are câte o singură ieșire per nod
+        pasi.append(f"{relatie['from']} --{relatie['label']}--> {relatie['to']} [{relatie['source']}]")
+        surse.append(relatie["source"])
+
+        nod_curent = relatie["to"]       # avansăm la nodul următor
+        relatii = relatii_din(nod_curent)
+
+    return nod_curent, surse, pasi
 
 
 def answer_multi_hop(start="Pegas"):
     """Răspunde la întrebarea compusă urmărind lanțul din graf.
 
-    Pegas -> Vela -> Fabrica Brașov -> Solaris. Nodul final al lanțului este
-    răspunsul; sursele parcurse sunt dovezile recuperate.
+    Pegas -> Vela -> Fabrica Brașov -> Solaris. Capătul lanțului este răspunsul,
+    iar sursele parcurse sunt dovezile recuperate.
     """
-    visited, sources, steps = traverse(start)
-    final = visited[-1]
-    return final, sources, steps
+    nod_final, surse, pasi = follow_chain(start)
+    return nod_final, surse, pasi
 
 
 if __name__ == "__main__":
-    final, sources, steps = answer_multi_hop()
-    for s in steps:
-        print(s)
-    print(f"\nRăspuns: {final}. [{', '.join(sources)}]")
+    nod_final, surse, pasi = answer_multi_hop()
+    for pas in pasi:
+        print(pas)
+    print(f"\nRăspuns: {nod_final}. [{', '.join(surse)}]")
