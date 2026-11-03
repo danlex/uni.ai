@@ -1,0 +1,3 @@
+# Necesar DOAR pentru varianta opțională cu embeddings reale (rag_real.py).
+# experiment.py rulează fără nicio dependență.
+sentence-transformers>=2.2.0
