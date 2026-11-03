@@ -69,6 +69,23 @@ python3 -m venv .venv
 
 Modelul (~90 MB) se descarcă o singură dată, la prima rulare.
 
+### 3. Laboratorul complet din slide-uri (`rag_local.py`)
+
+Varianta prezentată pe pagina cursului: encoder real E5 pe 6 paragrafe (două lanțuri
+de produse, ca să existe și distractori) plus generare locală opțională prin Ollama.
+Setările sunt constante în capul fișierului (`QUESTION`, `K`, `ENCODER`, `OFFLINE`, `LLM`).
+
+```bash
+cd rag
+python3 -m venv .venv
+.venv/bin/python -m pip install "sentence-transformers>=3.0,<6"
+.venv/bin/python rag_local.py
+```
+
+Encoderul E5 (~470 MB) se descarcă o singură dată, la prima rulare. Pentru generare,
+instalează [Ollama](https://ollama.com), descarcă un model (`ollama pull llama3:8b`),
+apoi pune `LLM = 'llama3:8b'` în fișier și rulează din nou.
+
 ## Structura folderului
 
 | Fișier | Rol |
@@ -77,7 +94,8 @@ Modelul (~90 MB) se descarcă o singură dată, la prima rulare.
 | `vector_rag.py` | Similaritate cosinus, căutare top-k, generator cu citări și abținere. |
 | `graph_rag.py` | Extragerea relațiilor, construirea grafului și traversarea multi-hop. |
 | `experiment.py` | Orchestratorul care rulează și afișează tot experimentul. |
-| `rag_real.py` | Varianta opțională cu embeddings reale. |
+| `rag_real.py` | Varianta opțională cu embeddings reale (3 paragrafe, ca restul folderului). |
+| `rag_local.py` | Laboratorul complet din slide-uri: encoder E5 real pe 6 paragrafe + generare locală opțională prin Ollama. |
 | `requirements.txt` | Dependența pentru varianta reală (doar `sentence-transformers`). |
 
 Fiecare modul se poate rula și separat (`python3 vector_rag.py`, `python3 graph_rag.py`)
