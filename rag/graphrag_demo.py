@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
-"""Graph RAG: construim un graf de documente și răspundem multi-hop (fără dependențe).
+"""Graph RAG: un graf de documente + recuperare multi-hop (fără dependențe).
 
-Spre deosebire de căutarea vectorială sau BM25, Graph RAG leagă documentele între
-ele prin entități comune și prin mențiuni, apoi urmărește lanțul de dovezi. Așa
-rezolvăm întrebări care cer conectarea mai multor pasaje (ex. Pegas -> Solaris),
-pe care un singur top-k le ratează.
+Graph RAG leagă documentele prin entități comune, apoi urmărește lanțul de
+dovezi. Așa rezolvăm întrebări care cer conectarea mai multor pasaje
+(Pegas -> Vela -> fabrica din Brașov -> Solaris), pe care un singur top-k le ratează.
 
 Rulare:
     python3 graphrag_demo.py
 """
 
-import re
+from collections import deque
 
 # Corpusul didactic (același ca în restul folderului).
 PASSAGES = {
@@ -19,63 +18,50 @@ PASSAGES = {
     "P3": "Fabrica din Brașov folosește energie furnizată de compania Solaris.",
 }
 
-# Entitățile pe care le urmărim (într-un sistem real le-ar extrage un model NER
-# gen GLiNER2; aici le enumerăm explicit, ca exemplul să rămână simplu).
+# Entitățile urmărite. Într-un sistem real le-ar extrage un model NER (ex. GLiNER2);
+# aici le enumerăm, ca exemplul să rămână simplu.
 ENTITIES = ["Pegas", "Vela", "fabrica din Brașov", "Solaris"]
 
 
 def entities_in(text):
-    """Ce entități apare în text (potrivire simplă, fără diacritice sensibile)."""
-    low = text.lower()
-    return {e for e in ENTITIES if e.lower() in low}
+    """Entitățile care apar într-un text."""
+    return {e for e in ENTITIES if e.lower() in text.lower()}
 
 
 def build_graph():
-    """Noduri = paragrafe. Muchie între două paragrafe dacă împart o entitate.
+    """Noduri = paragrafe; muchie între două paragrafe care împart o entitate.
 
-    Întoarce:
-      - ents: paragraf -> mulțimea de entități,
-      - edges: paragraf -> set de (vecin, entitatea comună).
+    Întoarce (entități per paragraf, vecini per paragraf ca (vecin, entitate comună)).
     """
     ents = {pid: entities_in(text) for pid, text in PASSAGES.items()}
-    edges = {pid: set() for pid in PASSAGES}
-    ids = list(PASSAGES)
-    for a in ids:
-        for b in ids:
-            if a >= b:
-                continue
-            comune = ents[a] & ents[b]
-            for e in comune:
-                edges[a].add((b, e))
-                edges[b].add((a, e))
+    edges = {pid: [] for pid in PASSAGES}
+    for a in PASSAGES:
+        for b in PASSAGES:
+            if a < b:
+                for shared in ents[a] & ents[b]:
+                    edges[a].append((b, shared))
+                    edges[b].append((a, shared))
     return ents, edges
 
 
-def seeds_for(question, ents):
-    """Paragrafele de pornire: cele care conțin o entitate din întrebare."""
-    qents = entities_in(question)
-    return [pid for pid, es in ents.items() if es & qents], qents
+def retrieve(query, ents, edges):
+    """Pornim din paragrafele cu entități din întrebare și extindem prin vecini.
 
-
-def graph_retrieve(question):
-    """Recuperare pe graf: pornim din semințe și extindem prin vecini (multi-hop).
-
-    Întoarce pasajele recuperate (în ordinea descoperirii) și pașii parcurși.
+    Întoarce pasajele recuperate și pașii de traversare (doar descoperirile noi).
     """
-    ents, edges = build_graph()
-    seeds, qents = seeds_for(question, ents)
+    seeds = [pid for pid, es in ents.items() if es & entities_in(query)]
 
-    recuperate = list(seeds)
-    pasi = []
-    frontiera = list(seeds)
-    while frontiera:
-        nod = frontiera.pop(0)
-        for vecin, entitate in sorted(edges[nod]):
-            pasi.append(f"{nod} --[{entitate}]--> {vecin}")
-            if vecin not in recuperate:
-                recuperate.append(vecin)
-                frontiera.append(vecin)
-    return qents, recuperate, pasi
+    found = list(seeds)
+    steps = []
+    queue = deque(seeds)
+    while queue:
+        node = queue.popleft()
+        for neighbor, shared in edges[node]:
+            if neighbor not in found:
+                found.append(neighbor)
+                steps.append(f"{node} --[{shared}]--> {neighbor}")
+                queue.append(neighbor)
+    return found, steps
 
 
 def main():
@@ -83,26 +69,22 @@ def main():
 
     print("GRAFUL DE DOCUMENTE (noduri = paragrafe, muchii = entitate comună)")
     for pid in PASSAGES:
-        legaturi = ", ".join(f"{v} [{e}]" for v, e in sorted(edges[pid]))
-        print(f"  {pid}  entități={sorted(ents[pid])}")
-        print(f"       vecini: {legaturi or '—'}")
+        neighbors = ", ".join(f"{n} [{e}]" for n, e in edges[pid])
+        print(f"  {pid}  entități={sorted(ents[pid])}  ->  {neighbors or '—'}")
 
-    # Întrebare multi-hop: lanțul Pegas -> Vela -> fabrica din Brașov -> Solaris.
-    question = "Cine furnizează energia fabricii care asamblează bicicleta produsă de Pegas?"
-    print(f"\nÎntrebare multi-hop:\n  {question}")
+    query = "Cine furnizează energia fabricii care asamblează bicicleta produsă de Pegas?"
+    print(f"\nÎntrebare multi-hop:\n  {query}")
 
-    qents, recuperate, pasi = graph_retrieve(question)
-    print(f"\nEntități în întrebare: {sorted(qents)}")
-    print("Traversare pe graf:")
-    for p in pasi:
-        print(f"  {p}")
+    found, steps = retrieve(query, ents, edges)
+    print("\nTraversare pe graf (din Pegas, prin entități comune):")
+    for step in steps:
+        print(f"  {step}")
 
-    print("\nPasaje recuperate (lanțul complet de dovezi):")
-    for pid in recuperate:
+    print("\nLanțul de dovezi recuperat:")
+    for pid in found:
         print(f"  [{pid}] {PASSAGES[pid]}")
 
-    # Răspunsul iese din capătul lanțului (ultima entitate nouă atinsă).
-    print("\nRăspuns: Solaris. [" + ", ".join(recuperate) + "]")
+    print("\nRăspuns: Solaris. [" + ", ".join(found) + "]")
 
 
 if __name__ == "__main__":
