@@ -210,23 +210,27 @@ Dacă niciuna nu conține răspunsul, spune „niciuna" și sistemul escaladeaz�
 <div class="callout">Un singur apel de model ieftin (Haiku) ridică precizia perechii de la 0,78 la <b>0,93</b>. LLM-ul nu caută în corpus; doar <b>verifică și sintetizează</b> dovezile recuperate.</div>
 <div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>13 / 16</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2>Leaderboard EnterpriseRAG-Bench</h2>
-<p>Scorul oficial = <b>correctness × completeness</b>, judecat de GPT-5.4. Topul sistemelor publice (overall %):</p>
+<p>Scorul oficial = <b>correctness × completeness</b>, judecat de GPT-5.4. <b>43 de sisteme</b>. Vârful clasamentului (overall %):</p>
 <div class="scroll"><table>
   <tr><th>#</th><th>Sistem</th><th class="n">Overall</th><th class="n">Correct</th><th class="n">Complet.</th></tr>
-  <tr class="best"><td>1</td><td>OpenClaw</td><td class="n">68,2</td><td class="n">81,6</td><td class="n">72,9</td></tr>
-  <tr class="row-o"><td>2</td><td>OpenAI File Search</td><td class="n">61,0</td><td class="n">69,8</td><td class="n">67,9</td></tr>
-  <tr class="row-o"><td>3</td><td>Bash Agent (GPT-5.4)</td><td class="n">52,6</td><td class="n">60,6</td><td class="n">61,1</td></tr>
-  <tr class="row-o"><td>4</td><td>BM25 + GPT-5.4</td><td class="n">50,6</td><td class="n">68,8</td><td class="n">56,0</td></tr>
-  <tr><td>5</td><td>RAGFlow</td><td class="n">50,2</td><td class="n">56,0</td><td class="n">58,7</td></tr>
-  <tr><td>6</td><td>Amazon Q (Kendra)</td><td class="n">49,0</td><td class="n">55,4</td><td class="n">60,7</td></tr>
-  <tr><td>7</td><td>Azure AI Search</td><td class="n">48,4</td><td class="n">56,4</td><td class="n">57,6</td></tr>
-  <tr class="row-v"><td>8</td><td>Vertex AI Search</td><td class="n">41,9</td><td class="n">49,2</td><td class="n">55,5</td></tr>
+  <tr class="best"><td>1</td><td>PipesHub</td><td class="n">93,2</td><td class="n">95,0</td><td class="n">95,6</td></tr>
+  <tr><td>2</td><td>Neurond AI</td><td class="n">92,7</td><td class="n">94,2</td><td class="n">95,1</td></tr>
+  <tr><td>3</td><td>codos.ai</td><td class="n">92,6</td><td class="n">94,4</td><td class="n">95,2</td></tr>
+  <tr><td>4</td><td>Flexor.ai (+ GPT-6.1)</td><td class="n">91,5</td><td class="n">93,0</td><td class="n">94,4</td></tr>
+  <tr><td>5</td><td>CDL (Causal Dynamics Lab)</td><td class="n">90,9</td><td class="n">92,4</td><td class="n">94,4</td></tr>
+  <tr><td>6</td><td>Unblocked</td><td class="n">88,5</td><td class="n">91,2</td><td class="n">93,2</td></tr>
 </table></div>
-<div class="callout">
-<b>Unde e OpenAI</b> (albastru): #2 <b>OpenAI File Search</b> (61,0); GPT-5.4 e și motorul lui #3/#4 și <b>judecătorul oficial</b>. Embeddings-urile OpenAI (text-embedding-3-large) sunt baseline-ul vectorial la retrieval: doar <b>46,0 R@10</b>.<br>
-<b>Unde e VertexAI</b> (verde): #8 <b>Vertex AI Search</b> (41,9), jos printre sistemele comerciale.
-</div>
-<p class="caption">„VertexAI Partners" care apare în documentele benchmark-ului este conținut fictiv al corpusului, nu un sistem evaluat.</p>
+<h3>Unde sunt marii furnizori</h3>
+<div class="scroll"><table>
+  <tr><th>#</th><th>Sistem</th><th class="n">Overall</th></tr>
+  <tr><td>23</td><td>OpenClaw</td><td class="n">68,2</td></tr>
+  <tr class="row-o"><td>26</td><td>OpenAI File Search</td><td class="n">61,0</td></tr>
+  <tr class="row-o"><td>28</td><td>BM25 + GPT-5.4</td><td class="n">50,6</td></tr>
+  <tr class="row-v"><td>34</td><td>Vertex AI Search</td><td class="n">41,9</td></tr>
+  <tr class="row-o"><td>37</td><td>Vectori OpenAI (emb-3-large) + GPT-5.4</td><td class="n">37,7</td></tr>
+</table></div>
+<div class="callout"><b>Surpriza:</b> vârful e dominat de sisteme RAG <b>specializate</b>, nu de marii furnizori. <b>OpenAI</b> (File Search #26, vectori #37) și <b>Vertex AI Search</b> (#34) stau în jumătatea de jos. Produsele gata-făcute nu bat un RAG construit pentru date de firmă.</div>
+<p class="caption">„VertexAI Partners" din documentele benchmark-ului e conținut fictiv al corpusului, nu un sistem evaluat. Sursa: leaderboard-ul oficial (HuggingFace, onyx-dot-app).</p>
 <div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>14 / 16</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2>tvl-rag pe EnterpriseRAG-Bench</h2>
 <div class="two">
@@ -239,15 +243,16 @@ Dacă niciuna nu conține răspunsul, spune „niciuna" și sistemul escaladeaz�
   <tr><td>tvl-rag ranker învățat</td><td class="n">73–74</td></tr>
   <tr class="best"><td>+ vectori statici + cross-encoder</td><td class="n">74,8–75,3</td></tr>
 </table></div>
-<p class="caption">+6,4 R@10 peste BM25 [IC 95%: +3,7, +9,2], validare încrucișată pe întrebări.</p>
+<p class="caption">+6,4 R@10 peste BM25 [IC 95%: +3,7, +9,2].</p>
 </div>
 <div>
 <h3>Răspuns (scorul de leaderboard)</h3>
 <p>Round 6 v3, judecător <b>oficial gpt-5.4</b>, eșantion de 60 de întrebări: <b>93,0</b> (IC 95% 86,8–97,9; correct 57/60).</p>
-<div class="callout"><b>Onestitate.</b> E un <b>eșantion de dezvoltare</b> de 60 de întrebări (optimist), nu o submisie oficială verificată pe toate cele 500. Estimarea curată (runda 7, pipeline înghețat) e ~<b>91–92</b>. Dacă se confirmă pe 500, ar fi peste topul public (OpenClaw 68,2) — dar până la rularea oficială completă rămâne estimare.</div>
+<div class="callout"><b>Onestitate.</b> E un <b>eșantion de dezvoltare</b> de 60 de întrebări (optimist), nu o submisie oficială pe toate cele 500. Estimarea curată (runda 7, pipeline înghețat) e ~<b>91–92</b>.</div>
 </div>
 </div>
-<p class="caption">tvl-rag nu e (încă) pe leaderboard-ul public; cifrele vin din <span class="tool">bench/enterpriserag</span> al implementării.</p>
+<div class="callout">Dacă ~91–92 se confirmă pe toate cele 500, tvl-rag ar fi <b>competitiv în top 5</b> (sub vârful PipesHub 93,2, lângă Flexor/CDL 90–91) și mult peste produsele gata-făcute (OpenAI File Search 61, Vertex 42). Până la rularea oficială completă rămâne o estimare.</div>
+<p class="caption">Cifrele vin din <span class="tool">bench/enterpriserag</span> al implementării; tvl-rag nu e (încă) pe leaderboard-ul public.</p>
 <div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>15 / 16</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2>De la toolbox la EnterpriseRAG-Bench</h2>
 <div class="scroll"><table>
