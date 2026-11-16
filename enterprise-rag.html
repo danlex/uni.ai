@@ -62,7 +62,7 @@ ul,ol{margin:8px 0 8px 22px}li{margin:5px 0}
   <a href="rag-benchmarks.html">Benchmark-uri</a>
   <a href="hotpotqa.html">HotpotQA</a>
 </div>
-<div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>01 / 18</b></span></div></div></section><section class="slide"><div class="slide-inner">
+<div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>01 / 20</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2>Problema: EnterpriseRAG-Bench</h2>
 <p>Benchmark-urile clasice (HotpotQA, MuSiQue) folosesc text public și curat. Companiile însă pun agenți AI peste <b>date interne</b>: dezorganizate, cu jargon, cu versiuni contradictorii.</p>
 <div class="scroll"><table>
@@ -75,7 +75,7 @@ ul,ol{margin:8px 0 8px 22px}li{margin:5px 0}
   <tr class="best"><td>Total</td><td class="n">~511.962</td><td>9 tipuri de surse, cu zgomot și versiuni</td></tr>
 </table></div>
 <p class="caption">Distribuția imită un enterprise real: comunicarea informală (Slack, email) depășește masiv documentația curată.</p>
-<div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>02 / 18</b></span></div></div></section><section class="slide"><div class="slide-inner">
+<div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>02 / 20</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2>De ce este greu: 10 categorii de întrebări</h2>
 <div class="two">
 <div>
@@ -100,17 +100,26 @@ ul,ol{margin:8px 0 8px 22px}li{margin:5px 0}
 <p class="caption">Encoderele sunt antrenate pe text public și ratează acronimele interne. Concluzia: ai nevoie de un <b>hibrid</b>, nu de vectori singuri.</p>
 </div>
 </div>
-<div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>03 / 18</b></span></div></div></section><section class="slide"><div class="slide-inner">
-<h2>Cum arată documentele din bench</h2>
-<p>Nu articole curate, ci fragmente reale de firmă în 9 formate diferite. Câteva mostre reprezentative:</p>
-<div class="grid">
-  <div class="card"><span class="tag">Slack · #eng-infra</span><p><b>Lina:</b> webhook-urile se dublează la retry pe FinOptix.<br><b>Evan:</b> pune <code>Idempotency-Key</code> pe <code>POST /hooks/ops</code>; SDK v1.7.0 are fix-ul.</p></div>
-  <div class="card"><span class="tag">Jira · INF-1211</span><p>Embeddings dau <code>413</code> la batch mare. Cauză: limita gateway-ului nginx. Workaround: downsample client-side + chunking.</p></div>
-  <div class="card"><span class="tag">Confluence · runbook</span><p>Retenție: <b>zero</b> pe LLM API, minim <b>1 an</b> pentru audit. CMEK/KMS, chei separate per tenant, mTLS.</p></div>
-  <div class="card"><span class="tag">Email · finanțe</span><p>Per diem și decont: termen de depunere... clientul „VertexAI Partners", TVA tranzacție externă...</p></div>
+<div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>03 / 20</b></span></div></div></section><section class="slide"><div class="slide-inner">
+<h2>Cum arată un document din dataset</h2>
+<p>Exemplu <b>real, verbatim</b> din corpusul EnterpriseRAG-Bench — un runbook Confluence de ~3.800 de cuvinte:</p>
+<div class="example"><span class="ex-tag">Document real · confluence · dsid_e54ef48b…</span>
+<b>Runbook: Deploy / Upgrade / Roll Back perf-canary (Prod)</b>
+<pre><code>## Purpose
+This runbook describes the operational procedures to deploy, upgrade,
+roll back, and safely disable the **perf-canary** service across regions.
+
+perf-canary is a lightweight, always-on synthetic workload that calls
+internal inference endpoints for a curated model set and emits performance
+metrics (p50/p95/p99, tokens/sec, prefill/decode, queueing time, batch stats).
+The service must stay under the defined overhead budget and must not capture
+or emit customer data.
+
+**Primary users:** Eng-Infra on-call and Release Engineering during rollouts.</code></pre>
 </div>
-<p class="caption">Stil reprezentativ (entități reale din corpusul EnterpriseRAG-Bench). Observă: jargon intern, nume de proiecte, coduri de tichet, mult text informal și irelevant.</p>
-<div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>04 / 18</b></span></div></div></section><section class="slide"><div class="slide-inner">
+<p>Și asta e partea „curată". Corpusul are <b>9 surse</b>: pe lângă runbook-uri Confluence, mesaje Slack, fire Gmail, tichete Jira/Linear, PR-uri GitHub, transcrieri Fireflies, înregistrări HubSpot — multe informale și pline de jargon intern (perf-canary, prefill/decode, Eng-Infra on-call).</p>
+<p class="caption">Un singur document are ~3.800 de cuvinte; răspunsul la o întrebare stă adesea îngropat adânc, printre proceduri și liste.</p>
+<div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>04 / 20</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2>De ce e greu să răspunzi la o întrebare</h2>
 <div class="example"><span class="ex-tag">Întrebare reală din bench</span>
 „După o schimbare de rețea la biroul SoMa, utilizatorii pe WiFi corporativ au văzut VPN-ul către un serviciu intern <code>10.11.x</code> picând și SSO expirând, pentru că un <i>bridge</i> de birou rescria adresele clienților. Ce <b>mod de dispozitiv</b> greșit a cauzat rescrierea IP-ului sursă?"
@@ -123,7 +132,7 @@ ul,ol{margin:8px 0 8px 22px}li{margin:5px 0}
   <li><b>Fapt îngropat</b> — răspunsul exact stă după caracterul 3.000 într-un document lung → citești documentul întreg, nu un chunk.</li>
   <li><b>Uneori nu există</b> — unele întrebări n-au răspuns în corpus; sistemul trebuie să se <b>abțină</b>, nu să inventeze (<b>info not found</b>).</li>
 </ul>
-<div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>05 / 18</b></span></div></div></section><section class="slide"><div class="slide-inner">
+<div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>05 / 20</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2>Harta soluției: pipeline-ul hibrid</h2>
 <p>Niciun tool singur nu rezolvă tot. Soluția din <span class="tool">tvl-rag</span> combină recuperare lexicală, semantică și pe graf, apoi rafinează cu modele tot mai scumpe:</p>
 <div class="flow">
@@ -142,7 +151,7 @@ ul,ol{margin:8px 0 8px 22px}li{margin:5px 0}
   <div class="box"><b>LLM judge</b>alege dovada</div>
 </div>
 <p class="caption">Candidați mulți și ieftini la început (BM25, dense, graf), filtrare scumpă și precisă la final (cross-encoder, LLM). Fiecare slide explică un tool: ce face, cum se folosește, un exemplu.</p>
-<div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>06 / 18</b></span></div></div></section><section class="slide"><div class="slide-inner">
+<div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>06 / 20</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2><span class="tool">rank-bm25</span> · Căutarea lexicală (BM25)</h2>
 <p>BM25 ordonează documentele după <b>potrivirea de termeni</b>, ponderat invers cu frecvența lor în corpus (termenii rari contează mai mult). Esențial în enterprise: codurile, acronimele și ID-urile de tichet sunt exacte.</p>
 <div class="howto"><span class="ht-tag">Cum se folosește</span><pre><code>pip install rank-bm25
@@ -157,7 +166,7 @@ scores = bm.get_scores(tokenize(question))     # scor per document</code></pre><
   <tr><td>[P3] fabrica folosește energie Solaris</td><td class="n">0,00</td></tr>
 </table>
 P2 câștigă; P3 are scor 0 — niciun termen comun. Rulează <code>rag/bm25_rag.py</code>.
-</div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>07 / 18</b></span></div></div></section><section class="slide"><div class="slide-inner">
+</div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>07 / 20</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2><span class="tool">fastembed · bge-small</span> · Căutarea semantică</h2>
 <p>Fiecare paragraf și întrebare devin un <b>vector de 384 de dimensiuni</b> (normalizat). Similaritatea cosinus prinde reformulări pe care BM25 le ratează. În <span class="tool">tvl-rag</span>, primele 100 de paragrafe formează clasamentul de bază.</p>
 <div class="howto"><span class="ht-tag">Cum se folosește</span><pre><code>pip install fastembed
@@ -168,7 +177,7 @@ vecs = list(enc.embed(docs))          # vectori 384-d, L2-normalizați
 q = next(enc.embed([question]))       # cosinus = produs scalar</code></pre></div><div class="example"><span class="ex-tag">Exemplu concret</span>
 <b>Întrebare reformulată:</b> „Unde se <u>montează</u> Vela?" (<code>montează</code>, nu <code>asamblată</code>).<br>
 BM25 dă scor 0 la P2. Dense aduce totuși <b>P2</b> primul, pentru că „montează" și „asamblată" sunt apropiați. Exact ce prinde dense și BM25 nu.
-</div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>08 / 18</b></span></div></div></section><section class="slide"><div class="slide-inner">
+</div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>08 / 20</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2>Fuziune: Reciprocal Rank Fusion (RRF)</h2>
 <p>Combini clasamentul lexical cu cel semantic fără să compari scoruri incompatibile: nu aduni scorurile, ci <b>rangurile</b>. Fiecare metodă votează cu <code>1 / (K + rang)</code>, cu <code>K = 60</code>.</p>
 <div class="howto"><span class="ht-tag">Cum se folosește</span><pre><code># fara pachet — doar ranguri
@@ -184,7 +193,7 @@ Trei documente, ordonate <b>diferit</b> de BM25 și dense. RRF = <code>1/(60+ran
   <tr><td>C</td><td class="n">9</td><td class="n">1</td><td class="n">0,0309</td></tr>
 </table>
 <b>B câștigă</b>, deși nu e primul în niciun clasament (3 la BM25, 2 la dense). A e primul la BM25 dar jos la dense; C invers. RRF premiază <b>acordul</b> dintre metode, nu vârful dintr-una singură.
-</div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>09 / 18</b></span></div></div></section><section class="slide"><div class="slide-inner">
+</div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>09 / 20</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2><span class="tool">gliner2</span> · Entity graph</h2>
 <p>Din fiecare paragraf extragem <b>entitățile</b> cu GLiNER2: persoană, organizație, locație, operă, eveniment, naționalitate. Entitățile dau un <b>scor de entitate</b> per paragraf și <b>muchiile grafului</b>.</p>
 <div class="howto"><span class="ht-tag">Cum se folosește</span><pre><code>pip install gliner2
@@ -196,7 +205,7 @@ ents = ner.extract_entities(text, labels)     # lower-case, min 3 caractere</cod
 GLiNER2 pe <b>[P2]</b> „Bicicleta Vela este asamblată la fabrica din Brașov":<br>
 entități = { <code>Vela</code>, <code>fabrica din Brașov</code> }.<br>
 Întrebarea „...bicicleta Pegas" are { <code>Pegas</code> } → scor(P1) = <b>1,0</b> (titlu), scor(P2) = <b>0,3</b> (menționează Vela).
-</div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>10 / 18</b></span></div></div></section><section class="slide"><div class="slide-inner">
+</div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>10 / 20</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2>Document Data Graph: muchiile dintre paragrafe</h2>
 <p>Nodurile sunt paragrafele. În <span class="tool">graph.py</span>, două paragrafe se leagă dacă împart o entitate (în 2–15 paragrafe), entitățile unuia conțin titlul celuilalt, textul unuia <b>numește</b> titlul celuilalt (muchie de punte), sau apare o variantă/alias a titlului.</p>
 <div class="howto"><span class="ht-tag">Cum se folosește</span><pre><code># fara pachet — construiesti lista de adiacenta
@@ -209,7 +218,7 @@ for a in docs:
 Muchiile reale între cele 3 paragrafe:<br>
 <code>P1 —[Vela]— P2 —[fabrica din Brașov]— P3</code><br>
 Muchie de <b>mențiune</b>: un tichet Jira „bug la bateria <u>Vela</u>" se leagă de P1 pentru că îi numește titlul. Așa conectezi Slack ↔ Jira ↔ Confluence. Rulează <code>rag/graphrag_demo.py</code>.
-</div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>11 / 18</b></span></div></div></section><section class="slide"><div class="slide-inner">
+</div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>11 / 20</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2>Multi-hop: Graph RAG second hop + JEPA</h2>
 <p>Întrebările grele cer <b>două dovezi</b> conectate (A → B). Lucrăm cu <b>perechi</b>: fiecare sămânță bună e împerecheată cu vecinii ei din graf (max 50). Predictorul <span class="tool">JEPA</span> prezice vectorul celui de-al doilea paragraf și adaugă perechi pe care graful le ratează (acoperire 96% → 99%).</p>
 <div class="howto"><span class="ht-tag">Cum se folosește</span><pre><code># perechi din graf  +  JEPA (predictor de punte, torch)
@@ -222,7 +231,7 @@ class Pred(nn.Module):                       # [q; A] -> vectorul lui B
 Întrebarea cere lanțul P1 → P2 → P3, dar dense top-1 aduce doar <b>P1</b>.<br>
 Graful formează perechi cu vecinii: (P1,P2) prin „Vela", apoi (P2,P3) prin „fabrica din Brașov".<br>
 Perechea <b>(P2,P3)</b> conține dovada pentru „Solaris" — exact ce top-k vectorial rata.
-</div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>12 / 18</b></span></div></div></section><section class="slide"><div class="slide-inner">
+</div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>12 / 20</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2><span class="tool">fastembed · bge-reranker-v2-m3</span> · Cross-encoder</h2>
 <p>Până aici, întrebarea și documentele au fost codate <b>separat</b> (rapid, aproximativ). Cross-encoderul citește <b>întrebarea și perechea împreună</b> și dă un scor de relevanță mult mai precis, cu cache pe (întrebare, pereche).</p>
 <div class="howto"><span class="ht-tag">Cum se folosește</span><pre><code>pip install fastembed
@@ -234,7 +243,7 @@ Două perechi candidate:<br>
 <code>CE(q, [P2]+[P3]) = 0,94</code> &nbsp; conține asamblarea și furnizorul (corect)<br>
 <code>CE(q, [P1]+[P4]) = 0,18</code> &nbsp; Pegas + alt produs (irelevant)<br>
 Citind întrebarea și perechea împreună, separă clar perechea corectă.
-</div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>13 / 18</b></span></div></div></section><section class="slide"><div class="slide-inner">
+</div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>13 / 20</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2><span class="tool">lightgbm</span> · Ranker învățat + feedback</h2>
 <p>Toate semnalele (dense, BM25, graf, cross-encoder, JEPA) devin <b>34 de trăsături</b> per pereche. Peste ele: LightGBM lambdarank (0,75) + model liniar (0,25), combinate pe ranguri. Notele pe perechi reantrenează partea liniară.</p>
 <div class="howto"><span class="ht-tag">Cum se folosește</span><pre><code>pip install lightgbm
@@ -247,7 +256,7 @@ rank_score = m.predict(X_new)</code></pre></div><div class="example"><span class
 Trăsăturile perechii (P2,P3), standardizate pe întrebare:<br>
 <code>ce=+1,8&nbsp; bm25=+0,4&nbsp; edge=1&nbsp; jepa=+1,2&nbsp; → rang 1</code><br>
 O notă +1 pe pereche o urcă data viitoare. Notele pe <b>perechi</b> se transferă la întrebări noi (+0,28); pe paragrafe izolate, nu.
-</div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>14 / 18</b></span></div></div></section><section class="slide"><div class="slide-inner">
+</div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>14 / 20</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2>LLM: judecătorul de dovezi și generatorul</h2>
 <p>Ultimul pas: un LLM (Claude / Haiku) primește primele <b>k perechi</b> candidate (amestecate, fără scoruri) și alege perechea care susține răspunsul, sau spune „niciuna". Tehnici: <b>answer-first</b>, <b>escaladare</b>, judecată în <b>două etape</b>.</p>
 <div class="howto"><span class="ht-tag">Cum se folosește</span><pre><code>from anthropic import Anthropic
@@ -259,7 +268,33 @@ msg = client.messages.create(
 Judecătorul primește 3 perechi amestecate și răspunde answer-first:<br>
 <code>Răspuns: Solaris. Perechea care îl susține: [P2]+[P3].</code><br>
 Un singur apel Haiku ridică precizia perechii de la 0,78 la <b>0,93</b>. LLM-ul nu caută; <b>verifică și sintetizează</b>.
-</div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>15 / 18</b></span></div></div></section><section class="slide"><div class="slide-inner">
+</div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>15 / 20</b></span></div></div></section><section class="slide"><div class="slide-inner">
+<h2>Arhitectura reală tvl-rag (din cod, v8.3)</h2>
+<p>ARCHITECTURE.md descrie o versiune veche. Codul actual (ultimul branch, <code>config_r6v83.json</code>) e un pipeline <b>agentic cu rutare</b>: ieftin întâi, scump doar unde trebuie.</p>
+<div class="scroll"><table>
+  <tr><th>Pas</th><th>Ce face</th><th>LLM</th></tr>
+  <tr><td><b>cards</b></td><td>~240 candidați din BM25 + m2v + dense + graf + „needle"; snippet-uri de 220 car.</td><td>—</td></tr>
+  <tr><td><b>rerank</b></td><td>Haiku alege ≤10 carduri per întrebare</td><td>Haiku</td></tr>
+  <tr><td><b>minilm</b></td><td>cross-encoder MiniLM fine-tuned scorează candidații</td><td>—</td></tr>
+  <tr><td><b>pack</b></td><td>packet per întrebare: documente întregi (20k car.), cu cote pe sursă</td><td>—</td></tr>
+  <tr><td><b>answer</b></td><td>Haiku răspunde din packet + self-check (fapte pe bullet-uri)</td><td>Haiku</td></tr>
+  <tr><td><b>hop</b></td><td>a doua căutare dacă încrederea &lt; 0,8 sau &lt; 6 fapte</td><td>—</td></tr>
+  <tr class="best"><td><b>agent</b></td><td>întrebările grele → agent cu 12 unelte, max 60 ture, fără gold</td><td>Haiku/Opus</td></tr>
+  <tr><td><b>reconcile</b></td><td>Opus citește documentele citate și scrie răspunsul final</td><td>Opus</td></tr>
+  <tr><td><b>bias → final → eval</b></td><td>validator de bias · răspuns oficial · judecător gpt-5.4</td><td>—</td></tr>
+</table></div>
+<p class="caption">„Adaptive depth" (v8.3): rularea 2 a agentului + reconcile se fac doar acolo unde rularea 1 nu confirmă schița Haiku. Fiecare apel e logat cu tokeni și cost.</p>
+<div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>16 / 20</b></span></div></div></section><section class="slide"><div class="slide-inner">
+<h2>Agentul de căutare: 12 unelte, fără gold</h2>
+<p>Pentru întrebările grele, un agent Claude (Haiku, Opus la nevoie) primește doar <code>question_id + întrebarea</code> și caută singur cu 12 unelte — fără shell, fără acces direct la fișiere:</p>
+<div class="grid">
+  <div class="card"><b>Căutare</b><p><code>bm25</code> (filtre: dată, status, autor, sursă) · <code>vec</code> · <code>grep</code> (regex)</p></div>
+  <div class="card"><b>Citire & graf</b><p><code>read</code> (document întreg, paginat) · <code>neighbors</code> (entity + metadata graph) · <code>docmap</code></p></div>
+  <div class="card"><b>Rafinare</b><p><code>rerank</code> (MiniLM) · <code>entity</code> / <code>timeline</code> (istoricul unei entități) · <code>explore</code></p></div>
+  <div class="card"><b>Versiuni & calcul</b><p><code>versions</code> (alte versiuni ale aceluiași document — pentru conflicte) · <code>python</code> (sandbox)</p></div>
+</div>
+<div class="callout"><b>Izolarea gold:</b> agentul nu vede niciodată răspunsul corect; <code>python</code> rulează într-un sandbox care poate citi doar corpusul și indecșii (nu etichetele), fără rețea, fără subprocese. Așa scorul rămâne onest.</div>
+<div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>17 / 20</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2>Leaderboard EnterpriseRAG-Bench</h2>
 <p>Scorul oficial = <b>correctness × completeness</b>, judecat de GPT-5.4. <b>43 de sisteme</b>. Vârful (overall %):</p>
 <div class="scroll"><table>
@@ -286,7 +321,7 @@ Un singur apel Haiku ridică precizia perechii de la 0,78 la <b>0,93</b>. LLM-ul
 </table></div>
 <div class="callout"><b>Surpriza:</b> vârful e dominat de sisteme RAG <b>specializate</b>. <b>OpenAI</b> (File Search #26, vectori #37) și <b>Vertex AI Search</b> (#34) stau în jumătatea de jos; produsele gata-făcute nu bat un RAG construit pentru date de firmă.</div>
 <p class="caption">Sursa: leaderboard-ul oficial (HuggingFace, onyx-dot-app). „VertexAI Partners" din documentele benchmark-ului e conținut fictiv, nu un sistem.</p>
-<div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>16 / 18</b></span></div></div></section><section class="slide"><div class="slide-inner">
+<div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>18 / 20</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2>tvl-rag pe EnterpriseRAG-Bench</h2>
 <div class="two">
 <div>
@@ -308,7 +343,7 @@ Un singur apel Haiku ridică precizia perechii de la 0,78 la <b>0,93</b>. LLM-ul
 </div>
 <div class="callout">Dacă ~91–92 se confirmă pe toate cele 500, tvl-rag ar fi <b>competitiv în top 5</b> (sub PipesHub 93,2, lângă Flexor/CDL 90–91) și mult peste produsele gata-făcute (OpenAI File Search 61, Vertex 42). Până la rularea oficială completă rămâne estimare.</div>
 <p class="caption">Cifrele vin din <span class="tool">bench/enterpriserag</span> al implementării; tvl-rag nu e (încă) pe leaderboard-ul public.</p>
-<div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>17 / 18</b></span></div></div></section><section class="slide"><div class="slide-inner">
+<div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>19 / 20</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2>De la toolbox la EnterpriseRAG-Bench</h2>
 <div class="scroll"><table>
   <tr><th>Provocare enterprise</th><th>Tool</th><th>Pachet</th></tr>
@@ -327,7 +362,7 @@ Un singur apel Haiku ridică precizia perechii de la 0,78 la <b>0,93</b>. LLM-ul
   <a href="https://github.com/danlex/tvl-rag" target="_blank" rel="noopener">Cod: danlex/tvl-rag ↗</a>
 </div>
 <p class="caption" style="margin-top:14px">Surse: EnterpriseRAG-Bench (arXiv 2605.05253, onyx-dot-app) · leaderboard oficial (HuggingFace) · implementarea tvl-rag (danlex/tvl-rag).</p>
-<div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>18 / 18</b></span></div></div></section></main><div class="counter">1 / 1</div><script>
+<div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>20 / 20</b></span></div></div></section></main><div class="counter">1 / 1</div><script>
 const slides=[...document.querySelectorAll('.slide')];
 const fill=document.querySelector('.topbar .fill');
 const counter=document.querySelector('.counter');
