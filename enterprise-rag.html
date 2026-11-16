@@ -1,4 +1,4 @@
-<!doctype html><html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Enterprise RAG | Universitatea din București</title><meta name="description" content="Curs Engineering for AI: cum rezolvi EnterpriseRAG-Bench — BM25, entity graph, document data graph, multi-hop (Graph RAG, JEPA), cross-encoder, ranker învățat și LLM judge, cu implementarea tvl-rag."><style>
+<!doctype html><html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Enterprise RAG | Universitatea din București</title><meta name="description" content="Curs Engineering for AI: cum rezolvi EnterpriseRAG-Bench — BM25, entity graph, document data graph, multi-hop (Graph RAG, JEPA), cross-encoder, ranker învățat și LLM judge, cu implementarea uni-rag."><style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--red:#C83224;--coral:#FF4931;--bg:#F7F6F4;--ink:#111;--gray:#4A4A4A;--border:#E6E1DB;--card:#fff;--dark:#14161a}
 html{scroll-behavior:smooth}
@@ -55,7 +55,7 @@ ul,ol{margin:8px 0 8px 22px}li{margin:5px 0}
 <p class="lead">De la 500.000 de documente interne, zgomotoase și versionate, la răspunsuri susținute de surse. Metodele și tool-urile: BM25, entity graph, document data graph, multi-hop și LLM.</p>
 <div class="grid" style="margin-top:22px">
   <div class="card"><span class="tag">Problema</span><p><b>EnterpriseRAG-Bench</b> (onyx-dot-app). RAG peste cunoașterea internă a unei firme.</p></div>
-  <div class="card"><span class="tag">Implementarea</span><p><b>tvl-rag</b> — pipeline hibrid real: dense + BM25 + graf + multi-hop + ranker învățat + LLM judge.</p></div>
+  <div class="card"><span class="tag">Implementarea</span><p><b>uni-rag</b> — pipeline hibrid real: dense + BM25 + graf + multi-hop + ranker învățat + LLM judge.</p></div>
 </div>
 <div class="pill-nav">
   <a href="rag.html">← Curs RAG</a>
@@ -134,7 +134,7 @@ or emit customer data.
 </ul>
 <div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>05 / 24</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2>Harta soluției: pipeline-ul hibrid</h2>
-<p>Niciun tool singur nu rezolvă tot. Soluția din <span class="tool">tvl-rag</span> combină recuperare lexicală, semantică și pe graf, apoi rafinează cu modele tot mai scumpe:</p>
+<p>Niciun tool singur nu rezolvă tot. Soluția din <span class="tool">uni-rag</span> combină recuperare lexicală, semantică și pe graf, apoi rafinează cu modele tot mai scumpe:</p>
 <div class="flow">
   <div class="box"><b>BM25</b>lexical, tot corpusul</div>
   <div class="arrow">+</div>
@@ -168,7 +168,7 @@ scores = bm.get_scores(tokenize(question))     # scor per document</code></pre><
 P2 câștigă; P3 are scor 0 — niciun termen comun. Rulează <code>rag/bm25_rag.py</code>.
 </div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>07 / 24</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2><span class="tool">fastembed · bge-small</span> · Căutarea semantică</h2>
-<p>Fiecare paragraf și întrebare devin un <b>vector de 384 de dimensiuni</b> (normalizat). Similaritatea cosinus prinde reformulări pe care BM25 le ratează. În <span class="tool">tvl-rag</span>, primele 100 de paragrafe formează clasamentul de bază.</p>
+<p>Fiecare paragraf și întrebare devin un <b>vector de 384 de dimensiuni</b> (normalizat). Similaritatea cosinus prinde reformulări pe care BM25 le ratează. În <span class="tool">uni-rag</span>, primele 100 de paragrafe formează clasamentul de bază.</p>
 <div class="howto"><span class="ht-tag">Cum se folosește</span><pre><code>pip install fastembed
 
 from fastembed import TextEmbedding
@@ -275,7 +275,7 @@ Judecătorul primește 3 perechi amestecate și răspunde answer-first:<br>
 <code>Răspuns: Solaris. Perechea care îl susține: [P2]+[P3].</code><br>
 Un singur apel Haiku ridică precizia perechii de la 0,78 la <b>0,93</b>. LLM-ul nu caută; <b>verifică și sintetizează</b>.
 </div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>15 / 24</b></span></div></div></section><section class="slide"><div class="slide-inner">
-<h2>Arhitectura reală tvl-rag (din cod, v8.3)</h2>
+<h2>Arhitectura reală uni-rag (din cod, v8.3)</h2>
 <p>ARCHITECTURE.md descrie o versiune veche. Codul actual (ultimul branch, <code>config_r6v83.json</code>) e un pipeline <b>agentic cu rutare</b>: ieftin întâi, scump doar unde trebuie.</p>
 <div class="flow">
   <div class="box"><b>cards</b>~240 candidați</div><div class="arrow">→</div>
@@ -339,7 +339,7 @@ Un singur apel Haiku ridică precizia perechii de la 0,78 la <b>0,93</b>. LLM-ul
 <div class="callout"><b>Surpriza:</b> vârful e dominat de sisteme RAG <b>specializate</b>. <b>OpenAI</b> (File Search #26, vectori #37) și <b>Vertex AI Search</b> (#34) stau în jumătatea de jos; produsele gata-făcute nu bat un RAG construit pentru date de firmă.</div>
 <p class="caption">Sursa: leaderboard-ul oficial (HuggingFace, onyx-dot-app). „VertexAI Partners" din documentele benchmark-ului e conținut fictiv, nu un sistem.</p>
 <div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>18 / 24</b></span></div></div></section><section class="slide"><div class="slide-inner">
-<h2>tvl-rag pe EnterpriseRAG-Bench</h2>
+<h2>uni-rag pe EnterpriseRAG-Bench</h2>
 <div class="two">
 <div>
 <h3>Recuperare (Recall@10)</h3>
@@ -347,7 +347,7 @@ Un singur apel Haiku ridică precizia perechii de la 0,78 la <b>0,93</b>. LLM-ul
   <tr><th>Sistem</th><th class="n">R@10</th></tr>
   <tr class="row-o"><td>Vectori OpenAI (emb-3-large)</td><td class="n">46,0</td></tr>
   <tr><td>BM25 (reproducere exactă)</td><td class="n">68,4</td></tr>
-  <tr><td>tvl-rag ranker învățat</td><td class="n">73–74</td></tr>
+  <tr><td>uni-rag ranker învățat</td><td class="n">73–74</td></tr>
   <tr class="best"><td>+ vectori statici + cross-encoder</td><td class="n">74,8–75,3</td></tr>
 </table></div>
 <p class="caption">+6,4 R@10 peste BM25 [IC 95%: +3,7, +9,2].</p>
@@ -358,8 +358,8 @@ Un singur apel Haiku ridică precizia perechii de la 0,78 la <b>0,93</b>. LLM-ul
 <div class="callout"><b>Onestitate.</b> E un <b>eșantion de dezvoltare</b> de 60 de întrebări (optimist), nu o submisie pe toate cele 500. Estimarea curată (runda 7, pipeline înghețat) e ~<b>91–92</b>.</div>
 </div>
 </div>
-<div class="callout">Dacă ~91–92 se confirmă pe toate cele 500, tvl-rag ar fi <b>competitiv în top 5</b> (sub PipesHub 93,2, lângă Flexor/CDL 90–91) și mult peste produsele gata-făcute (OpenAI File Search 61, Vertex 42). Până la rularea oficială completă rămâne estimare.</div>
-<p class="caption">Cifrele vin din <span class="tool">bench/enterpriserag</span> al implementării; tvl-rag nu e (încă) pe leaderboard-ul public.</p>
+<div class="callout">Dacă ~91–92 se confirmă pe toate cele 500, uni-rag ar fi <b>competitiv în top 5</b> (sub PipesHub 93,2, lângă Flexor/CDL 90–91) și mult peste produsele gata-făcute (OpenAI File Search 61, Vertex 42). Până la rularea oficială completă rămâne estimare.</div>
+<p class="caption">Cifrele vin din <span class="tool">bench/enterpriserag</span> al implementării; uni-rag nu e (încă) pe leaderboard-ul public.</p>
 <div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>19 / 24</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <p class="eyebrow">Laborator · cod rulabil</p>
 <h2>Lab 1 — BM25 RAG</h2>
@@ -436,9 +436,9 @@ def search(q_vec, k=3):
   <a href="rag.html">Curs RAG</a>
   <a href="rag-benchmarks.html">Benchmark-uri de RAG</a>
   <a href="hotpotqa.html">HotpotQA</a>
-  <a href="https://github.com/danlex/tvl-rag" target="_blank" rel="noopener">Cod: danlex/tvl-rag ↗</a>
+  <a href="https://github.com/danlex/uni-rag" target="_blank" rel="noopener">Cod: danlex/uni-rag ↗</a>
 </div>
-<p class="caption" style="margin-top:14px">Surse: EnterpriseRAG-Bench (arXiv 2605.05253, onyx-dot-app) · leaderboard oficial (HuggingFace) · implementarea tvl-rag (danlex/tvl-rag).</p>
+<p class="caption" style="margin-top:14px">Surse: EnterpriseRAG-Bench (arXiv 2605.05253, onyx-dot-app) · leaderboard oficial (HuggingFace) · implementarea uni-rag (danlex/uni-rag).</p>
 <div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>24 / 24</b></span></div></div></section></main><div class="counter">1 / 1</div><script>
 const slides=[...document.querySelectorAll('.slide')];
 const fill=document.querySelector('.topbar .fill');
