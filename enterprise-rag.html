@@ -268,7 +268,7 @@ O notă +1 pe pereche o urcă data viitoare. Notele pe <b>perechi</b> se transfe
 <div class="howto"><span class="ht-tag">Cum se folosește</span><pre><code>from anthropic import Anthropic
 client = Anthropic()
 msg = client.messages.create(
-    model="claude-haiku-4-5", max_tokens=300,
+    model="claude-haiku-5-5"   # din config_r6v83.json, max_tokens=300,
     messages=[{"role":"user","content": judge_prompt(question, pairs)}])
 # judge_prompt: „scrie raspunsul, apoi alege perechea care il sustine, sau 'niciuna'" </code></pre></div><div class="example"><span class="ex-tag">Exemplu concret</span>
 Judecătorul primește 3 perechi amestecate și răspunde answer-first:<br>
