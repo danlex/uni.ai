@@ -159,13 +159,9 @@ or emit customer data.
 from rank_bm25 import BM25Okapi
 bm = BM25Okapi([tokenize(d) for d in docs])   # un tokenizer simplu
 scores = bm.get_scores(tokenize(question))     # scor per document</code></pre></div><div class="example"><span class="ex-tag">Exemplu concret</span>
-<b>Întrebare:</b> „Unde este asamblată bicicleta Vela?" — scoruri reale:
-<table>
-  <tr><td><b>[P2]</b> ...asamblată la fabrica din Brașov</td><td class="n"><b>2,85</b></td></tr>
-  <tr><td>[P1] Pegas produce Vela</td><td class="n">1,04</td></tr>
-  <tr><td>[P3] fabrica folosește energie Solaris</td><td class="n">0,00</td></tr>
-</table>
-P2 câștigă; P3 are scor 0 — niciun termen comun. Rulează <code>rag/bm25_rag.py</code>.
+<b>Întrebare reală din bench:</b> „What change prevents oscillations in the GPU scratch memory allocator that can trigger repeated micro-batch splits?"<br>
+Răspunsul stă într-un document cu termeni <b>exacți și rari</b>: <code>AdaptiveScratchManager</code>, <code>cooldown_ms</code>, „micro-batch splits".<br>
+BM25 îl aduce primul tocmai pentru că potrivește acești termeni interni; un encoder antrenat pe web nu-i cunoaște. De asta BM25 e cel mai bun baseline pe EnterpriseRAG-Bench.
 </div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>07 / 24</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2><span class="tool">fastembed · bge-small</span> · Căutarea semantică</h2>
 <p>Fiecare paragraf și întrebare devin un <b>vector de 384 de dimensiuni</b> (normalizat). Similaritatea cosinus prinde reformulări pe care BM25 le ratează. În <span class="tool">uni-rag</span>, primele 100 de paragrafe formează clasamentul de bază.</p>
@@ -175,8 +171,9 @@ from fastembed import TextEmbedding
 enc = TextEmbedding("BAAI/bge-small-en-v1.5")
 vecs = list(enc.embed(docs))          # vectori 384-d, L2-normalizați
 q = next(enc.embed([question]))       # cosinus = produs scalar</code></pre></div><div class="example"><span class="ex-tag">Exemplu concret</span>
-<b>Întrebare reformulată:</b> „Unde se <u>montează</u> Vela?" (<code>montează</code>, nu <code>asamblată</code>).<br>
-BM25 dă scor 0 la P2. Dense aduce totuși <b>P2</b> primul, pentru că „montează" și „asamblată" sunt apropiați. Exact ce prinde dense și BM25 nu.
+<b>Întrebare reală (tip „semantic"):</b> ce a concluzionat testul de utilizabilitate cu șase recenzori despre <u>discoverability</u>-ul funcției de compresie a coloanelor?<br>
+Documentul folosește alt vocabular: „glanceability", „header affordance", „tooltip wording". BM25 ratează (puține cuvinte comune); vectorii apropie sensul.<br>
+Aici e punctul slab al bench-ului (~46% recall la „semantic"), de aceea dense se combină cu BM25 și graful.
 </div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>08 / 24</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2>Fuziune: Reciprocal Rank Fusion (RRF)</h2>
 <p>Combini clasamentul lexical cu cel semantic fără să compari scoruri incompatibile: nu aduni scorurile, ci <b>rangurile</b>. Fiecare metodă votează cu <code>1 / (K + rang)</code>, cu <code>K = 60</code>.</p>
@@ -202,15 +199,10 @@ from gliner2 import GLiNER2
 ner = GLiNER2.from_pretrained("fastino/gliner2-base-v1")
 labels = ["person","organization","location","creative work","event"]
 ents = ner.extract_entities(text, labels)     # lower-case, min 3 caractere</code></pre></div><div class="example"><span class="ex-tag">Exemplu concret</span>
-Trei documente <b>reale</b> din bench despre autentificarea CI între cloud-uri, cu entitățile extrase de GLiNER2:
-<table style="margin:8px 0">
-  <tr><td><code>327df8aa…</code></td><td>GCP: Github Actions, IAM, <b>Workload Identity Federation</b></td></tr>
-  <tr class="best"><td><code>846e635d…</code></td><td>audit centralizat: CloudTrail, KMS, <b>Workload Identity Federation</b>, <b>AssumeRoleWithWebIdentity</b></td></tr>
-  <tr><td><code>ed15f3ae…</code></td><td>AWS: Terraform, <b>AssumeRoleWithWebIdentity</b>, AccessDenied</td></tr>
-</table>
-Documentele GCP și AWS nu împart aproape niciun cuvânt, dar graful le leagă prin entitățile comune:<br>
-<code>327df8aa —[Workload Identity Federation]— 846e635d —[AssumeRoleWithWebIdentity]— ed15f3ae</code><br>
-Nodul <b>846e635d</b> e <b>puntea</b> dintre clusterul GCP și cel AWS — exact ce ratează BM25 și vectorii.
+GLiNER2 pe două documente <b>reale</b> din bench (clusterul de autentificare CI):<br>
+<code>327df8aa</code> (GCP) → { Github Actions, IAM, <b>Workload Identity Federation</b>, MFA }<br>
+<code>ed15f3ae</code> (AWS) → { Terraform, <b>AssumeRoleWithWebIdentity</b>, AccessDenied, role trust policy }<br>
+Aceste entități devin ancorele care leagă documentele în graf (slide-ul următor).
 </div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>10 / 24</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2>Document Data Graph: muchiile dintre paragrafe</h2>
 <p>Nodurile sunt paragrafele. În <span class="tool">graph.py</span>, două paragrafe se leagă dacă împart o entitate (în 2–15 paragrafe), entitățile unuia conțin titlul celuilalt, textul unuia <b>numește</b> titlul celuilalt (muchie de punte), sau apare o variantă/alias a titlului.</p>
@@ -221,9 +213,9 @@ for a in docs:
         if a != b and (ents[a] & ents[b]              # entitate comuna
                        or title[b] in text[a]):        # mentiune / punte
             edges[a].add(b)</code></pre></div><div class="example"><span class="ex-tag">Exemplu concret</span>
-Muchiile reale între cele 3 paragrafe:<br>
-<code>P1 —[Vela]— P2 —[fabrica din Brașov]— P3</code><br>
-Muchie de <b>mențiune</b>: un tichet Jira „bug la bateria <u>Vela</u>" se leagă de P1 pentru că îi numește titlul. Așa conectezi Slack ↔ Jira ↔ Confluence. Rulează <code>rag/graphrag_demo.py</code>.
+Aceleași documente reale, legate prin <b>entități comune</b>:<br>
+<code>327df8aa —[Workload Identity Federation]— 846e635d —[AssumeRoleWithWebIdentity]— ed15f3ae</code><br>
+Documentul GCP și cel AWS nu împart aproape niciun cuvânt; nodul <b>846e635d</b> (audit centralizat) e <b>puntea</b> care le conectează. BM25 și vectorii nu le-ar pune niciodată împreună.
 </div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>11 / 24</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2>Multi-hop: Graph RAG second hop + JEPA</h2>
 <p>Întrebările grele cer <b>două dovezi</b> conectate (A → B). Lucrăm cu <b>perechi</b>: fiecare sămânță bună e împerecheată cu vecinii ei din graf (max 50). Predictorul <span class="tool">JEPA</span> prezice vectorul celui de-al doilea paragraf și adaugă perechi pe care graful le ratează (acoperire 96% → 99%).</p>
@@ -234,9 +226,8 @@ class Pred(nn.Module):                       # [q; A] -> vectorul lui B
         super().__init__()
         self.f = nn.Sequential(nn.Linear(2*d, h), nn.GELU(), nn.Linear(h, d))
     def forward(self, q, a): return self.f(torch.cat([q, a], -1))</code></pre></div><div class="example"><span class="ex-tag">Exemplu concret</span>
-Întrebarea cere lanțul P1 → P2 → P3, dar dense top-1 aduce doar <b>P1</b>.<br>
-Graful formează perechi cu vecinii: (P1,P2) prin „Vela", apoi (P2,P3) prin „fabrica din Brașov".<br>
-Perechea <b>(P2,P3)</b> conține dovada pentru „Solaris" — exact ce top-k vectorial rata.
+O întrebare de tipul „de ce pică autentificarea CI și pe GCP, și pe AWS?" cere <b>două documente</b>: <code>327df8aa</code> (GCP) și <code>ed15f3ae</code> (AWS).<br>
+Dense top-1 aduce doar unul. Al doilea hop pe graf îl împerechează cu vecinul prin nodul-punte <code>846e635d</code>, aducând tot lanțul de dovezi — exact ce top-k vectorial rata.
 </div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>12 / 24</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2><span class="tool">fastembed · bge-reranker-v2-m3</span> · Cross-encoder</h2>
 <p>Până aici, întrebarea și documentele au fost codate <b>separat</b> (rapid, aproximativ). Cross-encoderul citește <b>întrebarea și perechea împreună</b> și dă un scor de relevanță mult mai precis, cu cache pe (întrebare, pereche).</p>
@@ -245,9 +236,9 @@ Perechea <b>(P2,P3)</b> conține dovada pentru „Solaris" — exact ce top-k ve
 from fastembed.rerank.cross_encoder import TextCrossEncoder
 ce = TextCrossEncoder("BAAI/bge-reranker-v2-m3-int8")   # int8 ONNX, pe CPU
 scores = list(ce.rerank(question, [pair_text_1, pair_text_2]))</code></pre></div><div class="example"><span class="ex-tag">Exemplu concret</span>
-Două perechi candidate:<br>
-<code>CE(q, [P2]+[P3]) = 0,94</code> &nbsp; conține asamblarea și furnizorul (corect)<br>
-<code>CE(q, [P1]+[P4]) = 0,18</code> &nbsp; Pegas + alt produs (irelevant)<br>
+Două perechi candidate pentru întrebarea despre autentificarea CI:<br>
+<code>CE(q, 327df8aa + ed15f3ae) = 0,94</code> &nbsp; GCP + AWS, lanțul corect<br>
+<code>CE(q, 327df8aa + doc-nelegat) = 0,21</code> &nbsp; doar GCP + zgomot<br>
 Citind întrebarea și perechea împreună, separă clar perechea corectă.
 </div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>13 / 24</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2><span class="tool">lightgbm</span> · Ranker învățat + feedback</h2>
@@ -271,8 +262,8 @@ msg = client.messages.create(
     model="claude-haiku-5-5"   # din config_r6v83.json, max_tokens=300,
     messages=[{"role":"user","content": judge_prompt(question, pairs)}])
 # judge_prompt: „scrie raspunsul, apoi alege perechea care il sustine, sau 'niciuna'" </code></pre></div><div class="example"><span class="ex-tag">Exemplu concret</span>
-Judecătorul primește 3 perechi amestecate și răspunde answer-first:<br>
-<code>Răspuns: Solaris. Perechea care îl susține: [P2]+[P3].</code><br>
+Pe o întrebare reală, judecătorul alege perechea și răspunde answer-first:<br>
+<code>Răspuns: un backoff per-model (cooldown_ms) în AdaptiveScratchManager. Dovada: [doc_alocator].</code><br>
 Un singur apel Haiku ridică precizia perechii de la 0,78 la <b>0,93</b>. LLM-ul nu caută; <b>verifică și sintetizează</b>.
 </div><div class="foot"><span>Universitatea din București · Engineering for AI</span><span>Enterprise RAG &nbsp; <b>15 / 24</b></span></div></div></section><section class="slide"><div class="slide-inner">
 <h2>Arhitectura reală uni-rag (din cod, v8.3)</h2>
