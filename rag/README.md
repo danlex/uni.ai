@@ -95,6 +95,7 @@ apoi pune `LLM = 'llama3:8b'` în fișier și rulează din nou.
 | `graph_rag.py` | Extragerea relațiilor, construirea grafului și traversarea multi-hop. |
 | `bm25_rag.py` | Exemplu de sine stătător: BM25 de la zero (căutare lexicală) + prompt RAG. |
 | `graphrag_demo.py` | Exemplu de sine stătător: graf de documente din entități + recuperare multi-hop. |
+| `hybrid_rag.py` | Hybrid RAG: BM25 + vector + graph fuzionate cu RRF, pe un cluster real din EnterpriseRAG-Bench (autentificare CI GCP/AWS). |
 | `experiment.py` | Orchestratorul care rulează și afișează tot experimentul. |
 | `rag_real.py` | Varianta opțională cu embeddings reale (3 paragrafe, ca restul folderului). |
 | `rag_local.py` | Laboratorul complet din slide-uri: encoder E5 real pe 6 paragrafe + generare locală opțională prin Ollama. |
